@@ -201,7 +201,8 @@ sub setRecord
             #  Skip unless the record is a match.
             #
             next
-              unless ( $existing->{ 'name' } eq "$record.$DHCP::Config::ZONE" );
+              unless ( ( $existing->{'type'} eq $type ) &&
+                ( $existing->{ 'name' } eq "$record.$DHCP::Config::ZONE" ) );
 
             #
             #  Get the old/current IP.
