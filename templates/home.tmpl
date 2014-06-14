@@ -27,6 +27,13 @@
             </pre>
           </blockquote>
 
+          <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
+          <blockquote>
+          <pre>
+            $ curl -v -X POST curl http://dhcp.io/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
+          </pre>
+          <p>(As before if you omit the <tt>ip=x.x.x.x</tt>  then the source of your request will be assumed.)</p>
+          </blockquote>
         </td>
         <td width="25%" valign="top">
 <!-- tmpl_include name='menu.inc' -->
