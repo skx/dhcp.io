@@ -46,6 +46,7 @@ You'll want to setup some rewrite rules:
 
     * /logout          -> /cgi-bin/index.cgi?mode=logout
     * /home            -> /cgi-bin/index.cgi?mode=home
+    * /create          -> /cgi-bin/index.cgi?mode=create
     * /set/(.*)/(.*)/? -> /cgi-bin/index.cgi?mode=set;token=$1;ip=$2
     * /set/(.*)/?      -> /cgi-bin/index.cgi?mode=set;token=$1
 
