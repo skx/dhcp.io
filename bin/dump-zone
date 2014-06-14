@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w -Ilib/ -I../lib/
+#
+#  Dump all records in the zone - i.e. registered users.
+#
+# Steve
+# --
+
+use strict;
+use warnings;
+
+use DHCP::Records;
+
+
+my $tmp = DHCP::Records->new();
+my $obj = $tmp->getRecords();
+my %obj = %$obj;
+
+foreach my $key (qw! A AAAA !)
+{
+    my $hash = $obj{ $key };
+
+    foreach my $name ( sort keys %$hash )
+    {
+        next if ( $name =~ /^(dhcp|www)$/ );
+        print sprintf( "%15s - %s", $name, $obj->{ $key }{ $name } ) . "\n";
+    }
+}
