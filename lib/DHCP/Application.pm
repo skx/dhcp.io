@@ -243,7 +243,7 @@ sub faq
     #  Load the template & render
     #
     my $template = $self->load_template("faq.tmpl");
-    $template->param( username => $existing ) if ( $existing );
+    $template->param( username => $existing ) if ($existing);
     return ( $template->output() );
 }
 
