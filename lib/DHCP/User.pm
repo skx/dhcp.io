@@ -34,13 +34,11 @@ use warnings;
 
 package DHCP::User;
 
-
-# This must be renamed - it isn't in the repository.
-use DHCP::Config;
+# Our code
+use DHCP::Records;
 
 # Standard modules.
 use Data::UUID::LibUUID;
-use WebService::Amazon::Route53;
 
 
 =begin doc
@@ -87,7 +85,7 @@ sub createUser
     # set their login details.
     $redis->set( "DHCP:USER:$user", $pass );
 
-    if ( $mail )
+    if ($mail)
     {
         $redis->set( "DHCP:USER:$user:MAIL", $mail );
     }
@@ -133,12 +131,15 @@ sub setRecord
     my ( $self, $record, $ip ) = (@_);
 
     #
-    #  Create the helper.
+    # Create a helper
     #
-    my $r53 =
-      WebService::Amazon::Route53->new( id  => $DHCP::Config::ROUTE_53_ID,
-                                        key => $DHCP::Config::ROUTE_53_KEY );
+    my $helper = DHCP::Records->new();
 
+    #
+    #  Get the existing records - we need to see if the record
+    # we're setting a new value to an existing record, or creating a new one.
+    #
+    my $existing = $helper->getRecords();
 
     #
     #  The type of the record we're dealing with.
@@ -155,61 +156,8 @@ sub setRecord
     #  Annoyingly deleting without the correct/current value will fail,
     # so you need to search the existing zone to find the old IP.
     #
-    my $old_ip = undef;
+    my $old_ip = $existing->{ $type }{ $record } || undef;
 
-
-    #
-    #  These are here to provide an offset in the iteration case.
-    #
-    #  The "fetch records" call will return no more than 100 records
-    # at a time.  Currently the dhcp.io zone has 5 records, but we
-    # should be prepared...
-    #
-    my $cont     = 1;
-    my $tmp_name = undef;
-    my $tmp_type = undef;
-
-    while ($cont)
-    {
-        my ( $record_sets, $next ) =
-          $r53->list_resource_record_sets( zone_id => $DHCP::Config::ZONE_ID,
-                                           name    => $tmp_name,
-                                           type    => $tmp_type
-                                         );
-
-        #
-        #  Should we continue looping for more records?
-        #
-        if ( $next->{ 'name' } )
-        {
-            $tmp_name = $next->{ 'name' };
-            $tmp_type = $next->{ 'type' };
-        }
-        else
-        {
-            $cont = 0;
-        }
-
-
-        #
-        #  OK is the record we're looking for in the current batch?
-        #
-        foreach my $existing (@$record_sets)
-        {
-
-            #
-            #  Skip unless the record is a match.
-            #
-            next
-              unless ( ( $existing->{'type'} eq $type ) &&
-                ( $existing->{ 'name' } eq "$record.$DHCP::Config::ZONE" ) );
-
-            #
-            #  Get the old/current IP.
-            #
-            $old_ip = $existing->{ 'records' }[0];
-        }
-    }
 
 
     #
@@ -218,44 +166,10 @@ sub setRecord
     #
     if ($old_ip)
     {
-        my $res = $r53->change_resource_record_sets(
-            zone_id => $DHCP::Config::ZONE_ID,
-            changes => [
-
-                # Delete the current record
-                {  action => 'delete',
-                   name   => "$record.$DHCP::Config::ZONE",
-                   type   => $type,
-                   ttl    => 60,
-                   value  => $old_ip,
-                },
-
-                # Add the new record.
-                {  action => 'create',
-                   name   => "$record.$DHCP::Config::ZONE",
-                   type   => $type,
-                   ttl    => 60,
-                   value  => $ip,
-                },
-            ] );
+        $helper->removeRecord( $record, $type, $old_ip );
     }
-    else
-    {
 
-        #
-        #  The record isn't present.  Create it.
-        #
-        my $res =
-          $r53->change_resource_record_sets(
-                           zone_id => $DHCP::Config::ZONE_ID,
-                           changes => [{ action => 'create',
-                                         name  => "$record.$DHCP::Config::ZONE",
-                                         type  => $type,
-                                         ttl   => 60,
-                                         value => $ip,
-                                       },
-                                      ] );
-    }
+    $helper->createRecord( $record, $type, $ip );
 
 }
 
@@ -345,8 +259,9 @@ sub forbidden
 
     $user = lc($user);
 
-    foreach
-      my $denied (qw! ip6 ipv6 ipv4 ip4 ip www admin secure official steve kemp notice secret !)
+    foreach my $denied (
+        qw! ip6 ipv6 ipv4 ip4 ip www admin secure official steve kemp notice secret !
+      )
     {
         return 1 if ( $denied eq $user );
     }
