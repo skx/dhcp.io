@@ -260,7 +260,7 @@ sub forbidden
     $user = lc($user);
 
     foreach my $denied (
-        qw! ip6 ipv6 ipv4 ip4 ip ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret !
+        qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret !
       )
     {
         return 1 if ( $denied eq $user );
