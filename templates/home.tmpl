@@ -12,7 +12,7 @@
   </div>
   <div id="content">
     <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
-    <p>You're in charge of the hostname <b><tt><!-- tmpl_var name='username' escape='html' -->.dhcp.io</tt></b>.</p>
+    <p>You're in charge of the hostname <b><span class="tt"><!-- tmpl_var name='username' escape='html' -->.dhcp.io</span></b>.</p>
     <p>To update the value this points to please run:</p>
     <blockquote>
       <pre>
@@ -31,7 +31,7 @@
       <pre>
         $ curl -v -X POST curl http://dhcp.io/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
       </pre>
-      <p>(As before if you omit the <tt>ip=x.x.x.x</tt>  then the source of your request will be assumed.)</p>
+      <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
     </blockquote>
   </div>
 </body>

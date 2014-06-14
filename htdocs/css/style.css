@@ -183,3 +183,7 @@ input:focus {
     width: 60%;
     padding-left: 20%;
 }
+.tt {
+    font-family: 'Droid Sans Mono', sans-serif;
+    font-size: inherit;
+}
