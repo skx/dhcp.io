@@ -229,11 +229,21 @@ Show the FAQ-page.
 
 sub faq
 {
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
 
     #
     #  Load the template & render
     #
     my $template = $self->load_template("faq.tmpl");
+    $template->param( username => $existing ) if ( $existing );
     return ( $template->output() );
 }
 
