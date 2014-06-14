@@ -101,7 +101,74 @@ Create a new account.
 
 sub create
 {
-    return ("TODO: Create");
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Already logged in?
+    #
+    my $existing = $session->param('logged_in');
+    if ( defined($existing) )
+    {
+        return ( $self->redirectURL("/home") );
+    }
+
+    #
+    #  Load the template.
+    #
+    my $template = $self->load_template("create.tmpl");
+
+    #
+    #  Is the user submitting?
+    #
+    if ( $q->param("submit") )
+    {
+        my $name = $q->param("zone");
+        my $pass = $q->param("password");
+
+        #
+        #  If the zone is empty then we're done
+        #
+        if ( !defined($name) || !length($name) )
+        {
+            $template->param( error => "You must supply a name." );
+            return ( $template->output() );
+        }
+
+        #
+        #  If the password is empty then we're done
+        #
+        if ( !defined($pass) || !length($pass) )
+        {
+            $template->param( error => "You must supply a password." );
+            return ( $template->output() );
+        }
+
+        #
+        #  If the user exists
+        #
+        my $tmp = DHCP::User->new( redis => $self->{ 'redis' } );
+        if ( $tmp->present($name) )
+        {
+            $template->param( error => "That name is already taken." );
+            return ( $template->output() );
+        }
+        if ( $tmp->forbidden($name) )
+        {
+            $template->param( error => "That name is forbidden." );
+            return ( $template->output() );
+        }
+
+        #
+        #  OK create the name.
+        #
+        $tmp->createUser( $name, $pass );
+
+        $template->param( created => 1 );
+    }
+
+    return ( $template->output() );
 }
 
 

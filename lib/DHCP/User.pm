@@ -339,7 +339,8 @@ sub forbidden
 
     $user = lc($user);
 
-    foreach my $denied (qw! www admin secure official steve kemp notice secret !)
+    foreach
+      my $denied (qw! www admin secure official steve kemp notice secret !)
     {
         return 1 if ( $denied eq $user );
     }

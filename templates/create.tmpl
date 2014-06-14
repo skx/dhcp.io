@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>DHCP.io - Free Dynamic DNS</title>
+  </head>
+  <body>
+    <div style="text-align: center;"><h1>DHCP.io - Free Dynamic DNS</h1></div>
+    <table width="100%">
+      <tr><td width="15%" valign="top">
+        </td>
+        <td width="60%" valign="top">
+
+<!-- tmpl_if name='created' -->
+     <h1>Account Created</h1>
+     <p>You may now login.</p>
+<!-- tmpl_else -->
+
+          <h1>Create An Account</h1>
+          <p>To get started you need to pick the name of the host you'll control - beneath the <b><tt>.dhcp.io</tt></b> domain.</p>
+          <p>(So if you pick "<tt>bob</tt>" you'll be able to control the IP address that <tt>bob.dhcp.io</tt> points to.)</p>
+          <form method="POST" action="/cgi-bin/index.cgi">
+          <input type="hidden" name="mode" value="create">
+          <table>
+          <tr><td>Hostname</td>
+          <td><input type="text" name="zone"></td></tr>
+          <tr><td>Password</td>
+          <td><input type="password" name="password"></td></tr>
+          <tr><td></td>
+                    <td align="right"><input type="submit" name="submit" value="create"></td></tr>
+<!-- tmpl_if name='error' -->
+          <tr><td colspan="2"><p><b><!-- tmpl_var name='error' --></b></p></td></tr>
+<!-- /tmpl_if -->
+                    </table>
+
+<!-- /tmpl_if -->
+
+        </td>
+        <td width="25%" valign="top">
+
+<!-- tmpl_if name='created' -->
+     <!-- tmpl_include name='menu.inc' -->
+<!-- /tmpl_if -->
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
