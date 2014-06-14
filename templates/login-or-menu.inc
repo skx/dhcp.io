@@ -27,6 +27,8 @@
                             </fieldset>
                             <input type="submit" name="login" id="login" value="Sign in" />
                         </fieldset>
+                        <span><a href="/create/">Create an account</a></span>
+
                     </form>
                 </div>
             </div>
