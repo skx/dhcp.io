@@ -1,0 +1,47 @@
+# -*- cperl -*- #
+
+=head1 NAME
+
+DHCP::Config - Configuration holder for Amazon Credentials.
+
+=head1 DESCRIPTION
+
+This module should be renamed `Config.pm` before the code is deployed,
+and the settings inside it should be updated to match your own.
+
+=cut
+
+=head1 AUTHOR
+
+Steve Kemp <steve@steve.org.uk>
+
+=cut
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2014 Steve Kemp <steve@steve.org.uk>.
+
+This library is free software. You can modify and or distribute it under
+the same terms as Perl itself.
+
+=cut
+
+package DHCP::Config;
+
+
+our $ROUTE_53_ID      = "xxxxxxxxxxx";
+our $ROUTE_53_KEY     = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+
+#
+#  The Zone we use - Note that the trailing period is ESSENTIAL.
+#
+our $ZONE    = "dhcp.io.";
+
+#
+#  The Zone-ID which can be found in your Amazon console, this should
+# match the domain listed above.
+#
+our $ZONE_ID = "example";
+
+1;
