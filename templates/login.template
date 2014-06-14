@@ -13,7 +13,7 @@
 <!-- /tmpl_if -->
 
 
-<form action="/" method="POST">
+<form action="/cgi-bin/index.cgi" method="POST">
  <input type="hidden" name="mode" value="login" >
 <!-- tmpl_if name='target' -->
  <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
