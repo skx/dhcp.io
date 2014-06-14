@@ -346,7 +346,7 @@ sub forbidden
     $user = lc($user);
 
     foreach
-      my $denied (qw! www admin secure official steve kemp notice secret !)
+      my $denied (qw! ip6 ipv6 ipv4 ip4 ip www admin secure official steve kemp notice secret !)
     {
         return 1 if ( $denied eq $user );
     }
