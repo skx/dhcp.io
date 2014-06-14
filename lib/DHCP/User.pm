@@ -212,7 +212,18 @@ sub testLogin
 
     my $redis = $self->{ 'redis' } || die "Missing handle";
 
-    return ( $redis->get("DHCP:USER:$pass") );
+    #
+    #  Does the user exist?
+    #
+    return undef unless( $self->present($user) );
+
+    #
+    #  Get the password
+    #
+    my $epass = $redis->get("DHCP:USER:$user");
+    return $user if ( $epass eq $pass );
+
+    return undef;
 
 }
 
