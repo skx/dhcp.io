@@ -126,6 +126,7 @@ sub create
     {
         my $name = $q->param("zone");
         my $pass = $q->param("password");
+        my $mail = $q->param("email" );
 
         #
         #  If the zone is empty then we're done
@@ -163,7 +164,7 @@ sub create
         #
         #  OK create the name.
         #
-        $tmp->createUser( $name, $pass );
+        $tmp->createUser( $name, $pass, $mail );
 
         $template->param( created => 1 );
     }

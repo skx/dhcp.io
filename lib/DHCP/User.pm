@@ -78,7 +78,7 @@ Create a new user on the system.
 
 sub createUser
 {
-    my ( $self, $user, $pass ) = (@_);
+    my ( $self, $user, $pass, $mail ) = (@_);
 
     $user = lc($user);
 
@@ -86,6 +86,11 @@ sub createUser
 
     # set their login details.
     $redis->set( "DHCP:USER:$user", $pass );
+
+    if ( $mail )
+    {
+        $redis->set( "DHCP:USER:$user:MAIL", $mail );
+    }
 
     # set their token
     my $uid = new_uuid_string();
