@@ -5,10 +5,10 @@ This repository contains the code behind the [DHCP.io](http://dhcp.io/) website,
 which provides a self-hosted Dynamic-DNS system.
 
 Users can register any hostname beneath a given DNS zone, and easily
-update those hostnames to point to arbitrary IPv4 addresses.
+update those hostnames to point to arbitrary IPv4 or IPv6 addresses.
 
 If you deployed the code with the hostname "`spare.io`", then a user
-"`bob`" coulld control the hostname "`bob.spare.io`".
+"`bob`" could control the hostname "`bob.spare.io`".
 
 > **NOTE**:  It is currently assumed a single user can control only a single hostname.
 
@@ -21,7 +21,7 @@ The code is written in Perl, using the [CGI::Application](http://search.cpan.org
 The logins for all users are stored in a [Redis](http://redis.io/) instance
 running on the local-host.
 
-For the actual dynamic DNS component Amazon's Route53 service is used.
+For the serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
 
 
 Installation
@@ -45,8 +45,8 @@ Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config
 You'll want to setup some rewrite rules:
 
     * /logout          -> /cgi-bin/index.cgi?mode=logout
-    * /home            -> /cgi-bin/index.cgi?mode=home
-    * /create          -> /cgi-bin/index.cgi?mode=create
+    * /home/?          -> /cgi-bin/index.cgi?mode=home
+    * /create/?        -> /cgi-bin/index.cgi?mode=create
     * /set/(.*)/(.*)/? -> /cgi-bin/index.cgi?mode=set;token=$1;ip=$2
     * /set/(.*)/?      -> /cgi-bin/index.cgi?mode=set;token=$1
 
