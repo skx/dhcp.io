@@ -809,14 +809,12 @@ sub list_resource_record_sets
 
         if ( exists $set_data->{ SetIdentifier } )
         {
-            $record_set->{ set_identifier } =
-              $set_data->{ SetIdentifier };
+            $record_set->{ set_identifier } = $set_data->{ SetIdentifier };
         }
 
         if ( exists $set_data->{ Weight } )
         {
-            $record_set->{ weight } =
-              $set_data->{ Weight };
+            $record_set->{ weight } = $set_data->{ Weight };
         }
 
         # TODO: Add support for AliasTarget data
