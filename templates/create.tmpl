@@ -1,19 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <title>DHCP.io - Free Dynamic DNS</title>
-  </head>
-  <body>
-    <div style="text-align: center;"><h1>DHCP.io - Free Dynamic DNS</h1></div>
-    <table width="100%">
-      <tr><td width="15%" valign="top">
-        </td>
-        <td width="60%" valign="top">
-
+<!doctype html>
+<head>
+  <meta charset="utf-8" />
+  <title>DHCP.io - Free Dynamic DNS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+  <script src="/js/login.js"></script>
+</head>
+<body>
+  <div id="bar">
+    <!-- tmpl_include name="login-or-menu.inc" -->
+  </div>
+  <div id="content">
 <!-- tmpl_if name='created' -->
-     <h1>Account Created</h1>
-     <p>You may now login.</p>
+<h1>Account Created</h1>
+<p>You may now login.</p>
 <!-- tmpl_else -->
 
           <h1>Create An Account</h1>
@@ -36,15 +36,6 @@
                     </table>
 
 <!-- /tmpl_if -->
-
-        </td>
-        <td width="25%" valign="top">
-
-<!-- tmpl_if name='created' -->
-     <!-- tmpl_include name='menu.inc' -->
-<!-- /tmpl_if -->
-        </td>
-      </tr>
-    </table>
-  </body>
+  </div>
+</body>
 </html>
