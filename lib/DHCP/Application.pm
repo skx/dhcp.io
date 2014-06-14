@@ -67,6 +67,7 @@ sub setup
         # Index/Home for signed-in users.
         'index' => 'index',
         'home'  => 'home',
+        'faq'   => 'faq',
 
         # Create a new user
         'create' => 'create',
@@ -216,6 +217,26 @@ sub home
     #
     return ( $template->output() );
 }
+
+
+=begin doc
+
+Show the FAQ-page.
+
+=end doc
+
+=cut
+
+sub faq
+{
+
+    #
+    #  Load the template & render
+    #
+    my $template = $self->load_template("faq.tmpl");
+    return ( $template->output() );
+}
+
 
 
 =begin doc
