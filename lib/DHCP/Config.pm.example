@@ -42,6 +42,6 @@ our $ZONE    = "dhcp.io.";
 #  The Zone-ID which can be found in your Amazon console, this should
 # match the domain listed above.
 #
-our $ZONE_ID = "example";
+our $ZONE_ID = "xxxx";
 
 1;
