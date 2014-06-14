@@ -1,31 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!doctype html>
+<html>
   <head>
-    <title>DHCP.io - Login</title>
+    <meta charset="utf-8"/>
+    <title>DHCP.io - Free Dynamic DNS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+    <script src="/js/login.js"></script>
   </head>
   <body>
+    <div id="bar">
+      <!-- tmpl_include name="login-or-menu.inc" -->
+    </div>
+    <div id="content">
+      <h1>Please Login</h1>
+      <!-- tmpl_if name='login_error' -->
+      <p>Your login failed, please try again:</p>
+      <!-- /tmpl_if -->
 
-<h1>Please Login</h1>
-
-<!-- tmpl_if name='login_error' -->
-<p>Your login failed, please try again:</p>
-<!-- /tmpl_if -->
-
-
-<form action="/cgi-bin/index.cgi" method="POST">
- <input type="hidden" name="mode" value="login" >
-<!-- tmpl_if name='target' -->
- <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
-<!-- /tmpl_if -->
- <table>
- <tr><td>Username</td>
-     <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->"></td></tr>
- <tr><td>Password</td>
-     <td><input type="password" name="lpass" value=""></td></tr>
- <tr><td></td>
-     <td><input type="submit" name="submit" value="Login"></td></tr>
- </table>
-</form>
-</body>
+      <form action="/cgi-bin/index.cgi" method="POST">
+        <input type="hidden" name="mode" value="login" />
+        <table>
+          <tr><td>Username</td>
+            <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->" /></td></tr>
+          <tr>
+            <td>Password</td>
+            <td><input type="password" name="lpass" value=""/></td>
+          </tr>
+          <tr><td></td>
+            <td><input type="submit" name="submit" value="Login" /></td></tr>
+        </table>
+      </form>
+    </div>
+  </body>
 </html>
+

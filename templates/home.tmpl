@@ -1,44 +1,38 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <title>DHCP.io - Free Dynamic DNS</title>
-  </head>
-  <body>
-    <div style="text-align: center;"><h1>DHCP.io - Free Dynamic DNS</h1></div>
+<!doctype html>
+<head>
+  <meta charset="utf-8" />
+  <title>DHCP.io - Free Dynamic DNS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+  <script src="/js/login.js"></script>
+</head>
+<body>
+  <div id="bar">
+    <!-- tmpl_include name="login-or-menu.inc" -->
+  </div>
+  <div id="content">
+    <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
+    <p>You're in charge of the hostname <b><tt><!-- tmpl_var name='username' escape='html' -->.dhcp.io</tt></b>.</p>
+    <p>To update the value this points to please run:</p>
+    <blockquote>
+      <pre>
+        $ curl http://dhcp.io/set/<!-- tmpl_var name='token' -->
+      </pre>
+    </blockquote>
+    <p>If you wish to set the value to a specific IP please run:</p>
+    <blockquote>
+      <pre>
+        $ curl http://dhcp.io/set/<!-- tmpl_var name='token' -->/1.2.3.4
+      </pre>
+    </blockquote>
 
-    <table width="100%">
-      <tr><td width="15%" valign="top">
-        </td>
-        <td width="60%" valign="top">
-
-          <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
-          <p>You're in charge of the hostname <b><tt><!-- tmpl_var name='username' escape='html' -->.dhcp.io</tt></b>.</p>
-          <p>To update the value this points to please run:</p>
-          <blockquote>
-            <pre>
-              $ curl http://dhcp.io/set/<!-- tmpl_var name='token' -->
-            </pre>
-          </blockquote>
-          <p>If you wish to set the value to a specific IP please run:</p>
-          <blockquote>
-            <pre>
-              $ curl http://dhcp.io/set/<!-- tmpl_var name='token' -->/1.2.3.4
-            </pre>
-          </blockquote>
-
-          <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
-          <blockquote>
-          <pre>
-            $ curl -v -X POST curl http://dhcp.io/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
-          </pre>
-          <p>(As before if you omit the <tt>ip=x.x.x.x</tt>  then the source of your request will be assumed.)</p>
-          </blockquote>
-        </td>
-        <td width="25%" valign="top">
-<!-- tmpl_include name='menu.inc' -->
-        </td>
-      </tr>
-    </table>
-  </body>
+    <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
+    <blockquote>
+      <pre>
+        $ curl -v -X POST curl http://dhcp.io/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
+      </pre>
+      <p>(As before if you omit the <tt>ip=x.x.x.x</tt>  then the source of your request will be assumed.)</p>
+    </blockquote>
+  </div>
+</body>
 </html>
