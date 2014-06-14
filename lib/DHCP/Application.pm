@@ -126,7 +126,7 @@ sub create
     {
         my $name = $q->param("zone");
         my $pass = $q->param("password");
-        my $mail = $q->param("email" );
+        my $mail = $q->param("email");
 
         #
         #  If the zone is empty then we're done
