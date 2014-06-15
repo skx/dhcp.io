@@ -139,35 +139,6 @@ sub teardown
 
 =begin doc
 
-Called before CGI::App dispatches to a runmode, merge GET + POST
-parameters.
-
-Source - http://www.perlmonks.org/?node_id=748939
-
-=end doc
-
-=cut
-
-sub cgiapp_prerun
-{
-    my ($self) = @_;
-
-    # $self->mode_param so we don't have to go back and change this if we
-    # ever decide to use something other than rm
-    if ( $self->query->url_param( $self->mode_param ) )
-    {
-
-        # prerun_mode lets you change CGI::Apps notion of the current runmode
-        $self->prerun_mode( $self->query->url_param( $self->mode_param ) );
-    }
-    return;
-}
-
-
-
-
-=begin doc
-
 Redirect to the given URL.
 
 =end doc
