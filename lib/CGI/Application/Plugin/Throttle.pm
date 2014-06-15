@@ -1,11 +1,83 @@
+
+=head1 NAME
+
+CGI::Application::Plugin::Throttle - Limit accesses to runmodes.
+
+=head1 SYNOPSIS
+
+  use CGI::Application::Plugin::Throttle;
+
+
+  # Your application
+  sub setup {
+    ...
+
+    # Create a redis handle
+    my $redis = Redis->new();
+
+    # Configure throttling
+    $self->throttle()->configure( redis => $redis,
+                                  prefix => "REDIS:KEY:PREFIX",
+                                  limit => 100,
+                                  period => 60,
+                                  exceeded => "slow_down_champ" );
+
+=head1 DESCRIPTION
+
+This module allows you to enforce a throttle on incoming requests to
+your application, based upon the remote IP address.
+
+This module stores a count of accesses in a Redis key-store, and
+and once hits from a particular source exceeed the specified threshold
+the user will be redirected to the run-mode you've specified.
+
+=cut
+
+=head1 POTENTIAL ISSUES / CONCERNS
+
+Users who share IP addresses, because they are behind a common-gateway
+for example, will all suffer if the threshold is too low.
+
+This module will apply to all run-modes, because it seems likely that
+this is the most common case.  If you have a preference for some modes
+to be excluded please do contact the author.
+
+
+=cut
+
+=head1 AUTHOR
+
+Steve Kemp <steve@steve.org.uk>
+
+=cut
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2014 Steve Kemp <steve@steve.org.uk>.
+
+This library is free software. You can modify and or distribute it under
+the same terms as Perl itself.
+
+=cut
+
+
+
 package CGI::Application::Plugin::Throttle;
 
 our $VERSION = '0.1';
 
-#
-# export the rate_limit method into the using CGI::App and setup the
-# prerun callback
-#
+
+
+
+=begin doc
+
+Force the C<throttle> method into the caller's namespace, and
+configure the prerun hook.
+
+=end doc
+
+=cut
+
 sub import
 {
     my $pkg     = shift;
@@ -20,6 +92,14 @@ sub import
 }
 
 
+=begin doc
+
+Constructor.
+
+=end doc
+
+=cut
+
 sub new
 {
     my ( $proto, %supplied ) = (@_);
@@ -33,11 +113,20 @@ sub new
     $self->{ 'limit' }    = 100;
     $self->{ 'period' }   = 60;
     $self->{ 'exceeded' } = "slow_down";
+    $self->{ 'prefix' }   = "THROTTLE";
 
     bless( $self, $class );
     return $self;
 }
 
+
+=being doc
+
+Allow the caller to gain access to the throttle object.
+
+=end doc
+
+=cut
 
 sub throttle
 {
@@ -49,30 +138,44 @@ sub throttle
 }
 
 
-#
-# intercept the run-mode call
-#
+=begin doc
+
+Hook invoked by L<CGI::Application> prior to execution.
+
+Test that the remote user hasn't exceeded our limit, if they have
+redirect the user.
+
+=end doc
+
+=cut
+
 sub prerun_callback
 {
     my $cgi_app = shift;
-    my $self    = $cgi_app->throttle;
+    my $self    = $cgi_app->throttle();
 
     #
-    #  Bump the count for this client.
+    # Get the redis handle
     #
     my $redis = $self->{ 'redis' } || return;
-    my $ip = $ENV{ 'REMOTE_ADDR' };
+
+    #
+    # The key relating to this user.
+    #
+    my $key = $self->{ 'prefix' };
+    $key .= ":$ENV{'REMOTE_USER'}" if ( $ENV{ 'REMOTE_USER' } );
+    $key .= ":$ENV{'REMOTE_ADDR'}" if ( $ENV{ 'REMOTE_ADDR' } );
 
     #
     #  Increase the count, and set the expiry.
     #
-    $redis->incr("THROTTLE:$ip");
-    $redis->expire( "THROTTLE:$ip", $self->{'period'} );
+    $redis->incr($key);
+    $redis->expire( $key, $self->{ 'period' } );
 
     #
     #  Get the current hit-count.
     #
-    my $cur = $redis->get("THROTTLE:$ip");
+    my $cur = $redis->get($key);
 
     print STDERR
       "IP $ip has $cur/$self->{'limit'} will go to $self->{'exceeded'}";
@@ -80,11 +183,20 @@ sub prerun_callback
     #
     #  If too many redirect.
     #
-    if ( ($cur) && ( $cur > $self->{ 'limit' } ) )
+    if ( ($cur) && ( $self->{ 'exceeded' } ) && ( $cur > $self->{ 'limit' } ) )
     {
         $cgi_app->prerun_mode( $self->{ 'exceeded' } );
     }
 }
+
+
+=begin doc
+
+Allow the caller configure their limit.
+
+=end doc
+
+=cut
 
 sub configure
 {
@@ -95,13 +207,18 @@ sub configure
     #
     #   100 requests in 60 seconds.
     #
-    $self->{ 'limit' }    = $args{ 'limit' }  || 100;
-    $self->{ 'period' }   = $args{ 'period' } || 60;
+    $self->{ 'limit' }  = $args{ 'limit' }  || 100;
+    $self->{ 'period' } = $args{ 'period' } || 60;
+
+    #
+    #  Redis key-prefix
+    #
+    $self->{ 'prefix' } = $args{ 'prefix' } || "THROTTLE";
 
     #
     #  The handle to Redis for state-tracking
     #
-    $self->{ 'redis' }    = $args{ 'redis' };
+    $self->{ 'redis' } = $args{ 'redis' };
 
     #
     #  The run-mode to redirect to on violition.
