@@ -31,20 +31,31 @@ The code relies upon the following modules being present and installed:
 
 * CGI::Application
   * `apt-get install libcgi-application-perl`
+* Data::UUID
+  * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
 * HTML::Template
   * `apt-get install libhtml-template-perl`
 * Net::DNS
   * `apt-get install libnet-dns-perl`
 * Redis
   * `apt-get install libredis-perl`
-* Data::UUID
-  * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
 * WebService::Amazon::Route53
   * Bundled into the distribution, as it isn't packaged for Debian (Stable).
 
+You'll also need the Redis server running on the same host as the application.
+
 Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config.pm`, updating it to contain your credentials.
 
-You'll want to setup some rewrite rules:
+
+Running Locally
+---------------
+
+The installation section, above, should be complete enough that you're
+able to run the application.
+
+For testing purposes a **sample** lighttpd configuration file is included
+within the repository - this contains the appropriate rewrite-rules to
+make the code function with pretty URLs:
 
     * /create/?        -> /cgi-bin/index.cgi?mode=create
     * /faq/?           -> /cgi-bin/index.cgi?mode=faq
@@ -55,7 +66,17 @@ You'll want to setup some rewrite rules:
     * /set/(.*)/?      -> /cgi-bin/index.cgi?mode=set;token=$1
     * /set/?           -> /cgi-bin/index.cgi?mode=set
 
-Otherwise you should now be good to go.
+If you have `lighttpd` installed then you should be able to launch the
+application on your local system via:
+
+    $ make local
+    Launching lighttpd on http://localhost:2000/
+    lighttpd -f conf/lighttpd.conf -D
+
+Press Ctrl-c to terminate, otherwise open http://localhost:2000 in your
+browser.
+
+> **NOTE**: You'll need to have Redis installed locally too.
 
 
 Steve
