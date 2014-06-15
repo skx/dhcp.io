@@ -177,9 +177,6 @@ sub prerun_callback
     #
     my $cur = $redis->get($key);
 
-    print STDERR
-      "IP $ip has $cur/$self->{'limit'} will go to $self->{'exceeded'}";
-
     #
     #  If too many redirect.
     #
