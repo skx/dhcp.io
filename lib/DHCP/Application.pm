@@ -220,6 +220,17 @@ sub home
     $template->param( username => $existing );
 
     #
+    # Lookup the live values
+    #
+    my $tmp = DHCP::Records->new();
+    my $ips = $tmp->lookup($existing);
+
+    $template->param( ipv4 => $ips->{ 'ipv4' }, present => 1 )
+      if ( $ips->{ 'ipv4' } );
+    $template->param( ipv4 => $ips->{ 'ipv6' }, present => 1 )
+      if ( $ips->{ 'ipv6' } );
+
+    #
     #  Render.
     #
     return ( $template->output() );

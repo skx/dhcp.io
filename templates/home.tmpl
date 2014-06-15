@@ -12,8 +12,23 @@
   </div>
   <div id="content">
     <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
-    <p>You're in charge of the hostname <b><span class="tt"><!-- tmpl_var name='username' escape='html' -->.dhcp.io</span></b>.</p>
-    <p>To update the value this points to please run:</p>
+    <p>You're in charge of the hostname <b><span class="tt"><!-- tmpl_var name='username' escape='html' -->.dhcp.io</span></b>:</p>
+<!-- tmpl_if name='present' -->
+    <blockquote>
+      <table cellpadding="5">
+<!-- tmpl_if name='ipv4' -->
+        <tr><td><p><b>IPv4</b></td>
+            <td><p><!-- tmpl_var name='ipv4' --></p></td></tr>
+<!-- /tmpl_if name='ipv4' -->
+<!-- tmpl_if name='ipv6' -->
+        <tr><td><p><b>IPv6</b></td>
+            <td><p><!-- tmpl_var name='ipv6' --></p></td></tr>
+<!-- /tmpl_if name='ipv6' -->
+        </table>
+    </blockquote>
+<!-- /tmpl_if name='present' -->
+
+    <p>To update the value of your hostname to please run:</p>
     <blockquote>
       <pre>
         $ curl http://dhcp.io/set/<!-- tmpl_var name='token' -->

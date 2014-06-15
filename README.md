@@ -33,6 +33,8 @@ The code relies upon the following modules being present and installed:
   * `apt-get install libcgi-application-perl`
 * HTML::Template
   * `apt-get install libhtml-template-perl`
+* Net::DNS
+  * `apt-get install libnet-dns-perl`
 * Redis
   * `apt-get install libredis-perl`
 * Data::UUID
