@@ -40,7 +40,7 @@ a { text-decoration:none }
     font-weight:bold;
     text-shadow:1px 1px #fff;
     padding:7px 29px 9px 10px;
-    background:url(../images/loginArrow.png) no-repeat 53px 7px;
+    background:url(/images/loginArrow.png) no-repeat 53px 7px;
     display:block
 }
 
