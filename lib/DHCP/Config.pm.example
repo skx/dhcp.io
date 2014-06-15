@@ -44,4 +44,11 @@ our $ZONE    = "dhcp.io.";
 #
 our $ZONE_ID = "xxxx";
 
+
+#
+#  The list of forbidden usernames
+#
+our @FORBIDDEN = ( qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret ! );
+
+
 1;

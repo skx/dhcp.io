@@ -36,6 +36,7 @@ package DHCP::User;
 
 # Our code
 use DHCP::Records;
+use DHCP::Config;
 
 # Standard modules.
 use Data::UUID::LibUUID;
@@ -259,9 +260,7 @@ sub forbidden
 
     $user = lc($user);
 
-    foreach my $denied (
-        qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret !
-      )
+    foreach my $denied (@DHCP::Config::FORBIDDEN)
     {
         return 1 if ( $denied eq $user );
     }
