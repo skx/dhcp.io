@@ -156,6 +156,10 @@ sub create
             $template->param( error => "That name is already taken." );
             return ( $template->output() );
         }
+
+        #
+        #  If the user is taking a forbidden name, deny it.
+        #
         if ( $tmp->forbidden($name) )
         {
             $template->param( error => "That name is forbidden." );
@@ -167,6 +171,9 @@ sub create
         #
         $tmp->createUser( $name, $pass, $mail );
 
+        #
+        #  Now return.
+        #
         $template->param( created => 1 );
     }
 
