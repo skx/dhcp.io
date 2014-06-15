@@ -171,12 +171,12 @@ sub prerun_callback
     #  2.  The remote IP address.
     #  3.  The remote user-agent.
     #
-    foreach my $env ( qw! REMOTE_USER REMOTE_ADDR HTTP_USER_AGENT ! )
+    foreach my $env (qw! REMOTE_USER REMOTE_ADDR HTTP_USER_AGENT !)
     {
-        if ( $ENV{$env} )
+        if ( $ENV{ $env } )
         {
             $key .= ":";
-            $key .= $ENV{$env};
+            $key .= $ENV{ $env };
         }
     }
 
@@ -204,8 +204,9 @@ sub prerun_callback
     #
     if ( $cgi_app->query->url_param( $cgi_app->mode_param ) )
     {
-        $cgi_app->prerun_mode( $cgi_app->query->url_param( $cgi_app->mode_param ) )
-   }
+        $cgi_app->prerun_mode($cgi_app->query->url_param( $cgi_app->mode_param )
+                             );
+    }
 
 }
 
