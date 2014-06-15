@@ -37,6 +37,8 @@ use warnings;
 package DHCP::Application;
 use base 'DHCP::Application::Base';
 
+use CGI::Application::Plugin::Throttle;
+
 #
 # Our code.
 #
@@ -64,6 +66,9 @@ sub setup
 
     $self->run_modes(
 
+        # Rate-Limit
+        'slow_down' => 'slow_down',
+
         # Index/Home for signed-in users.
         'index' => 'index',
         'home'  => 'home',
@@ -89,6 +94,16 @@ sub setup
     $self->header_add( -charset => 'utf-8' );
     $self->start_mode('index');
     $self->mode_param('mode');
+
+
+    #
+    #  Configure the throttling.
+    #
+    $self->throttle()->configure( redis    => $self->{ 'redis' },
+                                  limit    => 100,
+                                  period   => 60,
+                                  exceeded => "slow_down"
+                                );
 }
 
 
@@ -455,6 +470,21 @@ sub application_logout
     $session->close();
     return ( $self->redirectURL("/") );
 }
+
+
+=begin doc
+
+Called when the user is too busy.
+
+=end doc
+
+=cut
+
+sub slow_down
+{
+    return ("Rate limit exceeded - 100 requests per minute");
+}
+
 
 1;
 
