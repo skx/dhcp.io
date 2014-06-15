@@ -1,10 +1,63 @@
 #!/usr/bin/perl -w -Ilib/
-#
-#  Create a new user.
-#
-#  Steve hasn't written the new-user code yet, so this will suffice
-# until it is open.
-#
+
+=head1 NAME
+
+create-user - Create a new DHCP.io user from the command-line
+
+=cut
+
+=head1 SYNOPSIS
+
+  create-user [options]
+
+  Options:
+
+    --username      Specify the username to create.
+    --password      Specify the password for the new user.
+
+=cut
+
+=head1 ABOUT
+
+This script will create a new user for the system, and may be used
+by the site-administrator to pre-create users in a batch fashion.
+
+=head1 Questions / Bug Reports
+
+The code is developed and hosted on gitub in the following location:
+
+=over 8
+
+=item https://github.com/skx/dhcp.io
+
+=back
+
+Please raise any issues in the tracker there.
+
+=cut
+
+=head1 LICENSE
+
+Copyright (c) 2014 by Steve Kemp.  All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it
+under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+Foundation; either version 2, or (at your option) any later version,
+or
+
+b) the Perl "Artistic License".
+
+=cut
+
+=head1 AUTHOR
+
+ Steve
+ --
+ http://www.steve.org.uk/
+
+=cut
 
 
 use Redis;
@@ -30,6 +83,7 @@ if ( !$user || !$pass )
 #  Connect to redis
 #
 my $r = new Redis;
+die "Redis doesn't seem to be running on this host" unless ( $r->ping() );
 
 #
 #  Create the new user.

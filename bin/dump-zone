@@ -1,9 +1,57 @@
 #!/usr/bin/perl -w -Ilib/ -I../lib/
-#
-#  Dump all records in the zone - i.e. registered users.
-#
-# Steve
-# --
+#!/usr/bin/perl -w -Ilib/
+
+=head1 NAME
+
+dump-zone - Dump all records beneath our domain.
+
+=cut
+
+=head1 ABOUT
+
+This script will dump all the records beneath our zone - i.e. all our users.
+
+It is useful for diagnostics and for tracking growth, but perhaps little else.
+
+=cut
+
+=head1 Questions / Bug Reports
+
+The code is developed and hosted on gitub in the following location:
+
+=over 8
+
+=item https://github.com/skx/dhcp.io
+
+=back
+
+Please raise any issues in the tracker there.
+
+=cut
+
+=head1 LICENSE
+
+Copyright (c) 2014 by Steve Kemp.  All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it
+under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+Foundation; either version 2, or (at your option) any later version,
+or
+
+b) the Perl "Artistic License".
+
+=cut
+
+=head1 AUTHOR
+
+ Steve
+ --
+ http://www.steve.org.uk/
+
+=cut
+
 
 use strict;
 use warnings;
