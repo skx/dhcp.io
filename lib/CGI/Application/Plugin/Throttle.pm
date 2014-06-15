@@ -163,8 +163,22 @@ sub prerun_callback
     # The key relating to this user.
     #
     my $key = $self->{ 'prefix' };
-    $key .= ":$ENV{'REMOTE_USER'}" if ( $ENV{ 'REMOTE_USER' } );
-    $key .= ":$ENV{'REMOTE_ADDR'}" if ( $ENV{ 'REMOTE_ADDR' } );
+
+    #
+    #  Build up the key based on the:
+    #
+    #  1.  User using HTTP Basic-Auth, if present.
+    #  2.  The remote IP address.
+    #  3.  The remote user-agent.
+    #
+    foreach my $env ( qw! REMOTE_USER REMOTE_ADDR HTTP_USER_AGENT ! )
+    {
+        if ( $ENV{$env} )
+        {
+            $key .= ":";
+            $key .= $ENV{$env};
+        }
+    }
 
     #
     #  Increase the count, and set the expiry.
