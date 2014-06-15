@@ -22,59 +22,54 @@ CGI::Application::Plugin::Throttle - Limit accesses to runmodes.
                                   period => 60,
                                   exceeded => "slow_down_champ" );
 
+
+=cut
+
+
 =head1 DESCRIPTION
 
 This module allows you to enforce a throttle on incoming requests to
 your application, based upon the remote IP address.
 
 This module stores a count of accesses in a Redis key-store, and
-and once hits from a particular source exceeed the specified threshold
+once hits from a particular source exceeed the specified threshold
 the user will be redirected to the run-mode you've specified.
 
 =cut
 
+
 =head1 POTENTIAL ISSUES / CONCERNS
 
 Users who share IP addresses, because they are behind a common-gateway
-for example, will all suffer if the threshold is too low.
+for example, will all suffer if the threshold is too low.  We attempt to
+mitigate this by building the key using a combination of the remote
+IP address, and the remote user-agent.
 
 This module will apply to all run-modes, because it seems likely that
 this is the most common case.  If you have a preference for some modes
 to be excluded please do contact the author.
 
-
-=cut
-
-=head1 AUTHOR
-
-Steve Kemp <steve@steve.org.uk>
-
-=cut
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2014 Steve Kemp <steve@steve.org.uk>.
-
-This library is free software. You can modify and or distribute it under
-the same terms as Perl itself.
-
 =cut
 
 
+
+
+use strict;
+use warnings;
 
 package CGI::Application::Plugin::Throttle;
+
 
 our $VERSION = '0.1';
 
 
+=head1 METHODS
 
 
-=begin doc
+=head2 import
 
 Force the C<throttle> method into the caller's namespace, and
-configure the prerun hook.
-
-=end doc
+configure the prerun hook which is used by L<CGI::Application>.
 
 =cut
 
@@ -87,16 +82,23 @@ sub import
         no strict qw(refs);
         *{ $callpkg . '::throttle' } = \&throttle;
     }
-    $callpkg->add_callback( 'prerun' => \&prerun_callback );
+
+    if ( UNIVERSAL::can( $callpkg, "add_callback" ) )
+    {
+        $callpkg->add_callback( 'prerun' => \&throttle_callback );
+    }
 
 }
 
 
-=begin doc
+=head2 new
 
 Constructor.
 
-=end doc
+This method is used internally, and not expected to be invoked externally.
+
+The defaults are setup here, although they can be overridden in the
+</"configure"> method.
 
 =cut
 
@@ -120,11 +122,9 @@ sub new
 }
 
 
-=being doc
+=head2 throttle
 
-Allow the caller to gain access to the throttle object.
-
-=end doc
+Gain access to the throttle object.
 
 =cut
 
@@ -133,23 +133,27 @@ sub throttle
     my $cgi_app = shift;
     return $cgi_app->{ __throttle_obj } if $cgi_app->{ __throttle_obj };
 
+
+
     my $throttle = $cgi_app->{ __throttle_obj } = __PACKAGE__->new();
     return $throttle;
 }
 
 
-=begin doc
+=head2 throttle_callback
 
-Hook invoked by L<CGI::Application> prior to execution.
+This method is invoked by L<CGI::Application>, as a hook.
 
-Test that the remote user hasn't exceeded our limit, if they have
-redirect the user.
+The method is responsible for determining whether the remote client
+which triggered the current request has exceeded their request
+threshold.
 
-=end doc
+If the client has made too many requests their intended run-mode will
+be changed to to redirect them.
 
 =cut
 
-sub prerun_callback
+sub throttle_callback
 {
     my $cgi_app = shift;
     my $self    = $cgi_app->throttle();
@@ -204,18 +208,57 @@ sub prerun_callback
     #
     if ( $cgi_app->query->url_param( $cgi_app->mode_param ) )
     {
-        $cgi_app->prerun_mode($cgi_app->query->url_param( $cgi_app->mode_param )
-                             );
+        $cgi_app->prerun_mode(
+                           $cgi_app->query->url_param( $cgi_app->mode_param ) );
     }
 
 }
 
 
-=begin doc
+=head2 configure
 
-Allow the caller configure their limit.
+This method is what the user will invoke to configure the throttle-limits.
 
-=end doc
+It is expected that within the users L<CGI::Application> setup method
+there will be code similar to this:
+
+=for example begin
+
+    sub setup {
+        my $self = shift;
+
+        my $r = Redis->new();
+
+        $self->throttle()->configure( %args )
+    }
+
+=for example end
+
+The arguments hash contains the following known keys:
+
+=over 8
+
+=item C<redis>
+
+A L<Redis> handle object.
+
+=item C<limit>
+
+The maximum number of requests that the remote client may make, in the given period of time.
+
+=item C<period>
+
+The period of time which requests are summed for.  The period is specified in second and if more thant C<limit> requests are sent then the client will be redirected.
+
+=item C<prefix>
+
+This module uses L<Redis> to store the counts of client requests.  Redis is a key-value store, and each key used by this module is given a prefix to avoid collisions.  You may specify your own prefix here.
+
+=item C<exceeded>
+
+The C<run_mode> to redirect the client to, when their request-count has exceeded the specified limit.
+
+=back
 
 =cut
 
@@ -245,6 +288,26 @@ sub configure
     #  The run-mode to redirect to on violition.
     #
     $self->{ 'exceeded' } = $args{ 'exceeded' } || "slow_down";
+
 }
+
+
+
+=head1 AUTHOR
+
+Steve Kemp <steve@steve.org.uk>
+
+=cut
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2014 Steve Kemp <steve@steve.org.uk>.
+
+This library is free software. You can modify and or distribute it under
+the same terms as Perl itself.
+
+=cut
+
+
 
 1;
