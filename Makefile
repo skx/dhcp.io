@@ -16,7 +16,7 @@ tidy:
 #
 clean:
 	find . -name '*.bak' -delete
-
+	rm access.log error.log || true
 
 #
 #  Launch the application on the local host - for test-purposes.
