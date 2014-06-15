@@ -198,6 +198,15 @@ sub prerun_callback
     {
         $cgi_app->prerun_mode( $self->{ 'exceeded' } );
     }
+
+    #
+    #  Otherwise if we've been called with a mode merge it in
+    #
+    if ( $cgi_app->query->url_param( $cgi_app->mode_param ) )
+    {
+        $cgi_app->prerun_mode( $cgi_app->query->url_param( $cgi_app->mode_param ) )
+   }
+
 }
 
 
