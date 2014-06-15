@@ -126,8 +126,9 @@ sub deleteUser
     #
     #  If there are records then delete them.
     #
-    foreach my $type ( qw! A AAAA ! )
+    foreach my $type (qw! A AAAA !)
     {
+
         #
         #  Look for the old value of the zone.
         #
@@ -146,10 +147,10 @@ sub deleteUser
     my $token = $redis->get("DHCP:USER:$user:TOKEN");
 
     # Remove the keys.
-    $redis->del( "DHCP:USER:$user" );
-    $redis->del( "DHCP:USER:$user:MAIL" );
-    $redis->del( "DHCP:USER:$user:TOKEN" );
-    $redis->del( "DHCP:TOKEN:$token" );
+    $redis->del("DHCP:USER:$user");
+    $redis->del("DHCP:USER:$user:MAIL");
+    $redis->del("DHCP:USER:$user:TOKEN");
+    $redis->del("DHCP:TOKEN:$token");
 }
 
 
