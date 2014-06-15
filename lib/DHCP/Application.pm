@@ -227,7 +227,7 @@ sub home
 
     $template->param( ipv4 => $ips->{ 'ipv4' }, present => 1 )
       if ( $ips->{ 'ipv4' } );
-    $template->param( ipv4 => $ips->{ 'ipv6' }, present => 1 )
+    $template->param( ipv6 => $ips->{ 'ipv6' }, present => 1 )
       if ( $ips->{ 'ipv6' } );
 
     #
