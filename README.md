@@ -31,6 +31,8 @@ The code relies upon the following modules being present and installed:
 
 * CGI::Application
   * `apt-get install libcgi-application-perl`
+* [CGI::Application::Plugin::Throttle](http://search.cpan.org/dist/CGI-Application-Plugin-Throttle/)
+  * Bundled into the release.
 * Data::UUID
   * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
 * HTML::Template
