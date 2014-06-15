@@ -100,6 +100,61 @@ sub createUser
 
 =begin doc
 
+Delete a user, by username.
+
+=end doc
+
+=cut
+
+sub deleteUser
+{
+    my ( $self, $user ) = (@_);
+
+    $user = lc($user);
+
+    #
+    # Create a helper for removing the old DNS records.
+    #
+    my $helper = DHCP::Records->new();
+
+    #
+    #  Get all the zones records - so we can see if there are any present
+    # for the user we're going to delete.
+    #
+    my $existing = $helper->getRecords();
+
+    #
+    #  If there are records then delete them.
+    #
+    foreach my $type ( qw! A AAAA ! )
+    {
+        #
+        #  Look for the old value of the zone.
+        #
+        my $old_ip = $existing->{ $type }{ $user } || undef;
+
+        if ($old_ip)
+        {
+            $helper->removeRecord( $user, $type, $old_ip );
+        }
+    }
+
+
+    my $redis = $self->{ 'redis' } || die "Missing handle";
+
+    # Get their token so we can remove it.
+    my $token = $redis->get("DHCP:USER:$user:TOKEN");
+
+    # Remove the keys.
+    $redis->del( "DHCP:USER:$user" );
+    $redis->del( "DHCP:USER:$user:MAIL" );
+    $redis->del( "DHCP:USER:$user:TOKEN" );
+    $redis->del( "DHCP:TOKEN:$token" );
+}
+
+
+=begin doc
+
 Discover which username (read DNS record) the given token represents.
 
 =end doc

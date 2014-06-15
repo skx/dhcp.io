@@ -2,25 +2,24 @@
 
 =head1 NAME
 
-create-user - Create a new DHCP.io user from the command-line
+delete-user - Delete an existing DHCP.io user.
 
 =cut
 
 =head1 SYNOPSIS
 
-  create-user [options]
+  delete-user [options]
 
   Options:
 
     --username      Specify the username to create.
-    --password      Specify the password for the new user.
 
 =cut
 
 =head1 ABOUT
 
-This script will create a new user for the system, and may be used
-by the site-administrator to pre-create users in a batch fashion.
+This script will delete user from the system, and may be used
+by the site-administrator in the (unexpected?) case of abuse.
 
 =cut
 
@@ -67,19 +66,20 @@ use DHCP::User;
 use Getopt::Long;
 
 my $user;
-my $pass;
 
 exit
   if (
-     !Getopt::Long::GetOptions( "username=s", \$user, "password=s", \$pass, ) );
+     !Getopt::Long::GetOptions( "username=s", \$user ) );
 
 
-if ( !$user || !$pass )
+#
+#  If missing a user then abort.
+#
+if ( !$user )
 {
-    print "Usage: $0 --user=username --pass=password\n";
+    print "Usage: $0 --user=username\n";
     exit(1);
 }
-
 
 #
 #  Connect to redis
@@ -88,14 +88,17 @@ my $r = new Redis;
 die "Redis doesn't seem to be running on this host" unless ( $r->ping() );
 
 #
-#  Create the new user.
+#  Create a helper.
 #
 my $tmp = DHCP::User->new( redis => $r );
 
-die "User exists already!" if ( $tmp->present($user) );
-die "Forbidden user!"      if ( $tmp->forbidden($user) );
+if ( ! $tmp->present( $user ) )
+{
+    print "The user doesn't exist: $tmp\n";
+    exit(1);
+}
 
 #
-#  Create the user.
+#  Delete the user.
 #
-$tmp->createUser( $user, $pass );
+$tmp->deleteUser($user);
