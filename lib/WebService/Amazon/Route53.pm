@@ -32,14 +32,14 @@ service.
 
     my $r53 = WebService::Amazon::Route53->new(id => 'ROUTE53ID',
                                                key => 'SECRETKEY');
-    
+
     # Create a new zone
     $r53->create_hosted_zone(name => 'example.com.',
                              caller_reference => 'example.com_migration_01');
-    
+
     # Get zone information
     my $zone = $r53->find_hosted_zone(name => 'example.com.');
-    
+
     # Create a new record
     $r53->change_resource_record_sets(zone_id => $zone->{id},
                                       action => 'create',
@@ -207,7 +207,7 @@ Called in list context:
 
     ($zones, $next_marker) = $r53->list_hosted_zones(marker => '456ZONEID',
                                                      max_items => 15);
-    
+
 Parameters:
 
 =over 4
@@ -244,7 +244,7 @@ Example:
             }
         }
     ];
-    
+
 When called in list context, it also returns the next marker to pass to a
 subsequent call to C<list_hosted_zones> to get the next set of results. If this
 is the last set of results, next marker will be C<undef>.
@@ -318,7 +318,7 @@ sub list_hosted_zones
 Gets hosted zone data.
 
     $zone = get_hosted_zone(zone_id => '123ZONEID');
-    
+
 Parameters:
 
 =over 4
@@ -394,7 +394,7 @@ sub get_hosted_zone
 Finds the first hosted zone with the given name.
 
     $zone = $r53->find_hosted_zone(name => 'example.com.');
-    
+
 Parameters:
 
 =over 4
@@ -601,7 +601,7 @@ sub create_hosted_zone
 Deletes a hosted zone.
 
     $change_info = $r53->delete_hosted_zone(zone_id => '123ZONEID');
-    
+
 Parameters:
 
 =over 4
@@ -662,12 +662,12 @@ Lists resource record sets for a hosted zone.
 Called in scalar context:
 
     $record_sets = $r53->list_resource_record_sets(zone_id => '123ZONEID');
-    
+
 Called in list context:
 
     ($record_sets, $next_record) =
         $r53->list_resource_record_sets(zone_id => '123ZONEID');
-    
+
 Parameters:
 
 =over 4
@@ -730,7 +730,7 @@ and C<type> parameters). Example:
         name => 'www.example.com.',
         type => 'A'
     };
-    
+
 If this is the last set of records, next record will be C<undef>.
 
 =cut
@@ -865,10 +865,10 @@ Makes changes to DNS record sets.
                     ]
                 }
             ]);
-        
+
 If there is just one change to be made, you can use the simplified call syntax,
 and pass the change parameters directly, instead of using the C<changes>
-parameter: 
+parameter:
 
     $change_info = $r53->change_resource_record_sets(zone_id => '123ZONEID',
                                                      action => 'delete',
@@ -1052,7 +1052,7 @@ sub change_resource_record_sets
 Returns the last error.
 
     $error = $r53->error;
-    
+
 Returns: A reference to a hash containing the type, code, and message of the
 last error. Example:
 
@@ -1124,8 +1124,6 @@ L<http://docs.amazonwebservices.com/Route53/latest/APIReference/>
 
 =back
 
-
-=head1 ACKNOWLEDGEMENTS
 
 
 =head1 LICENSE AND COPYRIGHT
