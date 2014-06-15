@@ -33,10 +33,6 @@ the same terms as Perl itself.
 use strict;
 use warnings;
 
-#
-# Local module(s)
-#
-use CGI::utf8;
 
 #
 # Hierarchy.
