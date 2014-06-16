@@ -484,8 +484,10 @@ sub slow_down
 {
     my $self = shift;
 
-    my( $count, $max ) = $self->throttle()->count();
-    return( "Rate-Limit exceeded  - $count visits seen - maximum is $max - in the past 60 seconds." );
+    my ( $count, $max ) = $self->throttle()->count();
+    return (
+        "Rate-Limit exceeded  - $count visits seen - maximum is $max - in the past 60 seconds."
+    );
 }
 
 

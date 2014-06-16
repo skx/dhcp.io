@@ -145,7 +145,7 @@ sub throttle
 
 
 
-=head _get_redis_key
+=head2 _get_redis_key
 
 Build and return the Redis key to use for this particular remote
 request.
