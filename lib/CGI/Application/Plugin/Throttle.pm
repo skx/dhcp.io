@@ -60,7 +60,7 @@ use warnings;
 package CGI::Application::Plugin::Throttle;
 
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 
 =head1 METHODS
