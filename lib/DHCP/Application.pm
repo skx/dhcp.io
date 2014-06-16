@@ -482,7 +482,10 @@ Called when the user is too busy.
 
 sub slow_down
 {
-    return ("Rate limit exceeded - 100 requests per minute");
+    my $self = shift;
+
+    my( $count, $max ) = $self->throttle()->count();
+    return( "Rate-Limit exceeded  - $count visits seen - maximum is $max - in the past 60 seconds." );
 }
 
 

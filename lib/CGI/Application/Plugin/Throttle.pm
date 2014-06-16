@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-CGI::Application::Plugin::Throttle - Limit accesses to runmodes.
+CGI::Application::Plugin::Throttle - Rate-Limiting for CGI::Application-based applications, using Redis for persistence.
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,7 @@ use warnings;
 package CGI::Application::Plugin::Throttle;
 
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 =head1 METHODS
@@ -98,7 +98,7 @@ Constructor.
 This method is used internally, and not expected to be invoked externally.
 
 The defaults are setup here, although they can be overridden in the
-</"configure"> method.
+L</"configure"> method.
 
 =cut
 
@@ -112,14 +112,20 @@ sub new
     #
     #  Configure defaults.
     #
-    $self->{ 'limit' }    = 100;
-    $self->{ 'period' }   = 60;
+    $self->{ 'limit' }  = 100;
+    $self->{ 'period' } = 60;
+    $self->{ 'prefix' } = "THROTTLE";
+
+    #
+    #  Run mode to redirect to on exceed.
+    #
     $self->{ 'exceeded' } = "slow_down";
-    $self->{ 'prefix' }   = "THROTTLE";
+
 
     bless( $self, $class );
     return $self;
 }
+
 
 
 =head2 throttle
@@ -133,10 +139,89 @@ sub throttle
     my $cgi_app = shift;
     return $cgi_app->{ __throttle_obj } if $cgi_app->{ __throttle_obj };
 
-
-
     my $throttle = $cgi_app->{ __throttle_obj } = __PACKAGE__->new();
     return $throttle;
+}
+
+
+
+=head _get_redis_key
+
+Build and return the Redis key to use for this particular remote
+request.
+
+The key is built from the C<prefix> string set in L</"configure"> method,
+along with:
+
+=over 8
+
+=item The remote IP address of the client.
+
+=item The remote HTTP Basic-Auth username of the client.
+
+=item The remote User-Agent
+
+=back
+
+=cut
+
+sub _get_redis_key
+{
+    my $self = shift;
+    my $key  = $self->{ 'prefix' };
+
+    #
+    #  Build up the key based on the:
+    #
+    #  1.  User using HTTP Basic-Auth, if present.
+    #  2.  The remote IP address.
+    #  3.  The remote user-agent.
+    #
+    foreach my $env (qw! REMOTE_USER REMOTE_ADDR HTTP_USER_AGENT !)
+    {
+        if ( $ENV{ $env } )
+        {
+            $key .= ":";
+            $key .= $ENV{ $env };
+        }
+    }
+
+    return ($key);
+}
+
+
+=head2 count
+
+Return the number of times the remote client has hit a run mode, along
+with the maximum allowed visits:
+
+=for example begin
+
+      sub your_run_mode
+      {
+          my ($self) = (@_);
+
+          my( $count, $max ) = $self->throttle()->count();
+          return( "$count visits seen - maximum is $max." );
+      }
+
+=for example end
+
+=cut
+
+sub count
+{
+    my ($self) = (@_);
+
+    my $visits = 0;
+    my $max    = $self->{ 'limit' };
+
+    if ( $self->{ 'redis' } )
+    {
+        my $key = $self->_get_redis_key();
+        $visits = $self->{ 'redis' }->get($key);
+    }
+    return ( $visits, $max );
 }
 
 
@@ -166,25 +251,8 @@ sub throttle_callback
     #
     # The key relating to this user.
     #
-    my $key = $self->{ 'prefix' };
+    my $key = $self->_get_redis_key();
 
-    #
-    #  Build up the key based on the:
-    #
-    #  1.  User using HTTP Basic-Auth, if present.
-    #  2.  The remote IP address.
-    #  3.  The remote user-agent.
-    #
-    foreach my $env (qw! REMOTE_USER REMOTE_ADDR HTTP_USER_AGENT !)
-    {
-        if ( $ENV{ $env } )
-        {
-            $key .= ":";
-            $key .= $ENV{ $env };
-        }
-    }
-
-    #
     #  Increase the count, and set the expiry.
     #
     $redis->incr($key);
@@ -200,7 +268,14 @@ sub throttle_callback
     #
     if ( ($cur) && ( $self->{ 'exceeded' } ) && ( $cur > $self->{ 'limit' } ) )
     {
-        $cgi_app->prerun_mode( $self->{ 'exceeded' } );
+
+        #
+        #  Redirect to a different run-mode..
+        #
+        if ( $self->{ 'exceeded' } )
+        {
+            $cgi_app->prerun_mode( $self->{ 'exceeded' } );
+        }
     }
 
     #
@@ -248,11 +323,11 @@ The maximum number of requests that the remote client may make, in the given per
 
 =item C<period>
 
-The period of time which requests are summed for.  The period is specified in second and if more thant C<limit> requests are sent then the client will be redirected.
+The period of time which requests are summed for.  The period is specified in seconds and if more than C<limit> requests are sent then the client will be redirected.
 
 =item C<prefix>
 
-This module uses L<Redis> to store the counts of client requests.  Redis is a key-value store, and each key used by this module is given a prefix to avoid collisions.  You may specify your own prefix here.
+This module uses L<Redis> to store the counts of client requests.  Redis is a key-value store, and each key used by this module is given a prefix to avoid collisions.  You may specify your prefix here.
 
 =item C<exceeded>
 
@@ -271,23 +346,23 @@ sub configure
     #
     #   100 requests in 60 seconds.
     #
-    $self->{ 'limit' }  = $args{ 'limit' }  || 100;
-    $self->{ 'period' } = $args{ 'period' } || 60;
+    $self->{ 'limit' }  = $args{ 'limit' }  if ( $args{ 'limit' } );
+    $self->{ 'period' } = $args{ 'period' } if ( $args{ 'period' } );
 
     #
     #  Redis key-prefix
     #
-    $self->{ 'prefix' } = $args{ 'prefix' } || "THROTTLE";
+    $self->{ 'prefix' } = $args{ 'prefix' } if ( $args{ 'prefix' } );
 
     #
     #  The handle to Redis for state-tracking
     #
-    $self->{ 'redis' } = $args{ 'redis' };
+    $self->{ 'redis' } = $args{ 'redis' } if ( $args{ 'redis' } );
 
     #
     #  The run-mode to redirect to on violition.
     #
-    $self->{ 'exceeded' } = $args{ 'exceeded' } || "slow_down";
+    $self->{ 'exceeded' } = $args{ 'exceeded' } if ( $args{ 'exceeded' } );
 
 }
 
