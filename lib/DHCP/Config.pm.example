@@ -46,6 +46,19 @@ our $ZONE_ID = "xxxx";
 
 
 #
+#  The salt applied to all passwords, to avoid dictionary attacks against
+# any stolen hashes.
+#
+#  NOTE:  You must set this prior to deployment.
+#
+#  NOTE:  If you change this then all previously set passwords will be
+# invalid.
+#
+#
+our $SALT = 'VieghohS7ookOhT3giebiig7peiroov/i4OoEig%eghae7ufJa=w7eev4ooH AeF7eiyo\foiEf"i7sie[Y$a';
+
+
+#
 #  The list of forbidden usernames
 #
 our @FORBIDDEN = ( qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret ! );

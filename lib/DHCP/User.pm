@@ -39,6 +39,7 @@ use DHCP::Records;
 use DHCP::Config;
 
 # Standard modules.
+use Digest::SHA;
 use Data::UUID::LibUUID;
 
 
@@ -83,8 +84,16 @@ sub createUser
 
     my $redis = $self->{ 'redis' } || die "Missing handle";
 
+    #
+    #  Now hash the users password with our Salt
+    #
+    my $sha = Digest::SHA->new();
+    $sha->add($DHCP::Config::SALT);
+    $sha->add($pass);
+    my $hash = $sha->hexdigest();
+
     # set their login details.
-    $redis->set( "DHCP:USER:$user", $pass );
+    $redis->set( "DHCP:USER:$user", $hash );
 
     if ($mail)
     {
@@ -270,11 +279,26 @@ sub testLogin
     return undef unless ( $self->present($user) );
 
     #
-    #  Get the password - TODO: Hashing.
+    #  Get the password in the database.
     #
     my $epass = $redis->get("DHCP:USER:$user");
-    return $user if ( $epass eq $pass );
 
+    #
+    #  Now hash the users password with our Salt
+    #
+    my $sha = Digest::SHA->new();
+    $sha->add($DHCP::Config::SALT);
+    $sha->add($pass);
+    my $hash = $sha->hexdigest();
+
+    #
+    #  If the computed hash matches the expected hash we're good.
+    #
+    return $user if ( $hash eq $epass );
+
+    #
+    #  Fail.
+    #
     return undef;
 
 }
