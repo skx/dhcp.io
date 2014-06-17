@@ -101,6 +101,9 @@ sub setup
         # Delete an A/AAAA record
         'delete' => 'delete',
 
+        # Mark a feature as not available
+        'capture' => 'capture',
+
         # Set the IP for a record.
         'set' => 'set',
 
@@ -580,6 +583,49 @@ sub application_logout
     $session->close();
     return ( $self->redirectURL("/") );
 }
+
+
+
+=begin doc
+
+Mark a feature as being unavailable, but capture the user's email addres.
+
+=end doc
+
+=cut
+
+sub capture
+{
+    my $self = shift;
+
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+
+    my $template = $self->load_template("interest.tmpl");
+
+    if ( $q->param("submit") )
+    {
+        my $email = $q->param("email");
+
+        #
+        #  Load the template
+        #
+        my $mt = $self->load_template("interest.email.tmpl");
+        $mt->param( email => $email );
+
+        open( SENDMAIL, "|/usr/lib/sendmail" ) or
+          die "Cannot open sendmail: $!";
+        print( SENDMAIL $mt->output() );
+        close(SENDMAIL);
+
+        $template->param( thanks => 1 );
+
+    }
+
+    return ( $template->output() );
+}
+
 
 
 =begin doc
