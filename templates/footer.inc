@@ -8,7 +8,11 @@
           <li>Related Links
             <ul>
               <li><a href="http://dns-api.org/">DNS API - Online DNS lookup service</a></li>
-              <li>Are you interested in low-cost Git-Backed DNS hosting?  <a href="http://steve.org.uk/contact/">Email me</a>.</li>
+              <li>Are you interested in low-cost Git-Backed DNS hosting?
+                <ul>
+                  <li><a href="http://steve.org.uk/contact/">Email me</a>.</li>
+                </ul>
+              </li>
             </ul>
           </li>
         </ul>
