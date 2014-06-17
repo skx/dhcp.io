@@ -81,7 +81,6 @@ sub createUser
     my ( $self, $user, $pass, $mail ) = (@_);
 
     $user = lc($user);
-
     my $redis = $self->{ 'redis' } || die "Missing handle";
 
     #
@@ -254,6 +253,8 @@ sub getToken
 {
     my ( $self, $user ) = (@_);
 
+    $user = lc($user) if ($user);
+
     my $redis = $self->{ 'redis' } || die "Missing handle";
     return ( $redis->get("DHCP:USER:$user:TOKEN") );
 }
@@ -276,7 +277,9 @@ sub testLogin
     #
     #  Does the user exist?
     #
-    return undef unless ( $self->present($user) );
+    return unless ( $self->present($user) );
+
+    $user = lc($user) if ($user);
 
     #
     #  Get the password in the database.
@@ -296,11 +299,6 @@ sub testLogin
     #
     return $user if ( $hash eq $epass );
 
-    #
-    #  Fail.
-    #
-    return undef;
-
 }
 
 
@@ -315,6 +313,8 @@ Is the given username already present?
 sub present
 {
     my ( $self, $user ) = (@_);
+
+    $user = lc($user) if ($user);
 
     my $redis = $self->{ 'redis' };
     return 1 if ( defined( $redis->get("DHCP:USER:$user") ) );
