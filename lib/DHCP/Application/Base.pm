@@ -185,6 +185,9 @@ sub redirectURL
 Load a template from our ./templates directory - which is outside the
 web root directory for safety.
 
+
+If templates.local contains a match first then prefer that.
+
 =end doc
 
 =cut
@@ -196,7 +199,7 @@ sub load_template
 
     my $path = "";
 
-    foreach my $dir (qw! ../templates/ ../../templates/ !)
+    foreach my $dir (qw! ../templates.local/ ../../templates.local/ ../templates/ ../../templates/ !)
     {
         $path = $dir if ( -d $dir );
     }
