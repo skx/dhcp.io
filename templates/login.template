@@ -1,11 +1,8 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8"/>
     <title>DHCP.io - Fast and Reliable Dynamic DNS</title>
-    <link rel="stylesheet" href="/css/s.css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
-    <script src="/js/j.js"></script>
+    <!-- tmpl_include name='header.inc' -->
   </head>
   <body>
     <div id="bar">
