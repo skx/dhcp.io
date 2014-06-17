@@ -3,3 +3,4 @@ error.log
 access.log
 fabfile.pyc
 htdocs/css/s.css
+htdocs/js/j.js
