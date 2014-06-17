@@ -616,7 +616,7 @@ sub capture
         $mt->param( email => $email,
                     comm => $comm);
 
-        open( SENDMAIL, "|/usr/lib/sendmail" ) or
+        open( SENDMAIL, "|/usr/lib/sendmail -t" ) or
           die "Cannot open sendmail: $!";
         print( SENDMAIL $mt->output() );
         close(SENDMAIL);
