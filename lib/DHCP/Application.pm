@@ -614,7 +614,7 @@ sub capture
         #
         my $mt = $self->load_template("interest.email.tmpl");
         $mt->param( email => $email,
-                    comm => $comm);
+                    comm  => $comm );
 
         open( SENDMAIL, "|/usr/lib/sendmail -t" ) or
           die "Cannot open sendmail: $!";
