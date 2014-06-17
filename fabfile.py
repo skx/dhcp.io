@@ -101,7 +101,7 @@ def deploy():
     # installed.
     #
     local( "make css" )
-    put( "htdocs/css/s.css" )
+    put( "htdocs/css/s.css", "~/current/htdocs/css/s.css" )
 
     #
     #  And restart
