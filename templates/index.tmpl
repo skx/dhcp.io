@@ -13,13 +13,16 @@
     </div>
     <div id="content">
       <h1>DHCP.io - Free Dynamic DNS</h1>
-      <p>DHCP.io allows you to control the DNS entry belonging to a name beneath the <span class="tt">.dhcp.io</span> domain.</p>
-      <p>For example you could configure the name <span class="tt">steve.dhcp.io</span> to point to the IP of your home gateway.</p>
-      <p>To get started please create your account:</p>
+      <p>DHCP.io allows you to control the DNS entry belonging to a name beneath the <b><span class="tt">.<!-- tmpl_var name='zone' --></span></b> domain (both IPv4 and IPv6).</p>
+      <p>This will allow you to configure a name such as <b><span class="tt">gateway.<!-- tmpl_var name='zone' --></span></b> to point to the IP of your home gateway.</p>
+      <p>Registering takes seconds, we only need the name you wish to control:</p>
       <ul>
-        <li><a href="/create/">Create your name</a>, it is free, and you don't need to give your email address.</li>
+        <li><a href="/create/">Create your name</a> for free.
+          <ul>
+            <li>You don't need to give us your email address, unless you fear you'll forget your password!</li>
+          </ul></li>
       </ul>
-      <p>We're proud to support IPv6!</p>
+      <p>Once you've registered you can update your name via a simple call to <span class="tt">curl</span>, or your web-browser, with no need to install or configure any client.</p>
     </div>
     <!-- tmpl_include name='footer.inc' -->
   </body>

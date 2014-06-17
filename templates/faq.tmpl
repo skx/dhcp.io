@@ -15,8 +15,29 @@
     <dl>
       <dt>Who created this site, and why was it made?</dt>
       <dd><p>This site was created by <a href="http://steve.org.uk/">Steve Kemp</a>.</p>
-        <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understanded how it worked, and how it could be used.</p>
-        <p>This site was originally created as a learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
+        <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understood how it worked, and how it could be used.</p>
+        <p>This site was born as a result of that learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
+      </dd>
+
+      <dt>How long does it take for DNS changes to take effect?</dt>
+      <dd>
+        <p>All the records beneath the <span class="tt">.<!-- tmpl_var name='zone' --></span> zone have a 60 second <abbr title="time to live">TTL</abbr>.</p>
+        <p>This means that records <i>should</i> update in less than a minute, however local caches might misbehave and cause the updates to take longer.</p>
+      </dd>
+
+      <dt>How do I set only IPv6 or IPv4 addresses?</dt>
+      <dd>
+        <p>If the host you're updating from has <i>both</i> IPv4 and IPv6 connectivity you might find you update the wrong value.</p>
+        <p>The solution is to explicitly choose which version you wish to update via the <span class="tt">-4</span> and <span class="tt">-6</span> arguments to <span class="tt">curl</span>:</p>
+        <blockquote>
+        <pre>
+          $ # This will update the IPv4 address.
+          $ curl -4 http://<!-- tmpl_var name='zone' -->/set/efa6961c-f3dd-11e3-955b-...
+
+          $ # This will update the IPv6 address.
+          $ curl -6 http://<!-- tmpl_var name='zone' -->/set/efa6961c-f3dd-11e3-955b-...
+        </pre>
+        </blockquote>
       </dd>
       <dt>Is the code behind the site available?</dt>
       <dd>
