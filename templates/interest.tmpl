@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+  <title>DHCP.io - Fast and Reliable Dynamic DNS</title>
+  <!-- tmpl_include name='header.inc' -->
+</head>
+<body>
+  <div id="bar">
+    <!-- tmpl_include name="login-or-menu.inc" -->
+  </div>
+  <div id="content">
+<!-- tmpl_if name='thanks' -->
+     <h1>Thanks for your interest</h1>
+     <p>Your email has been recorded and we'll be in touch soon.</p>
+<!-- tmpl_else -->
+  <h1>Feature Coming Soon</h1>
+  <p>This feature is planned for future, but it is not yet ready.</p>
+  <p>If you'd like to hear when it is live please leave your email address here:</p>
+<form method="POST" action="/cgi-bin/index.cgi">
+      <input type="hidden" name="mode" value="capture">
+<table>
+<tr><td>Your email</td>
+     <td><input type="text" name="email" value ="" ></td></tr>
+<tr><td>Any comments?</td>
+     <td><textarea rows="5" cols="40" id="comments" name="comments"></textarea></td></tr>
+<tr><td></td>
+    <td><input type="submit" name="submit" value="Record Interest"></td></tr>
+</table>
+</form>
+<!-- /tmpl_if -->
+  </div>
+  <!-- tmpl_include name='footer.inc' -->
+</body>
+</html>
