@@ -95,6 +95,14 @@ def deploy():
     if os.path.isfile("lib/DHCP/Config.pm"):
         put( "lib/DHCP/Config.pm", "~/current/lib/DHCP" )
 
+
+    #
+    #  Upload our CSS files.  These should be minified if pyslimmer is
+    # installed.
+    #
+    local( "make css" )
+    put( "htdocs/css/s.css" )
+
     #
     #  And restart
     #
