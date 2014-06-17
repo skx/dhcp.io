@@ -2,15 +2,14 @@
 
 =head1 NAME
 
-dump-zone - Dump all records beneath our domain.
+set-name - Point a name at a given IP.
 
 =cut
 
 =head1 ABOUT
 
-This script will dump all the records beneath our zone - i.e. all our users.
-
-It is useful for diagnostics and for tracking growth, but perhaps little else.
+This script will set the IP of a given name to the specified value,
+without using the curl/token system.
 
 =cut
 
@@ -55,26 +54,35 @@ b) the Perl "Artistic License".
 use strict;
 use warnings;
 
-use DHCP::Records;
+use DHCP::User;
+use Getopt::Long;
+use Redis;
 
 
-my $tmp = DHCP::Records->new();
-my $obj = $tmp->getRecords();
-my %obj = %$obj;
-my $c   = 0;
+my $user;
+my $ip;
 
-foreach my $key (qw! A AAAA !)
-{
-    my $hash = $obj{ $key };
+#
+#  Get the name/IP pair from the command-line.
+#
+exit
+  if (
+       !Getopt::Long::GetOptions( "username=s", \$user, "zone=s", \$user,
+                                  "ip=s",       \$ip ) );
 
-    foreach my $name ( sort keys %$hash )
-    {
-        next if ( $name =~ /^(dhcp|www)$/ );
-        print sprintf( "%15s - %s", $name, $obj->{ $key }{ $name } ) . "\n";
-        $c += 1;
-    }
-}
 
-print "; $c record";
-print "s" unless ( $c == 1 );
-print ".\n";
+#
+#  Get a redis handle
+#
+my $redis = Redis->new();
+
+#
+#  Create a helper.
+#
+my $tmp = DHCP::User->new( redis => $redis );
+
+#
+#  Set the IP.
+#
+$tmp->setRecord( $user, $ip );
+

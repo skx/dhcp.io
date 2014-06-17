@@ -44,6 +44,7 @@ use base 'CGI::Application';
 # Standard module(s)
 #
 use CGI::Session;
+use HTML::Template;
 use Redis;
 
 

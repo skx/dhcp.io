@@ -32,7 +32,7 @@ This module allows you to enforce a throttle on incoming requests to
 your application, based upon the remote IP address.
 
 This module stores a count of accesses in a Redis key-store, and
-once hits from a particular source exceeed the specified threshold
+once hits from a particular source exceed the specified threshold
 the user will be redirected to the run-mode you've specified.
 
 =cut
@@ -60,7 +60,7 @@ use warnings;
 package CGI::Application::Plugin::Throttle;
 
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 
 =head1 METHODS
@@ -79,7 +79,9 @@ sub import
     my $callpkg = caller;
 
     {
+        ## no critic
         no strict qw(refs);
+        ## use critic
         *{ $callpkg . '::throttle' } = \&throttle;
     }
 
@@ -92,8 +94,6 @@ sub import
 
 
 =head2 new
-
-Constructor.
 
 This method is used internally, and not expected to be invoked externally.
 
@@ -114,7 +114,11 @@ sub new
     #
     $self->{ 'limit' }  = 100;
     $self->{ 'period' } = 60;
-    $self->{ 'prefix' } = "THROTTLE";
+
+    #
+    #  The redis key-prefix.
+    #
+    $self->{ 'prefix' } = $supplied{ 'prefix' } || "THROTTLE";
 
     #
     #  Run mode to redirect to on exceed.
@@ -130,7 +134,8 @@ sub new
 
 =head2 throttle
 
-Gain access to the throttle object.
+Gain access to an instance of this class.  This is the method by which you
+can call methods on this plugin from your L<CGI::Application> derived-class.
 
 =cut
 
@@ -139,7 +144,17 @@ sub throttle
     my $cgi_app = shift;
     return $cgi_app->{ __throttle_obj } if $cgi_app->{ __throttle_obj };
 
-    my $throttle = $cgi_app->{ __throttle_obj } = __PACKAGE__->new();
+    #
+    #  Setup the prefix of the Redis keys to default to the name of
+    # the CGI::Application.
+    #
+    #  This avoids collisions if multiple applications are running on
+    # the same host, and the developer won't need to explicitly setup
+    # distinct prefixes.
+    #
+    my $throttle = $cgi_app->{ __throttle_obj } =
+      __PACKAGE__->new( prefix => ref $cgi_app );
+
     return $throttle;
 }
 
@@ -155,11 +170,17 @@ along with:
 
 =over 8
 
-=item The remote IP address of the client.
+=item *
 
-=item The remote HTTP Basic-Auth username of the client.
+The remote IP address of the client.
 
-=item The remote User-Agent
+=item *
+
+The remote HTTP Basic-Auth username of the client.
+
+=item *
+
+The remote User-Agent.
 
 =back
 
@@ -275,6 +296,7 @@ sub throttle_callback
         if ( $self->{ 'exceeded' } )
         {
             $cgi_app->prerun_mode( $self->{ 'exceeded' } );
+            return;
         }
     }
 
@@ -294,8 +316,7 @@ sub throttle_callback
 
 This method is what the user will invoke to configure the throttle-limits.
 
-It is expected that within the users L<CGI::Application> setup method
-there will be code similar to this:
+It is expected that within the users L<CGI::Application> L<CGI::Application/setup> method there will be code similar to this:
 
 =for example begin
 
@@ -304,7 +325,9 @@ there will be code similar to this:
 
         my $r = Redis->new();
 
-        $self->throttle()->configure( %args )
+        $self->throttle()->configure( redis => $r,
+                                      # .. other options here
+                                    )
     }
 
 =for example end
@@ -328,6 +351,8 @@ The period of time which requests are summed for.  The period is specified in se
 =item C<prefix>
 
 This module uses L<Redis> to store the counts of client requests.  Redis is a key-value store, and each key used by this module is given a prefix to avoid collisions.  You may specify your prefix here.
+
+The prefix will default to the name of your application class if it isn't set explicitly, which should avoid collisions if you're running multiple applications on the same host.
 
 =item C<exceeded>
 
@@ -360,7 +385,7 @@ sub configure
     $self->{ 'redis' } = $args{ 'redis' } if ( $args{ 'redis' } );
 
     #
-    #  The run-mode to redirect to on violition.
+    #  The run-mode to redirect to on violation.
     #
     $self->{ 'exceeded' } = $args{ 'exceeded' } if ( $args{ 'exceeded' } );
 

@@ -7,6 +7,9 @@
 #
 
 
+use strict;
+use warnings;
+
 #
 #  The load-path
 #
