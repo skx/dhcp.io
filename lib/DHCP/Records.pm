@@ -1,4 +1,3 @@
-# -*- cperl -*- #
 
 =head1 NAME
 
@@ -100,8 +99,7 @@ sub getRecords
     #  These are here to provide an offset in the iteration case.
     #
     #  The "fetch records" call will return no more than 100 records
-    # at a time.  Currently the dhcp.io zone has 5 records, but we
-    # should be prepared...
+    # at a time.
     #
     my $cont     = 1;
     my $tmp_name = undef;
