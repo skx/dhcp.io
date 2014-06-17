@@ -199,14 +199,18 @@ sub load_template
 
     my $path = "";
 
-    foreach my $dir (qw! ../templates.local/ ../../templates.local/ ../templates/ ../../templates/ !)
+    my @dirs = ( "../templates.local/", "../../templates.local/",
+                 "../templates/",       "../../templates/" );
+
+    foreach my $dir (@dirs)
     {
+        next if ( defined($path) );
         $path = $dir if ( -d $dir );
     }
     die "No path" unless ( defined($path) );
 
     my $template = HTML::Template->new( filename => $file,
-                                        path     => [$path],
+                                        path     => [@dirs],
                                         %options,
                                         die_on_bad_params => 0,
                                       );
