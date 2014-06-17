@@ -607,12 +607,14 @@ sub capture
     if ( $q->param("submit") )
     {
         my $email = $q->param("email");
+        my $comm = $q->param("comments") || "";
 
         #
         #  Load the template
         #
         my $mt = $self->load_template("interest.email.tmpl");
-        $mt->param( email => $email );
+        $mt->param( email => $email,
+                    comm => $comm);
 
         open( SENDMAIL, "|/usr/lib/sendmail" ) or
           die "Cannot open sendmail: $!";
