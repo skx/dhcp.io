@@ -61,6 +61,10 @@ b) the Perl "Artistic License".
 =cut
 
 
+use strict;
+use warnings;
+
+
 use Redis;
 use DHCP::User;
 use Getopt::Long;
@@ -68,8 +72,7 @@ use Getopt::Long;
 my $user;
 
 exit
-  if (
-     !Getopt::Long::GetOptions( "username=s", \$user ) );
+  if ( !Getopt::Long::GetOptions( "username=s", \$user ) );
 
 
 #
@@ -92,7 +95,7 @@ die "Redis doesn't seem to be running on this host" unless ( $r->ping() );
 #
 my $tmp = DHCP::User->new( redis => $r );
 
-if ( ! $tmp->present( $user ) )
+if ( !$tmp->present($user) )
 {
     print "The user doesn't exist: $tmp\n";
     exit(1);

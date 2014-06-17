@@ -62,6 +62,10 @@ b) the Perl "Artistic License".
 =cut
 
 
+use strict;
+use warnings;
+
+
 use Redis;
 use DHCP::User;
 use Getopt::Long;
