@@ -39,16 +39,36 @@ use base 'DHCP::Application::Base';
 
 use CGI::Application::Plugin::Throttle;
 
+
+#
+#  This is is a sanity-check which will make the failure to follow
+# instructions more explicit to users.
+#
+BEGIN
+{
+
+    ## no critic
+    eval "use DHCP::Config";
+    ## use critic
+    if ($@)
+    {
+        print <<EOF;
+Content-type: text/plain
+
+The module lib/DHCP/Config.pm is not present.
+
+You're supposed to rename lib/DHCP/Config.pm.example, and edit the
+contents to make this application functional.
+EOF
+        exit(0);
+    }
+}
+
 #
 # Our code.
 #
 use DHCP::User;
 
-
-#
-# Standard module(s)
-#
-use HTML::Template;
 
 
 
@@ -74,8 +94,12 @@ sub setup
         'home'  => 'home',
         'faq'   => 'faq',
 
+
         # Create a new user
         'create' => 'create',
+
+        # Delete an A/AAAA record
+        'delete' => 'delete',
 
         # Set the IP for a record.
         'set' => 'set',
@@ -134,6 +158,13 @@ sub create
     #  Load the template.
     #
     my $template = $self->load_template("create.tmpl");
+
+    #
+    #  Set the zone in the template
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
 
     #
     #  Is the user submitting?
@@ -228,6 +259,14 @@ sub home
     my $template = $self->load_template("home.tmpl");
 
     #
+    #  Set the zone in the template
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+
+
+    #
     #  Find the token for the users' zone-control
     #
     my $user = DHCP::User->new( redis => $self->{ 'redis' } );
@@ -276,7 +315,20 @@ sub faq
     #  Load the template & render
     #
     my $template = $self->load_template("faq.tmpl");
+
+
+    #
+    #  Set the zone in the template
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+
+    #
+    #  Set the login name.
+    #
     $template->param( username => $existing ) if ($existing);
+
     return ( $template->output() );
 }
 
@@ -309,6 +361,14 @@ sub index
     #  Show the front-page.
     #
     my $template = $self->load_template("index.tmpl");
+
+    #
+    #  Set the zone in the template
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+
     return ( $template->output() );
 }
 
@@ -446,6 +506,56 @@ sub set
         #
         #  Attempting to update a record which has no valid token.
         #
+        return ( $self->redirectURL("/") );
+    }
+}
+
+
+=begin doc
+
+Allow the user to delete a record.
+
+=end doc
+
+=cut
+
+sub delete
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+
+
+    #
+    #  The user must be logged in.
+    #
+    my $existing = $session->param('logged_in');
+    if ( !defined($existing) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+    #
+    #  Get the type to delete.
+    #
+    my $type = $q->param("type");
+    my $name = $q->param("name");
+    my $ip   = $q->param("ip");
+
+    if ( lc($name) eq lc($existing) )
+    {
+        my $tmp = DHCP::Records->new();
+        $tmp->removeRecord( $name, $type, $ip );
+
+
+        return ( $self->redirectURL("/home") );
+        return "Deleting $name - $type";
+    }
+    else
+    {
+
+        # Tried to delete a record belonging to somebody else.
         return ( $self->redirectURL("/") );
     }
 }
