@@ -2,9 +2,11 @@
 <head>
   <meta charset="utf-8" />
   <title>DHCP.io - Free Dynamic DNS</title>
+  <link rel="stylesheet" href="/css/tabs.css" />
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script src="/js/login.js"></script>
+  <script src="/js/tabs.js"></script>
 </head>
 <body>
   <div id="bar">
@@ -12,44 +14,66 @@
   </div>
   <div id="content">
     <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
-    <p>You're in charge of the hostname <b><span class="tt"><!-- tmpl_var name='username' escape='html' -->.<!-- tmpl_var name='zone' --></span></b>:</p>
-<!-- tmpl_if name='present' -->
-    <blockquote>
-      <table cellspacing="5">
-<!-- tmpl_if name='ipv4' -->
-        <tr><td><p><b>IPv4</b></td>
-            <td><p><!-- tmpl_var name='ipv4' --> </p>
-            <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=A;ip=<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
-<!-- /tmpl_if name='ipv4' -->
-<!-- tmpl_if name='ipv6' -->
-        <tr><td><p><b>IPv6</b></td>
-            <td><p><!-- tmpl_var name='ipv6' --></p></td>
-            <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=AAAA;ip=<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
-<!-- /tmpl_if name='ipv6' -->
-        </table>
-    </blockquote>
-<!-- /tmpl_if name='present' -->
 
-    <p>To update the value of your hostname to please run:</p>
-    <blockquote>
-      <pre>
-        $ curl http://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->
-      </pre>
-    </blockquote>
-    <p>If you wish to set the value to a specific IP please run:</p>
-    <blockquote>
-      <pre>
-        $ curl http://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4
-      </pre>
-    </blockquote>
+    <ul class="tabs">
+      <li><a href="#<!-- tmpl_var name='username' -->"><!-- tmpl_var name='username' --></a></li>
+      <li><a href="#add">Add new ..</a></li>
+    </ul>
 
-    <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
-    <blockquote>
-      <pre>
-        $ curl -X POST http://<!-- tmpl_var name='zone' -->/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
-      </pre>
-      <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
-    </blockquote>
+    <div class="tabContainer">
+      <div id="<!-- tmpl_var name='username' -->" class="tabContent">
+        <!-- tmpl_if name='present' -->
+        <h3><!-- tmpl_var name='username' -->.<!-- tmpl_var name='zone' --></h3>
+
+        <blockquote>
+          <table cellspacing="5">
+            <!-- tmpl_if name='ipv4' -->
+            <tr><td><p><b>IPv4</b></td>
+              <td><p><!-- tmpl_var name='ipv4' --> </p>
+              <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=A;ip=<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
+            <!-- /tmpl_if name='ipv4' -->
+            <!-- tmpl_if name='ipv6' -->
+            <tr><td><p><b>IPv6</b></td>
+              <td><p><!-- tmpl_var name='ipv6' --></p></td>
+              <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=AAAA;ip=<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
+            <!-- /tmpl_if name='ipv6' -->
+          </table>
+        </blockquote>
+        <!-- /tmpl_if name='present' -->
+
+
+        <!-- tmpl_if name='present' -->
+        <p>To update the value of your hostname to please run:</p>
+        <!-- tmpl_else -->
+        <p>To set the value of your hostname to please run:</p>
+        <!-- /tmpl_if -->
+
+        <blockquote>
+          <pre>
+            $ curl http://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->
+          </pre>
+        </blockquote>
+        <p>If you wish to set the value to a specific IP please run:</p>
+        <blockquote>
+          <pre>
+            $ curl http://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4
+          </pre>
+        </blockquote>
+
+        <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
+        <blockquote>
+          <pre>
+            $ curl -X POST http://<!-- tmpl_var name='zone' -->/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
+          </pre>
+          <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
+        </blockquote>
+      </div>
+      <div id="add" class="tabContent">
+        <p>It is not possible to add new records at this time.</p>
+        <p>If you believe this is a feature you would enjoy please <a href="http://steve.org.uk/contact/">contact the author</a>.</p>
+      </div>
+    </div>
+    <p>&nbsp;</p>
   </div>
   <!-- tmpl_include name='footer.inc' -->
 </body>
