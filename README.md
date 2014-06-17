@@ -32,7 +32,7 @@ The code relies upon the following modules being present and installed:
 * CGI::Application
   * `apt-get install libcgi-application-perl`
 * [CGI::Application::Plugin::Throttle](http://search.cpan.org/dist/CGI-Application-Plugin-Throttle/)
-  * Bundled into the release.
+  * Bundled into the distribution, as it isn't packaged for Debian.
 * Data::UUID
   * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
 * HTML::Template
@@ -42,9 +42,21 @@ The code relies upon the following modules being present and installed:
 * Redis
   * `apt-get install libredis-perl`
 * WebService::Amazon::Route53
-  * Bundled into the distribution, as it isn't packaged for Debian (Stable).
+  * Bundled into the distribution, as it isn't packaged for Debian.
 
-You'll also need the Redis server running on the same host as the application.
+These modules have other dependencies which you might not have present.
+To test you have all the required packages please run:
+
+    make test
+
+or:
+
+    perl t/00-load.t
+
+
+Finally you'll also need a Redis server running on the same host as
+the application, as this is used to store login sessions along with the
+user-data.
 
 Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config.pm`, updating it to contain your credentials.
 
