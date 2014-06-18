@@ -5,10 +5,19 @@
 
 
 #
-#  Reformat/pretty-print our perl source
+#  Reformat/pretty-print our perl code.
 #
 tidy:
 	perltidy $$(find . -iname '*.pm' -o -iname '*.t') bin/*
+
+
+
+#
+#  Run the code-quality tool over our code.
+#
+critic:
+	perlcritic $$(find . -iname '*.pm' -o -iname '*.t') bin/*
+
 
 
 #
@@ -52,5 +61,8 @@ local: css js
 	lighttpd -f conf/lighttpd.conf -D
 
 
+#
+#  Upload to production.
+#
 deploy:
 	fab deploy
