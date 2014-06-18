@@ -20,7 +20,6 @@
         <ul>
           <li>Author Links
             <ul>
-              <li><a href="http://steve.org.uk/contact/">E-mail Me</a></li>
               <li><a href="http://blog.steve.org.uk/">Blog</a></li>
               <li><a href="https://twitter.com/Stolen_Souls">Twitter</a></li>
             </ul>
@@ -33,7 +32,6 @@
             <ul>
               <li><a href="/abuse/">Report Abuse</a></li>
               <li><a href="/feedback/">Send Feedback</a></li>
-              <li><a href="/privacy/">Terms &amp; Conditions</a></li>
           </ul>
           </li>
         </ul>
