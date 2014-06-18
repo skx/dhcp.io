@@ -56,14 +56,54 @@ use strict;
 use warnings;
 
 use DHCP::Records;
+use Getopt::Long;
+
+#
+#  Parse options: -4 / -6 / all
+#
+my %CONFIG;
+$CONFIG{ 'all' } = 1;
+
+exit
+  if (
+       !Getopt::Long::GetOptions( "4",     \$CONFIG{ 'ipv4' },
+                                  "6",     \$CONFIG{ 'ipv6' },
+                                  "--all", \$CONFIG{ 'all' } ) );
+
+my $type = "all";
+$type = "A"    if ( $CONFIG{ 'ipv4' } );
+$type = "AAAA" if ( $CONFIG{ 'ipv6' } );
 
 
+
+#
+#  Get the records.
+#
 my $tmp = DHCP::Records->new();
 my $obj = $tmp->getRecords();
+
+#
+#  The results and the count.
+#
 my %obj = %$obj;
 my $c   = 0;
 
-foreach my $key (qw! A AAAA !)
+#
+#  The record-types to dump.  All by default.
+#
+my @types = ( "A", "AAAA" );
+
+#
+#  Might be limiting.
+#
+@types = ("A")    if ( $type eq "A" );
+@types = ("AAAA") if ( $type eq "AAAA" );
+
+
+#
+#  Get the types.
+#
+foreach my $key (@types)
 {
     my $hash = $obj{ $key };
 
