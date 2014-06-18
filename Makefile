@@ -46,7 +46,7 @@ clean:
 #
 #  Launch the application on the local host - for test-purposes.
 #
-local:
+local: css js
 	@which lighttpd >/dev/null 2>/dev/null || ( echo  "lighttpd doesn't seem to be installed" ; false )
 	@echo "Launching lighttpd on http://localhost:2000/"
 	lighttpd -f conf/lighttpd.conf -D
