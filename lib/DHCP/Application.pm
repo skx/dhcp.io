@@ -672,6 +672,9 @@ sub capture
 
     my $template = $self->load_template("interest.tmpl");
 
+    my $existing = $session->param('logged_in');
+    $template->param( username => $existing ) if ( $existing );
+
     if ( $q->param("submit") )
     {
         my $email = $q->param("email");
