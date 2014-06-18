@@ -167,7 +167,7 @@ sub create
     #
     #  Load the template.
     #
-    my $template = $self->load_template("create.tmpl");
+    my $template = $self->load_template("pages/create.tmpl");
 
     #
     #  Set the zone in the template
@@ -280,7 +280,7 @@ sub home
     #
     #  Load the homepage template.
     #
-    my $template = $self->load_template("home.tmpl");
+    my $template = $self->load_template("pages/home.tmpl");
 
     #
     #  Set the zone in the template
@@ -342,7 +342,7 @@ sub faq
     #
     #  Load the template & render
     #
-    my $template = $self->load_template("faq.tmpl");
+    my $template = $self->load_template("pages/faq.tmpl");
 
 
     #
@@ -392,7 +392,7 @@ sub index
     #
     #  Show the front-page.
     #
-    my $template = $self->load_template("index.tmpl");
+    my $template = $self->load_template("pages/index.tmpl");
 
     #
     #  Set the zone in the template
@@ -489,7 +489,7 @@ sub application_login
         #
         #  Load the template
         #
-        my $template = $self->load_template("login.template");
+        my $template = $self->load_template("pages/login.template");
         $template->param( login_name => $lname ) if ($lname);
 
 
@@ -586,7 +586,7 @@ sub edit
     #
     #  Load the template
     #
-    my $template = $self->load_template("edit.tmpl");
+    my $template = $self->load_template("pages/edit.tmpl");
     $template->param( username => $existing ) if ($existing);
 
 
@@ -718,7 +718,7 @@ sub capture
     my $session = $self->param('session');
 
 
-    my $template = $self->load_template("interest.tmpl");
+    my $template = $self->load_template("pages/interest.tmpl");
 
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
@@ -739,7 +739,7 @@ sub capture
         #
         #  Load the template
         #
-        my $mt = $self->load_template("email/interest.tmpl");
+        my $mt = $self->load_template("emails/interest.tmpl");
         $mt->param( email => $email,
                     comm  => $comm );
         $mt->param( username => $existing ) if ($existing);
