@@ -64,7 +64,7 @@ Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config
 Running Locally
 ---------------
 
-The installation section, above, should be complete enough that you're
+The installation section should be complete enough that you're
 able to run the application.
 
 For testing purposes a **sample** lighttpd configuration file is included
