@@ -22,10 +22,10 @@
         <blockquote>
         <pre>
           $ # This will update the IPv4 address.
-          $ curl -4 http://<!-- tmpl_var name='zone' -->/set/efa6961c-f3dd-11e3-955b-...
+          $ curl -4 http://dhcp.io/set/efa6961c-f3dd-11e3-955b-...
 
           $ # This will update the IPv6 address.
-          $ curl -6 http://<!-- tmpl_var name='zone' -->/set/efa6961c-f3dd-11e3-955b-...
+          $ curl -6 http://dhcp.io/set/efa6961c-f3dd-11e3-955b-...
         </pre>
         </blockquote>
         <p>Alternatively you can <a href="/login/">login</a> and edit the records via your browser.</p>
@@ -34,14 +34,12 @@
       <dt>Is this service free?</dt>
       <dd>
         <p>It will always be free to set the IP address for a single name, for both IPv4 and IPv6.</p>
-<!-- tmpl_if name='pimp' -->
         <p>It is possible in the future that there might be an annual charge, or lifetime membership (one-off) fee which will unlock <a href="/interest/">extra features</a> such as:</p>
         <ul>
           <li>The ability to set an MX record.</li>
           <li>The ability to control multiple records with a single login.</li>
         </ul>
         <p>Regardless of future features if you find this service useful you can <a href="http://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
-<!-- /tmpl_if name='pimp' -->
 
       </dd>
 
