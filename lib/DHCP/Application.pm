@@ -720,6 +720,8 @@ sub capture
 
     my $template = $self->load_template("interest.tmpl");
 
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
