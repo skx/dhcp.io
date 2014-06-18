@@ -32,7 +32,7 @@
           <li>Site Links
             <ul>
               <li><a href="/abuse/">Report Abuse</a></li>
-              <li><a href="/abuse/">Send Feedback</a></li>
+              <li><a href="/feedback/">Send Feedback</a></li>
               <li><a href="/privacy/">Terms &amp; Conditions</a></li>
           </ul>
           </li>
