@@ -281,7 +281,7 @@ sub home
     #
     # Lookup the live values
     #
-    my $tmp = DHCP::Records->new();
+    my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
     my $ips = $tmp->lookup($existing);
 
     $template->param( ipv4 => $ips->{ 'ipv4' }, present => 1 )
@@ -616,7 +616,7 @@ sub delete
 
     if ( lc($name) eq lc($existing) )
     {
-        my $tmp = DHCP::Records->new();
+        my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
         $tmp->removeRecord( $name, $type, $ip );
 
 

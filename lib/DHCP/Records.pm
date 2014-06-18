@@ -35,7 +35,7 @@ package DHCP::Records;
 use DHCP::Config;
 
 use WebService::Amazon::Route53;
-
+use JSON;
 
 =begin doc
 
@@ -61,6 +61,11 @@ sub new
       WebService::Amazon::Route53->new( id  => $DHCP::Config::ROUTE_53_ID,
                                         key => $DHCP::Config::ROUTE_53_KEY );
 
+
+    #
+    #  Save the Redis handle
+    #
+    $self->{ 'redis' } = $supplied{ 'redis' } || die "Missing Redis handle";
 
     bless( $self, $class );
     return $self;
@@ -93,6 +98,16 @@ sub getRecords
     my ($self) = (@_);
 
     my $result;
+
+    #
+    #  Lookup in cache first
+    #
+    my $cached = $self->{ 'redis' }->get("DHCP:CACHED:ZONE");
+    if ($cached)
+    {
+        $result = from_json($cached);
+        return ($result);
+    }
 
     #
     #  These are here to provide an offset in the iteration case.
@@ -142,6 +157,11 @@ sub getRecords
         }
     }
 
+    #
+    #  Store in the cache
+    #
+    $self->{ 'redis' }->set( "DHCP:CACHED:ZONE", to_json($result) );
+
     return ($result);
 }
 
@@ -176,6 +196,12 @@ sub removeRecord
         use Data::Dumper;
         print STDERR Dumper( $self->{ 'r53' }->error() );
     }
+
+    #
+    #  Remove the cached values - which are now invalid.
+    #
+    $self->{ 'redis' }->del("DHCP:CACHED:ZONE");
+
 }
 
 
@@ -210,6 +236,11 @@ sub createRecord
         use Data::Dumper;
         print STDERR Dumper( $self->{ 'r53' }->error() );
     }
+
+    #
+    #  Remove the cached values - which are now invalid.
+    #
+    $self->{ 'redis' }->del("DHCP:CACHED:ZONE");
 }
 
 

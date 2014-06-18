@@ -57,6 +57,7 @@ use warnings;
 
 use DHCP::Records;
 use Getopt::Long;
+use Redis;
 
 #
 #  Parse options: -4 / -6 / all
@@ -79,7 +80,8 @@ $type = "AAAA" if ( $CONFIG{ 'ipv6' } );
 #
 #  Get the records.
 #
-my $tmp = DHCP::Records->new();
+my $r   = Redis->new();
+my $tmp = DHCP::Records->new( redis => $r );
 my $obj = $tmp->getRecords();
 
 #

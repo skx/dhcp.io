@@ -123,7 +123,7 @@ sub deleteUser
     #
     # Create a helper for removing the old DNS records.
     #
-    my $helper = DHCP::Records->new();
+    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
 
     #
     #  Get all the zones records - so we can see if there are any present
@@ -198,7 +198,7 @@ sub setRecord
     #
     # Create a helper
     #
-    my $helper = DHCP::Records->new();
+    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
 
     #
     #  Get the existing records - we need to see if the record
