@@ -199,6 +199,15 @@ sub create
         }
 
         #
+        #  Avoid one-letter registration.
+        #
+        if ( length($name) < 2 )
+        {
+            $template->param( error => "That name is too short." );
+            return ( $template->output() );
+        }
+
+        #
         #  If the user exists
         #
         my $tmp = DHCP::User->new( redis => $self->{ 'redis' } );
