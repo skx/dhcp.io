@@ -65,20 +65,13 @@ Running Locally
 ---------------
 
 The installation section should be complete enough that you're
-able to run the application.
+able to run the application for real.
 
-For testing purposes a **sample** lighttpd configuration file is included
-within the repository - this contains the appropriate rewrite-rules to
-make the code function with pretty URLs:
+However for testing purposes a **sample** lighttpd configuration file
+is also included within this repository.  The configuration file contains
+all the required "rewrite rules", for example:
 
     * /create/?        -> /cgi-bin/index.cgi?mode=create
-    * /faq/?           -> /cgi-bin/index.cgi?mode=faq
-    * /home/?          -> /cgi-bin/index.cgi?mode=home
-    * /login           -> /cgi-bin/index.cgi?mode=login
-    * /logout          -> /cgi-bin/index.cgi?mode=logout
-    * /set/(.*)/(.*)/? -> /cgi-bin/index.cgi?mode=set;token=$1;ip=$2
-    * /set/(.*)/?      -> /cgi-bin/index.cgi?mode=set;token=$1
-    * /set/?           -> /cgi-bin/index.cgi?mode=set
 
 If you have `lighttpd` installed then you should be able to launch the
 application on your local system via:
