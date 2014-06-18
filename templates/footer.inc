@@ -28,6 +28,17 @@
         </ul>
       </td>
       <td width="25%" valign="top">
+        <ul>
+          <li>Site Links
+            <ul>
+              <li><a href="/abuse/">Report Abuse</a></li>
+              <li><a href="/abuse/">Send Feedback</a></li>
+              <li><a href="/privacy/">Terms &amp; Conditions</a></li>
+          </ul>
+          </li>
+        </ul>
+      </td>
+      <td width="25%" valign="top">
 <script type="text/javascript">
 /* <![CDATA[ */
     (function() {
@@ -44,11 +55,10 @@
 /* ]]> */
 </script>
 
-<p><a class="FlattrButton" href="http://dhcp.io/" description="Free Dynamic-DNS" title="Free Dynamic-DNS">Free Dynamic-DNS</a></p>
-</td>
-      <td width="25%" valign="top">
       <p><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en"   data-via="Stolen_Souls" data-url="http://dhcp.io/">Tweet</a></p>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<p><a class="FlattrButton" href="http://dhcp.io/" description="Free Dynamic-DNS" title="Free Dynamic-DNS">Free Dynamic-DNS</a></p>
 
       </td>
     </tr>
