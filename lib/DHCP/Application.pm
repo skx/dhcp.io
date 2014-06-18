@@ -692,7 +692,7 @@ sub capture
         #
         #  Load the template
         #
-        my $mt = $self->load_template("interest.email.tmpl");
+        my $mt = $self->load_template("email/interest.tmpl");
         $mt->param( email => $email,
                     comm  => $comm );
         $mt->param( username => $existing ) if ($existing);
