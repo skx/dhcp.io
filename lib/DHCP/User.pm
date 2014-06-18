@@ -78,7 +78,7 @@ Create a new user on the system.
 
 sub createUser
 {
-    my ( $self, $user, $pass, $mail ) = (@_);
+    my ( $self, $user, $pass, $mail, $ip ) = (@_);
 
     $user = lc($user);
     my $redis = $self->{ 'redis' } || die "Missing handle";
@@ -97,6 +97,11 @@ sub createUser
     if ($mail)
     {
         $redis->set( "DHCP:USER:$user:MAIL", $mail );
+    }
+
+    if ($ip)
+    {
+        $redis->set( "DHCP:USER:$user:IP", $ip );
     }
 
     # set their token
@@ -157,6 +162,7 @@ sub deleteUser
     # Remove the keys.
     $redis->del("DHCP:USER:$user");
     $redis->del("DHCP:USER:$user:MAIL");
+    $redis->del("DHCP:USER:$user:IP");
     $redis->del("DHCP:USER:$user:TOKEN");
     $redis->del("DHCP:TOKEN:$token");
 }

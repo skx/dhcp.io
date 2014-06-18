@@ -177,7 +177,7 @@ sub create
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        $template->param( "ZONE" => uc($1) . "." . $2 );
     }
 
     #
@@ -188,6 +188,7 @@ sub create
         my $name = $q->param("zone");
         my $pass = $q->param("password");
         my $mail = $q->param("email");
+        my $ip   = $ENV{ 'REMOTE_ADDR' };
 
         #
         #  If the zone is empty then we're done
@@ -238,7 +239,7 @@ sub create
         #
         #  OK create the name.
         #
-        $tmp->createUser( $name, $pass, $mail );
+        $tmp->createUser( $name, $pass, $mail, $ip );
 
         #
         #  Now return.
@@ -289,7 +290,7 @@ sub home
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        $template->param( "ZONE" => uc($1) . "." . $2 );
     }
 
 
@@ -352,7 +353,7 @@ sub faq
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        $template->param( "ZONE" => uc($1) . "." . $2 );
     }
 
     #
@@ -401,7 +402,7 @@ sub index
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        $template->param( "ZONE" => uc($1) . "." . $2 );
     }
 
     return ( $template->output() );
@@ -497,7 +498,7 @@ sub application_login
         $template->param( "zone" => $z );
         if ( $z =~ /^(.*)\.(.*)$/ )
         {
-            $template->param( "ZONE" => uc($1 ) . "." . $2 );
+            $template->param( "ZONE" => uc($1) . "." . $2 );
         }
 
         #
@@ -594,7 +595,7 @@ sub edit
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        $template->param( "ZONE" => uc($1) . "." . $2 );
     }
 
     #
