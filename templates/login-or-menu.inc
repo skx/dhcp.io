@@ -1,6 +1,6 @@
 <!-- tmpl_if name='username' -->
 <div id="container">
-  <span style="font-size:20px;"><a href="/">DHCP.io</a> - Fast and Reliable Dynamic-DNS</span>
+  <span style="font-size:20px;"><a href="/"><!-- tmpl_var name='ZONE' --></a> - Fast and Reliable Dynamic-DNS</span>
   <div id="loginContainer">
     <a href="/logout/" class="Button"><span>Logout</span><em></em></a>
     <a href="/faq/" class="Button"><span>FAQ</span><em></em></a>
@@ -8,7 +8,7 @@
 </div>
 <!-- tmpl_else -->
 <div id="container">
-  <span style="font-size:20px;"><a href="/">DHCP.io</a> - Fast and Reliable Dynamic-DNS</span>
+  <span style="font-size:20px;"><a href="/"><!-- tmpl_var name='ZONE' --></a> - Fast and Reliable Dynamic-DNS</span>
   <div id="loginContainer">
     <a href="/login/" id="loginButton"><span>Login</span><em></em></a>
     <div style="clear:both"></div>

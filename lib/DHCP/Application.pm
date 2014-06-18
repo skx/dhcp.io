@@ -37,6 +37,9 @@ use warnings;
 package DHCP::Application;
 use base 'DHCP::Application::Base';
 
+#
+# We don't need abusive clients.
+#
 use CGI::Application::Plugin::Throttle;
 
 
@@ -64,9 +67,11 @@ EOF
     }
 }
 
+
 #
 # Our code.
 #
+use DHCP::Records;
 use DHCP::User;
 
 
@@ -170,6 +175,10 @@ sub create
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
     $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+    }
 
     #
     #  Is the user submitting?
@@ -278,6 +287,10 @@ sub home
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
     $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+    }
 
 
     #
@@ -337,6 +350,10 @@ sub faq
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
     $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+    }
 
     #
     #  Set the login name.
@@ -382,6 +399,10 @@ sub index
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
     $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+    }
 
     return ( $template->output() );
 }
@@ -471,6 +492,14 @@ sub application_login
         $template->param( login_name => $lname ) if ($lname);
 
 
+        my $z = $DHCP::Config::ZONE;
+        $z =~ s/\.$//g;
+        $template->param( "zone" => $z );
+        if ( $z =~ /^(.*)\.(.*)$/ )
+        {
+            $template->param( "ZONE" => uc($1 ) . "." . $2 );
+        }
+
         #
         # User submitted a login attempt which failed.
         #
@@ -558,6 +587,15 @@ sub edit
     #
     my $template = $self->load_template("edit.tmpl");
     $template->param( username => $existing ) if ($existing);
+
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "ZONE" => uc($1 ) . "." . $2 );
+    }
 
     #
     #  Populate values.
