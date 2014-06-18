@@ -177,7 +177,7 @@ sub create
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1) . "." . $2 );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
     #
@@ -290,7 +290,7 @@ sub home
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1) . "." . $2 );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
 
@@ -353,7 +353,7 @@ sub faq
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1) . "." . $2 );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
     #
@@ -402,7 +402,7 @@ sub index
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1) . "." . $2 );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
     return ( $template->output() );
@@ -498,7 +498,7 @@ sub application_login
         $template->param( "zone" => $z );
         if ( $z =~ /^(.*)\.(.*)$/ )
         {
-            $template->param( "ZONE" => uc($1) . "." . $2 );
+            $template->param( "uc_zone" => uc($1) . "." . $2 );
         }
 
         #
@@ -595,7 +595,7 @@ sub edit
     $template->param( "zone" => $z );
     if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        $template->param( "ZONE" => uc($1) . "." . $2 );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
     #
