@@ -5,15 +5,13 @@
         <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understood how it worked, and how it could be used.</p>
         <p>This site was born as a result of that learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
 
-<!-- tmpl_if name='pimp' -->
-        <p>I'm <a href="/interest/">prioritizing premium features</a>, if you'd like to make suggestions.</p>
-<!-- /tmpl_if name='pimp' -->
+        <p>I'm <a href="/interest/">prioritizing premium features</a>, if you'd like to <a href="/feedback">make suggestions</a>.</p>
 
       </dd>
 
       <dt>How long does it take for DNS changes to take effect?</dt>
       <dd>
-        <p>All the records beneath the <span class="tt">.<!-- tmpl_var name='zone' --></span> zone have a 60 second <abbr title="time to live">TTL</abbr>.</p>
+        <p>All the records beneath the <b><span class="tt">.dhcp.io</span></b> zone have a 60 second <abbr title="time to live">TTL</abbr>.</p>
         <p>This means that records <i>should</i> update in less than a minute, however local caches might misbehave and cause the updates to take longer.</p>
       </dd>
 
