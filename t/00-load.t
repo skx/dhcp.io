@@ -46,9 +46,6 @@ require_ok("HTML::Template");
 BEGIN {use_ok("LWP::UserAgent")}
 require_ok("LWP::UserAgent");
 
-BEGIN {use_ok("Net::DNS")}
-require_ok("Net::DNS");
-
 BEGIN {use_ok("Redis")}
 require_ok("Redis");
 

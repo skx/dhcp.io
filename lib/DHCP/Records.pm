@@ -34,7 +34,6 @@ package DHCP::Records;
 # This must be renamed - it isn't in the repository.
 use DHCP::Config;
 
-use Net::DNS;
 use WebService::Amazon::Route53;
 
 
@@ -230,30 +229,9 @@ sub lookup
 
     my $result;
 
-    my $res = Net::DNS::Resolver->new( udp_timeout => 10,
-                                       tcp_timeout => 10 );
-
-    my $count = 0;
-    my $retry = 5;
-
-    while ( $count < $retry )
-    {
-        my $query = $res->search( $name . "." . $DHCP::Config::ZONE, "any" );
-
-        if ($query)
-        {
-            foreach my $rr ( sort $query->answer )
-            {
-                my $type = $rr->type();
-                my $addr = $rr->address();
-
-                $result->{ 'ipv4' } = $addr if ( $type eq "A" );
-                $result->{ 'ipv6' } = $addr if ( $type eq "AAAA" );
-            }
-            return ($result);
-        }
-        $count += 1;
-    }
+    my $existing = $self->getRecords();
+    $result->{ 'ipv4' } = $existing->{ "A" }{ $name }    || undef;
+    $result->{ 'ipv6' } = $existing->{ "AAAA" }{ $name } || undef;
 
     return ($result);
 }

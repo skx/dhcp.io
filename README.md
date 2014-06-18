@@ -37,8 +37,6 @@ The code relies upon the following modules being present and installed:
   * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
 * HTML::Template
   * `apt-get install libhtml-template-perl`
-* Net::DNS
-  * `apt-get install libnet-dns-perl`
 * Redis
   * `apt-get install libredis-perl`
 * WebService::Amazon::Route53
