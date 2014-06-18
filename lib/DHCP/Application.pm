@@ -98,8 +98,8 @@ sub setup
         'index' => 'index',
         'home'  => 'home',
 
-        # FAQ-page
-        'faq' => 'faq',
+        # static-page serving
+        'static' => 'static',
 
         # Create a new user
         'create' => 'create',
@@ -321,13 +321,13 @@ sub home
 
 =begin doc
 
-Show the FAQ-page.
+Show a static page of text.
 
 =end doc
 
 =cut
 
-sub faq
+sub static
 {
     my ($self)  = (@_);
     my $q       = $self->query();
@@ -342,8 +342,7 @@ sub faq
     #
     #  Load the template & render
     #
-    my $template = $self->load_template("pages/faq.tmpl");
-
+    my $template = $self->load_template("pages/static.tmpl");
 
     #
     #  Set the zone in the template
@@ -355,6 +354,26 @@ sub faq
     {
         $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
+
+
+    #
+    #  Get the text to show
+    #
+    my $file = $q->param("file");
+    die "Missing file" unless ($file);
+    die "Exploit Attempt" if ( $file !~ /^([a-z]+)\.txt$/ );
+
+    open( my $handle, "<", "../../templates/static/$file" ) or
+      die "Failed to open - $!";
+
+    my $text = "";
+    while ( my $line = <$handle> )
+    {
+        $text .= $line;
+    }
+    close($handle);
+
+    $template->param( text => $text );
 
     #
     #  Set the login name.
