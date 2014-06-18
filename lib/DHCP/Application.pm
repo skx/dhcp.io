@@ -569,7 +569,7 @@ sub edit
         my $ipv4 = $q->param("ipv4") || undef;
         my $ipv6 = $q->param("ipv6") || undef;
 
-        my $uh = DHCP::User->new( redis => $self->{'redis'} );
+        my $uh = DHCP::User->new( redis => $self->{ 'redis' } );
         $uh->setRecord( $existing, $ipv4 ) if ($ipv4);
         $uh->setRecord( $existing, $ipv6 ) if ($ipv6);
 
@@ -673,7 +673,7 @@ sub capture
     my $template = $self->load_template("interest.tmpl");
 
     my $existing = $session->param('logged_in');
-    $template->param( username => $existing ) if ( $existing );
+    $template->param( username => $existing ) if ($existing);
 
     if ( $q->param("submit") )
     {
@@ -686,7 +686,7 @@ sub capture
         my $mt = $self->load_template("interest.email.tmpl");
         $mt->param( email => $email,
                     comm  => $comm );
-        $mt->param( username => $existing ) if ( $existing );
+        $mt->param( username => $existing ) if ($existing);
 
         open( SENDMAIL, "|/usr/lib/sendmail -t" ) or
           die "Cannot open sendmail: $!";

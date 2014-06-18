@@ -214,6 +214,17 @@ sub load_template
                                         %options,
                                         die_on_bad_params => 0,
                                       );
+
+
+    #
+    #  If there is a STEVE:KEMP key in Redis then we're running
+    # this in the production environment.
+    #
+    if ( $self->{ 'redis' }->get("STEVE:KEMP") )
+    {
+        $template->param( pimp => 1 );
+    }
+
     return ($template);
 }
 
