@@ -1,4 +1,4 @@
-    <h1>Leaving Feedback</h1>
+    <h1>Leave Feedback</h1>
 
     <p>If you have comments, suggestions, or other feedback please do feel free to drop me a mail:</p>
     <ul style="list-style:none;">

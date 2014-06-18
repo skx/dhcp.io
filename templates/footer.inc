@@ -31,7 +31,7 @@
           <li>Site Links
             <ul>
               <li><a href="/abuse/">Report Abuse</a></li>
-              <li><a href="/feedback/">Send Feedback</a></li>
+              <li><a href="/feedback/">Leave Feedback</a></li>
           </ul>
           </li>
         </ul>

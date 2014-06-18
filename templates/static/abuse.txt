@@ -1,4 +1,4 @@
-    <h1>Reporting Abuse</h1>
+    <h1>Report Abuse</h1>
 
     <p>If you believe one of our hostnames is being used for abusive purposes please let us know by emailing all appropriate details to:</p>
     <ul style="list-style:none;">
