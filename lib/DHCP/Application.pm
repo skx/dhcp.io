@@ -720,6 +720,12 @@ sub capture
 
     my $template = $self->load_template("interest.tmpl");
 
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
     my $existing = $session->param('logged_in');
     $template->param( username => $existing ) if ($existing);
 
