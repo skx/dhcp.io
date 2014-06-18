@@ -25,12 +25,12 @@
             <!-- tmpl_if name='ipv4' -->
             <tr><td><p><b>IPv4</b></td>
               <td><p><!-- tmpl_var name='ipv4' --> </p>
-              <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=A;ip=<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
+              <td><p><a href="/edit/">Edit</a> | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=A;ip=<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv4' -->
             <!-- tmpl_if name='ipv6' -->
             <tr><td><p><b>IPv6</b></td>
               <td><p><!-- tmpl_var name='ipv6' --></p></td>
-              <td><p>Edit | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=AAAA;ip=<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
+              <td><p><a href="/edit/">Edit</a> | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=AAAA;ip=<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv6' -->
           </table>
         </blockquote>

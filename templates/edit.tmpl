@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+  <title>DHCP.io - Fast and Reliable Dynamic DNS</title>
+  <!-- tmpl_include name='header.inc' -->
+</head>
+<body>
+  <div id="bar">
+    <!-- tmpl_include name="login-or-menu.inc" -->
+  </div>
+  <div id="content">
+    <h1>Update Your Record(s)</h1>
+
+<!-- tmpl_if name='updated' -->
+    <p>Your changes have been applied.</p>
+<!-- tmpl_else -->
+    <form method="POST" action="/cgi-bin/index.cgi">
+      <input type="hidden" name="mode" value="edit">
+      <table>
+        <tr>
+          <td><p>IPv4</p></td>
+          <td><input type="text" name="ipv4" value="<!-- tmpl_var name='ipv4' escape='html' -->" /></td></tr>
+          <td><p>IPv6</p></td>
+          <td><input type="text" name="ipv6" value="<!-- tmpl_var name='ipv6' escape='html' -->" /></td></tr>
+        </tr>
+       <tr><td></td>
+         <td align="right"><input type="submit" value="Update" name="submit"/></td></tr>
+       </table>
+    </form>
+<!-- /tmpl_if name='updated' -->
+  </div>
+  <!-- tmpl_include name='footer.inc' -->
+</body>
+</html>

@@ -92,8 +92,9 @@ sub setup
         # Index/Home for signed-in users.
         'index' => 'index',
         'home'  => 'home',
-        'faq'   => 'faq',
 
+        # FAQ-page
+        'faq' => 'faq',
 
         # Create a new user
         'create' => 'create',
@@ -104,8 +105,9 @@ sub setup
         # Mark a feature as not available
         'capture' => 'capture',
 
-        # Set the IP for a record.
-        'set' => 'set',
+        # Edit/Set the IP for a record.
+        'set'  => 'set',
+        'edit' => 'edit',
 
         # login / logout
         'login'  => 'application_login',
@@ -512,6 +514,72 @@ sub set
         return ( $self->redirectURL("/") );
     }
 }
+
+
+=begin doc
+
+Update a valid record, via the web-page.
+
+=end doc
+
+=cut
+
+sub edit
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  The user must be logged in.
+    #
+    my $existing = $session->param('logged_in');
+    if ( !defined($existing) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+    #
+    #  Get the helper.
+    #
+    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
+
+    #
+    #  Load the template
+    #
+    my $template = $self->load_template("edit.tmpl");
+    $template->param( username => $existing ) if ($existing);
+
+    #
+    #  Populate values.
+    #
+    my $records = $helper->getRecords();
+    $template->param( ipv4 => $records->{ 'A' }{ $existing } )
+      if ( $records->{ 'A' }{ $existing } );
+    $template->param( ipv6 => $records->{ 'AAAA' }{ $existing } )
+      if ( $records->{ 'AAAA' }{ $existing } );
+
+
+    if ( $q->param("submit") )
+    {
+
+        #
+        #  Get the values.
+        #
+        my $ipv4 = $q->param("ipv4") || undef;
+        my $ipv6 = $q->param("ipv6") || undef;
+
+        my $uh = DHCP::User->new( redis => $self->{'redis'} );
+        $uh->setRecord( $existing, $ipv4 ) if ($ipv4);
+        $uh->setRecord( $existing, $ipv6 ) if ($ipv6);
+
+        $template->param( updated => 1 );
+    }
+
+    return ( $template->output() );
+}
+
+
 
 
 =begin doc
