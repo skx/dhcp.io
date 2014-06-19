@@ -56,7 +56,6 @@ use warnings;
 
 use DHCP::User;
 use Getopt::Long;
-use Redis;
 
 
 my $user;
@@ -71,18 +70,17 @@ exit
                                   "ip=s",       \$ip ) );
 
 
-#
-#  Get a redis handle
-#
-my $redis = Redis->new();
+die "Missing username!" unless( $user );
+die "Missing IP!" unless( $ip );
+
 
 #
 #  Create a helper.
 #
-my $tmp = DHCP::User->new( redis => $redis );
+my $tmp = DHCP::User->new();
 
 #
 #  Set the IP.
 #
-$tmp->setRecord( $user, $ip );
+$tmp->setRecord( $user, $ip , $user);
 
