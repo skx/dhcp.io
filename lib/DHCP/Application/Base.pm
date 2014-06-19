@@ -55,8 +55,6 @@ use HTML::Template;
 
 
 
-
-
 =begin doc
 
 Create our session, and connect to redis.
@@ -202,7 +200,8 @@ sub load_template
 
     my $path = "";
 
-    my @dirs = ( "../templates/", "../../templates/", "../templates/inc", "../../templates/inc" );
+    my @dirs = ( "../templates/",    "../../templates/",
+                 "../templates/inc", "../../templates/inc" );
 
     foreach my $dir (@dirs)
     {
