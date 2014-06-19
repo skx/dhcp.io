@@ -94,21 +94,19 @@ sub setup
         # Rate-Limit
         'slow_down' => 'slow_down',
 
-        # Index/Home for signed-in users.
+        # Index/Home for anonymous/signed-in users.
         'index' => 'index',
         'home'  => 'home',
 
         # static-page serving
         'static' => 'static',
 
-        # Create a new user
+        # Create a new user/record
         'create' => 'create',
+        'record' => 'record',
 
         # Delete an A/AAAA record
         'delete' => 'delete',
-
-        # Mark a feature as not available
-        'capture' => 'capture',
 
         # Edit/Set the IP for a record.
         'set'  => 'set',
@@ -133,7 +131,7 @@ sub setup
     #
     #  Configure the throttling.
     #
-    $self->throttle()->configure( redis    => $self->{ 'redis' },
+    $self->throttle()->configure( redis    => Singleton::Redis->instance(),
                                   limit    => 100,
                                   period   => 60,
                                   exceeded => "slow_down"
@@ -220,7 +218,7 @@ sub create
         #
         #  If the user exists
         #
-        my $tmp = DHCP::User->new( redis => $self->{ 'redis' } );
+        my $tmp = DHCP::User->new();
         if ( $tmp->present($name) )
         {
             $template->param( error => "That name is already taken." );
@@ -248,6 +246,78 @@ sub create
     }
 
     return ( $template->output() );
+}
+
+
+
+=begin doc
+
+Create a new record assocated with the current user.
+
+=end doc
+
+=cut
+
+sub record
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
+    if ( !defined($existing) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+    #
+    #  Get the attempted name
+    #
+    my $name = $q->param("name");
+
+    #
+    #  Is the name empty?
+    #
+    if ( !$name )
+    {
+        return ("Missing name");
+    }
+
+    #
+    #  Ensure it is only a single record
+    #
+    if ( $name =~ /\./ )
+    {
+        return ("Single names only - no subrecords");
+    }
+
+    #
+    #  Is the name forbidden?
+    #
+    foreach my $denied (@DHCP::Config::FORBIDDEN)
+    {
+        return "Name forbidden" if ( $denied eq $name );
+    }
+
+    #
+    #  If it doesn't exist ..
+    #
+    my $user = DHCP::User->new();
+
+    if ( $user->recordPresent($name) )
+    {
+        return "Name already in use";
+    }
+
+    #
+    #  Create the record
+    #
+    $user->addRecord( $existing, $name );
+    return ( $self->redirectURL("/home") );
 }
 
 
@@ -293,24 +363,28 @@ sub home
         $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
-
     #
     #  Find the token for the users' zone-control
     #
-    my $user = DHCP::User->new( redis => $self->{ 'redis' } );
-    $template->param( token    => $user->getToken($existing) );
+    my $user = DHCP::User->new();
+
+    #
+    # Get the records a user owns.
+    #
+    # This method will return several things:
+    #
+    #   Names the user has
+    #   The token for each name.
+    #   Their current IPv4 + IPv6 addresses.
+    #
+    my $records = $user->getAllData($existing);
+    $template->param( records => $records ) if ($records);
     $template->param( username => $existing );
 
     #
-    # Lookup the live values
+    # Limit on records.
     #
-    my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
-    my $ips = $tmp->lookup($existing);
-
-    $template->param( ipv4 => $ips->{ 'ipv4' }, present => 1 )
-      if ( $ips->{ 'ipv4' } );
-    $template->param( ipv6 => $ips->{ 'ipv6' }, present => 1 )
-      if ( $ips->{ 'ipv6' } );
+    $template->param( exceeded => 1 ) if ( $records && ( scalar( @$records ) >= 5 ) );
 
     #
     #  Render.
@@ -472,7 +546,7 @@ sub application_login
          defined($lpass) &&
          length($lpass) )
     {
-        my $user = DHCP::User->new( redis => $self->{ 'redis' } );
+        my $user = DHCP::User->new();
         $logged_in = $user->testLogin( $lname, $lpass );
     }
 
@@ -555,7 +629,7 @@ sub set
     #
     #  See if we can find a user by token
     #
-    my $temp = DHCP::User->new( redis => $self->{ 'redis' } );
+    my $temp = DHCP::User->new();
     my $user = $temp->getUserFromToken($token);
 
     if ($user)
@@ -598,16 +672,55 @@ sub edit
     }
 
     #
-    #  Get the helper.
+    #  Get the name we're editing, remember there might be
+    # more than one for each user
     #
-    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
+    my $record = $q->param("record");
+    if ( !defined($record) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+    #
+    #  Security Test.
+    #
+    #  Get all the values for the current user, and ensure that
+    # they have control over the record
+    #
+    my $temp = DHCP::User->new();
+    my $data = $temp->getAllData($existing);
+
+    #
+    #  Look for a match
+    #
+    my $match = 0;
+    my $ipv4  = undef;
+    my $ipv6  = undef;
+
+    foreach my $entry (@$data)
+    {
+        if ( $entry->{ 'name' } eq $record )
+        {
+            $match = 1;
+
+            #
+            #  Get the values in case we're not submitted and we
+            # need to show them to the user.
+            #
+            $ipv4 = $entry->{ 'ipv4' } if ( $entry->{ 'ipv4' } );
+            $ipv6 = $entry->{ 'ipv6' } if ( $entry->{ 'ipv6' } );
+        }
+    }
+
+    return ( $self->redirectURL("/") ) if ( !$match );
+
 
     #
     #  Load the template
     #
     my $template = $self->load_template("pages/edit.tmpl");
     $template->param( username => $existing ) if ($existing);
-
+    $template->param( record => $record );
 
     my $z = $DHCP::Config::ZONE;
     $z =~ s/\.$//g;
@@ -620,11 +733,8 @@ sub edit
     #
     #  Populate values.
     #
-    my $records = $helper->getRecords();
-    $template->param( ipv4 => $records->{ 'A' }{ $existing } )
-      if ( $records->{ 'A' }{ $existing } );
-    $template->param( ipv6 => $records->{ 'AAAA' }{ $existing } )
-      if ( $records->{ 'AAAA' }{ $existing } );
+    $template->param( ipv4 => $ipv4 ) if ($ipv4);
+    $template->param( ipv6 => $ipv6 ) if ($ipv6);
 
 
     if ( $q->param("submit") )
@@ -636,18 +746,16 @@ sub edit
         my $ipv4 = $q->param("ipv4") || undef;
         my $ipv6 = $q->param("ipv6") || undef;
 
-        my $uh = DHCP::User->new( redis => $self->{ 'redis' } );
-        $uh->setRecord( $existing, $ipv4 ) if ($ipv4);
-        $uh->setRecord( $existing, $ipv6 ) if ($ipv6);
+        my $uh = DHCP::User->new();
+
+        $uh->setRecord( $record, $ipv4 ) if ($ipv4);
+        $uh->setRecord( $record, $ipv6 ) if ($ipv6);
 
         $template->param( updated => 1 );
     }
 
     return ( $template->output() );
 }
-
-
-
 
 =begin doc
 
@@ -663,8 +771,6 @@ sub delete
     my $q       = $self->query();
     my $session = $self->param('session');
 
-
-
     #
     #  The user must be logged in.
     #
@@ -674,28 +780,51 @@ sub delete
         return ( $self->redirectURL("/") );
     }
 
+
     #
-    #  Get the type to delete.
+    #  Get the name we're editing, remember there might be
+    # more than one for each user
     #
-    my $type = $q->param("type");
-    my $name = $q->param("name");
-    my $ip   = $q->param("ip");
+    my $record = $q->param("record");
+    my $type   = $q->param("type");
+    my $value  = $q->param("val");
 
-    if ( lc($name) eq lc($existing) )
+    #
+    #  Ensure the values are present.
+    #
+    if ( !defined($record) ||
+         !defined($type) ||
+         !defined($value) )
     {
-        my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
-        $tmp->removeRecord( $name, $type, $ip );
-
-
-        return ( $self->redirectURL("/home") );
-        return "Deleting $name - $type";
-    }
-    else
-    {
-
-        # Tried to delete a record belonging to somebody else.
         return ( $self->redirectURL("/") );
     }
+
+
+    #
+    #  Security Test.
+    #
+    #  Get all the values for the current user, and ensure that
+    # they have control over the record
+    #
+    my $temp = DHCP::User->new();
+    my $data = $temp->getAllData($existing);
+
+    #
+    #  Look for a match
+    #
+    my $match = 0;
+    foreach my $entry (@$data)
+    {
+        $match = 1 if ( $entry->{ 'name' } eq $record );
+    }
+
+    return ( $self->redirectURL("/") ) if ( !$match );
+
+    my $tmp = DHCP::Records->new();
+    $tmp->removeRecord( $record, $type, $value );
+
+
+    return ( $self->redirectURL("/home") );
 }
 
 
@@ -719,61 +848,6 @@ sub application_logout
     return ( $self->redirectURL("/") );
 }
 
-
-
-=begin doc
-
-Mark a feature as being unavailable, but capture the user's email addres.
-
-=end doc
-
-=cut
-
-sub capture
-{
-    my $self = shift;
-
-    my $q       = $self->query();
-    my $session = $self->param('session');
-
-
-    my $template = $self->load_template("pages/interest.tmpl");
-
-    my $z = $DHCP::Config::ZONE;
-    $z =~ s/\.$//g;
-    $template->param( "zone" => $z );
-    if ( $z =~ /^(.*)\.(.*)$/ )
-    {
-        $template->param( "uc_zone" => uc($1) . "." . $2 );
-    }
-
-    my $existing = $session->param('logged_in');
-    $template->param( username => $existing ) if ($existing);
-
-    if ( $q->param("submit") )
-    {
-        my $email = $q->param("email");
-        my $comm = $q->param("comments") || "";
-
-        #
-        #  Load the template
-        #
-        my $mt = $self->load_template("emails/interest.tmpl");
-        $mt->param( email => $email,
-                    comm  => $comm );
-        $mt->param( username => $existing ) if ($existing);
-
-        open( SENDMAIL, "|/usr/lib/sendmail -t" ) or
-          die "Cannot open sendmail: $!";
-        print( SENDMAIL $mt->output() );
-        close(SENDMAIL);
-
-        $template->param( thanks => 1 );
-
-    }
-
-    return ( $template->output() );
-}
 
 
 
