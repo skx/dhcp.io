@@ -37,4 +37,9 @@
 
       </dd>
 
+      <dt>Can we see our history?</dt>
+      <dd>
+      <p>Yes, if you're signed into the site you can visit <a href="/logs/">the logs page</a>.</p>
+      <p>The log-page will show you the most recent 100 changes you've applied to your record(s).</p>
+      </dd>
     </dl>
