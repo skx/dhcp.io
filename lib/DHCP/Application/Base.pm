@@ -199,7 +199,7 @@ sub load_template
 
     my $path = "";
 
-    my @dirs = ( "../templates/", "../../templates/" );
+    my @dirs = ( "../templates/", "../../templates/", "../templates/inc", "../../templates/inc" );
 
     foreach my $dir (@dirs)
     {
