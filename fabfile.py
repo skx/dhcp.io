@@ -96,9 +96,6 @@ def deploy():
         put( "lib/DHCP/Config.pm", "~/current/lib/DHCP" )
 
 
-    if os.path.isdir("templates.local"):
-        put( "templates.local", "~/current/" )
-
     #
     #  Upload our CSS files.  These should be minified if pyslimmer is
     # installed.
