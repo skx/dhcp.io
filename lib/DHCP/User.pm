@@ -545,4 +545,46 @@ sub forbidden
 }
 
 
+=begin doc
+
+Return the most recent logs.
+
+=end doc
+
+=cut
+
+sub logs
+{
+    my ( $self, $user ) = (@_);
+
+    my $logs;
+    $user = lc($user) if ($user);
+
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql = $db->prepare(
+        "SELECT a.domain,a.changed_from,a.changed_to,a.ip FROM logs AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER by a.id ASC LIMIT 100"
+      ) or
+      die "Failed to prepare" . $db->errstr();
+
+    $sql->execute($user) or die "Failed to execute";
+
+    my ( $record, $old, $new, $source );
+    $sql->bind_columns( undef, \$record, \$old, \$new, \$source );
+
+    while ( $sql->fetch() )
+    {
+        push( @$logs,
+              {  old    => $old,
+                 new    => $new,
+                 record => $record,
+                 source => $source
+              } );
+    }
+
+
+    $sql->finish();
+
+    return ($logs);
+}
 1;

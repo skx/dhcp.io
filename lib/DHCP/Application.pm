@@ -98,6 +98,9 @@ sub setup
         'index' => 'index',
         'home'  => 'home',
 
+        # Log lookup
+        'logs' => 'logs',
+
         # static-page serving
         'static' => 'static',
 
@@ -875,6 +878,50 @@ sub slow_down
     );
 }
 
+
+
+sub logs
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  The user must be logged in.
+    #
+    my $existing = $session->param('logged_in');
+    if ( !defined($existing) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+    #
+    #  Load the template
+    #
+    my $template = $self->load_template("pages/logs.tmpl");
+    $template->param( username => $existing ) if ($existing);
+
+    #
+    #  Populate the domain.
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+    #
+    #  Get the logs
+    #
+    my $helper = DHCP::User->new();
+    my $logs   = $helper->logs($existing);
+
+    $template->param( logs => $logs ) if ($logs);
+    return ( $template->output() );
+
+}
 
 1;
 

@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title><!-- tmpl_var name='uc_zone' --> - Fast and Reliable Dynamic DNS</title>
+    <!-- tmpl_include name='header.inc' -->
+  </head>
+  <body>
+    <div id="bar">
+      <!-- tmpl_include name="login-or-menu.inc" -->
+    </div>
+    <div id="content">
+      <h3>Activity Log</h3>
+<!-- tmpl_if name='logs' -->
+<p>The following table shows the IP changes applied to the record(s) you control:</p>
+<blockquote>
+<table>
+<tr>
+  <td><b>Record</b></td>
+  <td><b>Old IP</b></td>
+  <td><b>New IP</b></td>
+  <td><b>Source</b></td>
+</tr>
+<!-- tmpl_loop name='logs' -->
+<tr>
+  <td><!-- tmpl_var name='record' --></td>
+  <td><!-- tmpl_var name='old' --></td>
+  <td><!-- tmpl_var name='new' --></td>
+  <td><!-- tmpl_var name='source' --></td>
+</tr>
+<!-- /tmpl_loop -->
+
+</table>
+</blockquote>
+<!-- tmpl_else -->
+<p>You have no updates logged.</p>
+<!-- /tmpl_if -->
+    </div>
+    <!-- tmpl_include name='footer.inc' -->
+  </body>
+</html>
