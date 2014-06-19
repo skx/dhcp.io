@@ -387,7 +387,7 @@ sub home
     if ( $records && ( scalar(@$records) >= 5 ) )
     {
         $template->param( exceeded => 1 )
-          unless ( $DHCP::Config::Magic{ $existing } );
+          unless ( $DHCP::Config::MAGIC->{ $existing } );
     }
 
     #
