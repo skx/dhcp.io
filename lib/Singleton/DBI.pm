@@ -43,7 +43,7 @@ use DBI;
 #
 #  The single, global, instance of this object
 #
-my $_h = undef;
+my $_dbh = undef;
 
 
 
@@ -55,9 +55,9 @@ Gain access to the single instance of our database connection.
 
 sub instance
 {
-    $_h ||= (shift)->new();
+    $_dbh ||= (shift)->new();
 
-    return ($_h);
+    return ($_dbh);
 }
 
 
