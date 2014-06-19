@@ -5,7 +5,6 @@
         <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understood how it worked, and how it could be used.</p>
         <p>This site was born as a result of that learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
 
-        <p>I'm <a href="/interest/">prioritizing premium features</a>, if you'd like to <a href="/feedback">make suggestions</a>.</p>
 
       </dd>
 
