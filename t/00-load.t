@@ -10,6 +10,9 @@ use Test::More qw! no_plan !;
 BEGIN {use_ok("Digest::SHA")}
 require_ok("Digest::SHA");
 
+BEGIN {use_ok("DBI")}
+require_ok("DBI");
+
 BEGIN {use_ok("Carp")}
 require_ok("Carp");
 

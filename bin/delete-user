@@ -65,9 +65,9 @@ use strict;
 use warnings;
 
 
-use Redis;
 use DHCP::User;
 use Getopt::Long;
+
 
 my $user;
 
@@ -84,20 +84,19 @@ if ( !$user )
     exit(1);
 }
 
-#
-#  Connect to redis
-#
-my $r = new Redis;
-die "Redis doesn't seem to be running on this host" unless ( $r->ping() );
+
 
 #
 #  Create a helper.
 #
-my $tmp = DHCP::User->new( redis => $r );
+my $tmp = DHCP::User->new();
 
+#
+#  Ensure the user isn't present.
+#
 if ( !$tmp->present($user) )
 {
-    print "The user doesn't exist: $tmp\n";
+    print "The user doesn't exist: $user\n";
     exit(1);
 }
 

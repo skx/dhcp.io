@@ -11,26 +11,30 @@
     <h1>Welcome Home <!-- tmpl_var name='username' --></h1>
 
     <ul class="tabs">
-      <li><a href="#<!-- tmpl_var name='username' -->"><!-- tmpl_var name='username' --></a></li>
+<!-- tmpl_loop name='records' -->
+      <li><a href="#<!-- tmpl_var name='name' escape='html' -->"><!-- tmpl_var name='name' --></a></li>
+<!-- /tmpl_loop -->
       <li><a href="#add">Add new ..</a></li>
     </ul>
 
     <div class="tabContainer">
-      <div id="<!-- tmpl_var name='username' -->" class="tabContent">
+
+<!-- tmpl_loop name='records' -->
+      <div id="<!-- tmpl_var name='name' -->" class="tabContent">
         <!-- tmpl_if name='present' -->
-        <h3><!-- tmpl_var name='username' -->.<!-- tmpl_var name='zone' --></h3>
+        <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' --></h3>
 
         <blockquote>
           <table cellspacing="5">
             <!-- tmpl_if name='ipv4' -->
             <tr><td><p><b>IPv4</b></td>
               <td><p><!-- tmpl_var name='ipv4' --> </p>
-              <td><p><a href="/edit/">Edit</a> | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=A;ip=<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
+              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/A/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv4' -->
             <!-- tmpl_if name='ipv6' -->
             <tr><td><p><b>IPv6</b></td>
               <td><p><!-- tmpl_var name='ipv6' --></p></td>
-              <td><p><a href="/edit/">Edit</a> | <a href="/cgi-bin/index.cgi?mode=delete;name=<!-- tmpl_var name='username' -->;type=AAAA;ip=<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
+              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv6' -->
           </table>
         </blockquote>
@@ -63,12 +67,21 @@
           <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
         </blockquote>
       </div>
+<!-- /tmpl_loop name='records' -->
       <div id="add" class="tabContent">
-        <p>It is not possible to add new records at this time.</p>
-
-<!-- tmpl_if name='pimp' -->
-        <p>If you would like this feature, perhaps for a small premium, or one-off lifetime fee, please <a href="/interest/">register your interest</a>.</p>
-<!-- /tmpl_if name='pimp' -->
+<!-- tmpl_if name='exceeded' -->
+        <h3>Limit Exceeded</h3>
+        <p>You may only have five, or fewer, names on one account.</p>
+        <p>If you'd like more then please <a href="/feedbackup">mail $teve</a>.</p>
+<!-- tmpl_else name='exceeded' -->
+        <h3>Add New</h3>
+        <p>You can add up to five records with your account:</p>
+        <form method="POST" action="/record/">
+          <input type="hidden" name="mode" value="record">
+          <input type="text" name="name" value="">
+          <input type="submit" name="submit" value="Create Name" >
+        </form>
+<!-- /tmpl_if -->
       </div>
     </div>
     <p>&nbsp;</p>

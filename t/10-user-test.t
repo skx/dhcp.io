@@ -8,6 +8,8 @@ use Test::More qw! no_plan !;
 
 BEGIN {use_ok("DHCP::User")}
 require_ok("DHCP::User");
+BEGIN {use_ok("Singleton::DBI")}
+require_ok("Singleton::DBI");
 
 
 #
@@ -55,16 +57,18 @@ SKIP:
     #
     is( length($username), 8, "Generated 8 character long username " );
 
+
     #
     # Create the helper
     #
-    my $u = DHCP::User->new( redis => $redis );
+    my $u = DHCP::User->new( redis => $redis,
+                             db    => Singleton::DBI->instance() );
     isa_ok( $u, "DHCP::User", "Our object has the right type" );
 
     #
     # Try to find the user.
     #
-    is( $u->present($username), 0, "The user doesn't exist." );
+    is( $u->present($username), 0, "The user doesn't exist: $username." );
 
 
     #
@@ -88,20 +92,6 @@ SKIP:
     is( $u->testLogin( lc($username), $username ),
         lc($username), "Login works" );
 
-    #
-    #  Get the token for the user
-    #
-    my $token1 = $u->getToken($username);
-    my $token2 = $u->getToken( lc($username) );
-
-    is( $token1, $token2, "Tokens match" );
-
-    #
-    #  Find the user by token
-    #
-    my $user = $u->getUserFromToken($token1);
-    is( $user, lc($username), "Lookup of the user from token works" );
-
 
     #
     #  Delete the user
@@ -114,7 +104,8 @@ SKIP:
 #
 #  Test that expected usernames are forbidden.
 #
-my $u = DHCP::User->new( redis => 1 );
+my $u = DHCP::User->new( redis => $redis,
+                         db    => Singleton::DBI->instance() );
 
 foreach my $name (qw! www admin ipv4 ipv6 !)
 {

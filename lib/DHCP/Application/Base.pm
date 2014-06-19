@@ -41,11 +41,16 @@ package DHCP::Application::Base;
 use base 'CGI::Application';
 
 #
+# Our modules
+#
+use Singleton::DBI;
+use Singleton::Redis;
+
+#
 # Standard module(s)
 #
 use CGI::Session;
 use HTML::Template;
-use Redis;
 
 
 
@@ -63,11 +68,6 @@ sub cgiapp_init
     my $self  = shift;
     my $query = $self->query();
 
-    #
-    # Open our redis connection.
-    #
-    $self->{ 'redis' } = Redis->new();
-
     my $cookie_name   = 'CGISESSID';
     my $cookie_expiry = '+7d';
     my $sid           = $query->cookie($cookie_name) || undef;
@@ -75,7 +75,7 @@ sub cgiapp_init
     # session setup
     my $session = CGI::Session->new( "driver:redis",
                                      $sid,
-                                     {  Redis  => $self->{ 'redis' },
+                                     {  Redis  => Singleton::Redis->instance(),
                                         Expire => 60 * 60 * 24
                                      } );
 
@@ -128,8 +128,9 @@ sub teardown
     #
     #  Disconnect.
     #
-    my $redis = $self->{ 'redis' };
-    $redis->quit() if ($redis);
+    Singleton::Redis->instance()->quit();
+    Singleton::DBI->instance()->disconnect();
+
 }
 
 
@@ -199,7 +200,8 @@ sub load_template
 
     my $path = "";
 
-    my @dirs = ( "../templates/", "../../templates/" );
+    my @dirs = ( "../templates/",    "../../templates/",
+                 "../templates/inc", "../../templates/inc" );
 
     foreach my $dir (@dirs)
     {
@@ -211,18 +213,9 @@ sub load_template
     my $template = HTML::Template->new( filename => $file,
                                         path     => [@dirs],
                                         %options,
+                                        global_vars       => 1,
                                         die_on_bad_params => 0,
                                       );
-
-
-    #
-    #  If there is a STEVE:KEMP key in Redis then we're running
-    # this in the production environment.
-    #
-    if ( $self->{ 'redis' }->get("STEVE:KEMP") )
-    {
-        $template->param( pimp => 1 );
-    }
 
     return ($template);
 }
