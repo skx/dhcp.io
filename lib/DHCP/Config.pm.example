@@ -64,4 +64,12 @@ our $SALT = 'VieghohS7ookOhT3giebiig7peiroov/i4OoEig%eghae7ufJa=w7eev4ooH AeF7ei
 our @FORBIDDEN = ( qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret ! );
 
 
+#
+#  Magic-users can have more than five hostnames ..
+#
+our %MAGIC = {
+              "skx" => 1,
+             };
+
+
 1;

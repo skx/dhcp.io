@@ -384,7 +384,11 @@ sub home
     #
     # Limit on records.
     #
-    $template->param( exceeded => 1 ) if ( $records && ( scalar( @$records ) >= 5 ) );
+    if ( $records && ( scalar(@$records) >= 5 ) )
+    {
+        $template->param( exceeded => 1 )
+          unless ( $DHCP::Config::Magic{ $existing } );
+    }
 
     #
     #  Render.
