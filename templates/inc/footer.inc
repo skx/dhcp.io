@@ -1,4 +1,3 @@
-<!-- tmpl_if name='pimp' -->
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <div style="border-top:1px solid silver">
@@ -9,9 +8,6 @@
           <li>Related Links
             <ul>
               <li><a href="http://dns-api.org/">DNS API - Online DNS lookup service</a></li>
-<!-- tmpl_if name='pimp' -->
-              <li><a href="/interest">Premium features</a></li>
-<!-- /tmpl_if name='pimp' -->
             </ul>
           </li>
         </ul>
@@ -62,4 +58,3 @@
     </tr>
   </table>
 </div>
-<!-- /tmpl_if name='pimp' -->
