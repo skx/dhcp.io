@@ -34,14 +34,13 @@ package DHCP::Records;
 # This must be renamed - it isn't in the repository.
 use DHCP::Config;
 
+use Singleton::Redis;
 use WebService::Amazon::Route53;
 use JSON;
 
 =begin doc
 
 Constructor.
-
-Save away the redis handle we're given.
 
 =end doc
 
@@ -61,11 +60,6 @@ sub new
       WebService::Amazon::Route53->new( id  => $DHCP::Config::ROUTE_53_ID,
                                         key => $DHCP::Config::ROUTE_53_KEY );
 
-
-    #
-    #  Save the Redis handle
-    #
-    $self->{ 'redis' } = $supplied{ 'redis' } || die "Missing Redis handle";
 
     bless( $self, $class );
     return $self;
@@ -102,7 +96,8 @@ sub getRecords
     #
     #  Lookup in cache first
     #
-    my $cached = $self->{ 'redis' }->get("DHCP:CACHED:ZONE");
+    my $redis  = Singleton::Redis->instance();
+    my $cached = $redis->get("DHCP:CACHED:ZONE");
     if ($cached)
     {
         $result = from_json($cached);
@@ -160,7 +155,7 @@ sub getRecords
     #
     #  Store in the cache
     #
-    $self->{ 'redis' }->set( "DHCP:CACHED:ZONE", to_json($result) );
+    $redis->set( "DHCP:CACHED:ZONE", to_json($result) );
 
     return ($result);
 }
@@ -200,7 +195,7 @@ sub removeRecord
     #
     #  Remove the cached values - which are now invalid.
     #
-    $self->{ 'redis' }->del("DHCP:CACHED:ZONE");
+    Singleton::Redis->instance()->del("DHCP:CACHED:ZONE");
 
 }
 
@@ -240,13 +235,13 @@ sub createRecord
     #
     #  Remove the cached values - which are now invalid.
     #
-    $self->{ 'redis' }->del("DHCP:CACHED:ZONE");
+    Singleton::Redis->instance()->del("DHCP:CACHED:ZONE");
 }
 
 
 =begin doc
 
-Lookup the current values, from DNS, of the given name.
+Lookup the current values of the given record.
 
 Return both the IPv4 and IPv6 records - if available.
 
