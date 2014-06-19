@@ -104,7 +104,7 @@ sub new
         #  Update logs
         #
         $dbh->do(
-            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner)"
+            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner, timestamp DATE DEFAULT (datetime('now','localtime')))"
         );
     }
     else
@@ -117,7 +117,7 @@ sub new
         }
 
         $dbh->do(
-            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner)"
+            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner, timestamp DATE DEFAULT (datetime('now','localtime')))"
         ) unless ($found);
 
     }

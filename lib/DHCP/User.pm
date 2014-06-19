@@ -563,14 +563,14 @@ sub logs
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
 
     my $sql = $db->prepare(
-        "SELECT a.domain,a.changed_from,a.changed_to,a.ip FROM logs AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER by a.id ASC LIMIT 100"
+        "SELECT a.domain,a.changed_from,a.changed_to,a.ip,a.timestamp FROM logs AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER by a.id ASC LIMIT 100"
       ) or
       die "Failed to prepare" . $db->errstr();
 
     $sql->execute($user) or die "Failed to execute";
 
-    my ( $record, $old, $new, $source );
-    $sql->bind_columns( undef, \$record, \$old, \$new, \$source );
+    my ( $record, $old, $new, $source, $time );
+    $sql->bind_columns( undef, \$record, \$old, \$new, \$source, \$time );
 
     while ( $sql->fetch() )
     {
@@ -578,7 +578,8 @@ sub logs
               {  old    => $old,
                  new    => $new,
                  record => $record,
-                 source => $source
+                 source => $source,
+                 time   => $time
               } );
     }
 
