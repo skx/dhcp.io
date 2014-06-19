@@ -4,13 +4,11 @@ DHCP.io
 This repository contains the code behind the [DHCP.io](http://dhcp.io/) service,
 which provides a self-hosted Dynamic-DNS system.
 
-Users can register any hostname beneath a given DNS zone, and easily
+Users can register up to five hostname beneath a given DNS zone, and easily
 update those hostnames to point to arbitrary IPv4 or IPv6 addresses.
 
 For example if you deployed the code with the hostname "`spare.io`", then a user
 "`bob`" would control the hostname "`bob.spare.io`".
-
-> **NOTE**:  It is currently assumed a single user can control only a single hostname.
 
 
 
@@ -19,10 +17,12 @@ Overview
 
 The code is written in Perl, using the [CGI::Application](http://search.cpan.org/perldoc?CGI%3A%3AApplication) framework.
 
-The logins for all users are stored in a [Redis](http://redis.io/) instance
-running on the local-host.
+The logins and record-associations for all users are stored in an SQLite
+database, making deployment nice and simple.
 
-For the serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
+[Redis](http://redis.io/) instance is used for session-storage, and zone-caching.
+
+For serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
 
 
 Requirements
@@ -48,6 +48,8 @@ The code relies upon the following modules being present and installed:
   * Bundled into the distribution, as it isn't packaged for Debian.
 * Data::UUID
   * `apt-get install libtie-ixhash-perl libdata-uuid-libuuid-perl`
+* DBI
+  * `apt-get install libdbi-perl libdbd-sqlite3-perl`
 * HTML::Template
   * `apt-get install libhtml-template-perl`
 * JSON
@@ -68,8 +70,7 @@ or:
 
 
 Finally you'll also need a Redis server running on the same host as
-the application, as this is used to store login sessions along with the
-user-data.
+the application, as this is used to store login sessions.
 
 Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config.pm`, updating it to contain your credentials.
 
