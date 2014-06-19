@@ -85,17 +85,17 @@ if ( !$user || !$pass )
 }
 
 
-#
-#  Connect to redis
-#
-my $r = new Redis;
-die "Redis doesn't seem to be running on this host" unless ( $r->ping() );
+
 
 #
-#  Create the new user.
+#  Create the new user-helper.
 #
-my $tmp = DHCP::User->new( redis => $r );
+my $tmp = DHCP::User->new();
 
+
+#
+#  Test the user will be OK
+#
 die "User exists already!" if ( $tmp->present($user) );
 die "Forbidden user!"      if ( $tmp->forbidden($user) );
 
