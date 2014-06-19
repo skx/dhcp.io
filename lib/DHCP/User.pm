@@ -249,6 +249,36 @@ sub deleteUser
 
 =begin doc
 
+Find the user who owns the given domain.
+
+=end doc
+
+=cut
+
+sub getOwnerFromDomain
+{
+    my ( $self, $record ) = (@_);
+
+    #
+    #  Fetch the zones and tokens.
+    #
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql = $db->prepare(
+        "SELECT a.login FROM users AS a JOIN records AS b WHERE ( a.id=b.owner AND b.name =?) "
+      ) or
+      die "Failed to prepare";
+    $sql->execute($record) or die "Failed to execute:" . $db->errstr();
+
+
+    my $found = $sql->fetchrow_array();
+
+    return ($found);
+}
+
+
+=begin doc
+
 Discover which record corresponds to the specified token.
 
 =end doc
@@ -286,7 +316,7 @@ method than I'd like.
 
 sub setRecord
 {
-    my ( $self, $record, $ip ) = (@_);
+    my ( $self, $record, $ip, $owner ) = (@_);
 
     #
     # Create a helper
@@ -328,6 +358,29 @@ sub setRecord
     }
 
     $helper->createRecord( $record, $type, $ip );
+
+    #
+    #  Get the user-id
+    #
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($owner) or
+      die "Failed to execute statement";
+    my $user_id = $sql->fetchrow_array();
+    $sql->finish();
+
+    #
+    #  Log the update.
+    #
+    $sql = $db->prepare(
+        "INSERT INTO logs (domain,changed_from, changed_to, ip, owner) VALUES(?,?,?,?,?);"
+      ) or
+      die "Failed to prepare statement:" . $db->errstr();
+    $sql->execute( $record, $old_ip, $ip, $ENV{ 'REMOTE_ADDR' }, $user_id ) or
+      die "Failed to execute statement";
+    $sql->finish();
 
 }
 

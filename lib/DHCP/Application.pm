@@ -638,7 +638,9 @@ sub set
 
     if ($user)
     {
-        $temp->setRecord( $user, $ip );
+        my $owner = $temp->getOwnerFromDomain($user);
+
+        $temp->setRecord( $user, $ip, $owner );
         return ($ip);
     }
     else
@@ -752,8 +754,8 @@ sub edit
 
         my $uh = DHCP::User->new();
 
-        $uh->setRecord( $record, $ipv4 ) if ($ipv4);
-        $uh->setRecord( $record, $ipv6 ) if ($ipv6);
+        $uh->setRecord( $record, $ipv4, $existing ) if ($ipv4);
+        $uh->setRecord( $record, $ipv6, $existing ) if ($ipv6);
 
         $template->param( updated => 1 );
     }

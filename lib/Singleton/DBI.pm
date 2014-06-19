@@ -85,12 +85,41 @@ sub new
 
     if ($create)
     {
+
+        #
+        #  Users
+        #
         $dbh->do(
             "CREATE TABLE users (id INTEGER PRIMARY KEY, login, password, email, ip);"
         );
+
+        #
+        #  DNS records
+        #
         $dbh->do(
              "CREATE TABLE records (id INTEGER PRIMARY KEY, name, token, owner)"
         );
+
+        #
+        #  Update logs
+        #
+        $dbh->do(
+            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner)"
+        );
+    }
+    else
+    {
+        my @tables = $dbh->tables();
+        my $found  = 0;
+        foreach my $table (@tables)
+        {
+            $found = 1 if ( $table =~ /logs/i );
+        }
+
+        $dbh->do(
+            "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner)"
+        ) unless ($found);
+
     }
 
     return ($dbh);
