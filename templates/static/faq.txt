@@ -32,13 +32,8 @@
 
       <dt>Is this service free?</dt>
       <dd>
-        <p>It will always be free to set the IP address for a single name, for both IPv4 and IPv6.</p>
-        <p>It is possible in the future that there might be an annual charge, or lifetime membership (one-off) fee which will unlock <a href="/interest/">extra features</a> such as:</p>
-        <ul>
-          <li>The ability to set an MX record.</li>
-          <li>The ability to control multiple records with a single login.</li>
-        </ul>
-        <p>Regardless of future features if you find this service useful you can <a href="http://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
+        <p>Yes it is a free service, although if you do not trust it to remain alive in the future you may <a href="http://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
+        <p>In the near future there will be a second service launched for hosting DNS on Amazon's infrastructure, using Git for storage.  If you'd like to discuss that please do <a href="/feedback/">get in touch</a>.</p>
 
       </dd>
 
