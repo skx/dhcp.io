@@ -37,6 +37,7 @@ package DHCP::User;
 # Our code
 use DHCP::Records;
 use DHCP::Config;
+use Singleton::DBI;
 
 # Standard modules.
 use Digest::SHA;
@@ -46,8 +47,6 @@ use Data::UUID::LibUUID;
 =begin doc
 
 Constructor.
-
-Save away the redis handle we're given.
 
 =end doc
 
@@ -59,8 +58,6 @@ sub new
     my $class = ref($proto) || $proto;
 
     my $self = {};
-
-    $self->{ 'redis' } = $supplied{ 'redis' } || die "Missing Redis handle";
 
     bless( $self, $class );
     return $self;
@@ -81,7 +78,7 @@ sub createUser
     my ( $self, $user, $pass, $mail, $ip ) = (@_);
 
     $user = lc($user);
-    my $redis = $self->{ 'redis' } || die "Missing handle";
+
 
     #
     #  Now hash the users password with our Salt
@@ -91,23 +88,91 @@ sub createUser
     $sha->add($pass);
     my $hash = $sha->hexdigest();
 
-    # set their login details.
-    $redis->set( "DHCP:USER:$user", $hash );
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+    my $sql = $db->prepare(
+                "INSERT INTO users (login,password,email,ip) VALUES( ?,?,?,?)");
+    $sql->execute( $user, $hash, $mail, $ip );
+    $sql->finish();
 
-    if ($mail)
-    {
-        $redis->set( "DHCP:USER:$user:MAIL", $mail );
-    }
+    #
+    #  Get the user-id
+    #
+    $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($user) or
+      die "Failed to execute statement";
+    my $user_id = $sql->fetchrow_array();
+    $sql->finish();
 
-    if ($ip)
-    {
-        $redis->set( "DHCP:USER:$user:IP", $ip );
-    }
+    #
+    # Now add a new record for them.
+    #
+    $sql =
+      $db->prepare("INSERT INTO records( name, token, owner ) VALUES( ?,?,?)")
+      or
+      die "Failed to prepare statement";
+    $sql->execute( $user, new_uuid_string(), $user_id ) or
+      die "Failed to execute statement";
+    $sql->finish();
+}
 
-    # set their token
-    my $uid = new_uuid_string();
-    $redis->set( "DHCP:USER:$user:TOKEN", $uid );
-    $redis->set( "DHCP:TOKEN:$uid",       $user );
+
+=begin doc
+
+Add a record to the user's set
+
+=end doc
+
+=cut
+
+sub addRecord
+{
+    my ( $self, $user, $name ) = (@_);
+
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    #
+    #  Get the user-id
+    #
+    my $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($user) or
+      die "Failed to execute statement";
+    my $user_id = $sql->fetchrow_array();
+    $sql->finish();
+
+    die "No user ID" unless ( $user_id && ( $user_id =~ /^([0-9]+)$/ ) );
+    $sql =
+      $db->prepare("INSERT INTO records( name, token, owner ) VALUES( ?,?,?)")
+      or
+      die "Failed to prepare statement";
+    $sql->execute( $name, new_uuid_string(), $user_id ) or
+      die "Failed to execute statement";
+    $sql->finish();
+
+}
+
+
+=begin doc
+
+Does the given record exist?
+
+=end doc
+
+=cut
+
+sub recordPresent
+{
+    my ( $self, $name ) = (@_);
+
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+    my $sql = $db->prepare("SELECT name FROM records WHERE name=?");
+    $sql->execute($name);
+    my $found = $sql->fetchrow_array() || "";
+    $sql->finish();
+
+    return ( $found ? $found : undef );
+
 }
 
 
@@ -126,51 +191,65 @@ sub deleteUser
     $user = lc($user);
 
     #
+    #  Get all data pertaining to this user, so that we can delete
+    # their DNS records
+    #
+    my $data = $self->getAllData($user);
+
+    #
     # Create a helper for removing the old DNS records.
     #
     my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
 
-    #
-    #  Get all the zones records - so we can see if there are any present
-    # for the user we're going to delete.
-    #
-    my $existing = $helper->getRecords();
-
-    #
-    #  If there are records then delete them.
-    #
-    foreach my $type (qw! A AAAA !)
+    foreach my $entry (@$data)
     {
-
-        #
-        #  Look for the old value of the zone.
-        #
-        my $old_ip = $existing->{ $type }{ $user } || undef;
-
-        if ($old_ip)
+        if ( $entry->{ 'ipv4' } )
         {
-            $helper->removeRecord( $user, $type, $old_ip );
+            $helper->removeRecord( $entry->{ 'name' }, "A",
+                                   $entry->{ 'ipv4' } );
+        }
+        if ( $entry->{ 'ipv6' } )
+        {
+            $helper->removeRecord( $entry->{ 'name' },
+                                   "AAAA", $entry->{ 'ipv6' } );
+
         }
     }
 
 
-    my $redis = $self->{ 'redis' } || die "Missing handle";
+    #
+    #  Get the user-id
+    #
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+    my $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($user) or
+      die "Failed to execute statement";
+    my $user_id = $sql->fetchrow_array();
+    $sql->finish();
 
-    # Get their token so we can remove it.
-    my $token = $redis->get("DHCP:USER:$user:TOKEN");
+    #
+    #  Delete the records from the database.
+    #
+    $sql = $db->prepare("DELETE FROM records WHERE owner=?") or
+      die "Failed to prepare";
+    $sql->execute($user_id);
+    $sql->finish();
 
-    # Remove the keys.
-    $redis->del("DHCP:USER:$user");
-    $redis->del("DHCP:USER:$user:MAIL");
-    $redis->del("DHCP:USER:$user:IP");
-    $redis->del("DHCP:USER:$user:TOKEN");
-    $redis->del("DHCP:TOKEN:$token");
+    #
+    #  Delete the user from the database.
+    #
+    $sql = $db->prepare("DELETE FROM users WHERE id=?") or
+      die "Failed to prepare";
+    $sql->execute($user_id);
+    $sql->finish();
+
 }
 
 
 =begin doc
 
-Discover which username (read DNS record) the given token represents.
+Discover which record corresponds to the specified token.
 
 =end doc
 
@@ -180,8 +259,16 @@ sub getUserFromToken
 {
     my ( $self, $token ) = (@_);
 
-    my $redis = $self->{ 'redis' } || die "Missing handle";
-    return ( $redis->get("DHCP:TOKEN:$token") );
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql = $db->prepare("SELECT name FROM records WHERE token=?") or
+      die "Failed to prepare statement";
+    $sql->execute($token) or
+      die "Failed to execute statement";
+    my $name = $sql->fetchrow_array();
+    $sql->finish();
+
+    return ($name);
 }
 
 
@@ -249,26 +336,65 @@ sub setRecord
 
 =begin doc
 
-Get the token belonging to the given user.
+Get the data belonging to the user. names/tokens belonging to the given user.
 
 =end doc
 
 =cut
 
-sub getToken
+sub getAllData
 {
     my ( $self, $user ) = (@_);
 
-    $user = lc($user) if ($user);
+    my $results;
 
-    my $redis = $self->{ 'redis' } || die "Missing handle";
-    return ( $redis->get("DHCP:USER:$user:TOKEN") );
+    #
+    # Lookup the live values of all zones.
+    #
+    my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
+    my $live = $tmp->getRecords();
+
+
+    #
+    #  Fetch the zones and tokens.
+    #
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql = $db->prepare(
+        "SELECT a.name,a.token FROM records AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER BY a.name ASC"
+      ) or
+      die "Failed to prepare";
+    $sql->execute($user) or die "Failed to execute";
+
+
+    my ( $dom, $token );
+    $sql->bind_columns( undef, \$dom, \$token );
+
+    while ( $sql->fetch() )
+    {
+        my $present = $live->{ 'A' }{ $dom } || $live->{ 'AAAA' }{ $dom };
+        push( @$results,
+              {  name    => $dom,
+                 token   => $token,
+                 present => $present,
+                 ipv4    => $live->{ 'A' }{ $dom } ? $live->{ 'A' }{ $dom } :
+                   undef,
+                 ipv6 => $live->{ 'AAAA' }{ $dom } ? $live->{ 'AAAA' }{ $dom } :
+                   undef,
+              } );
+
+    }
+    $sql->finish();
+
+    return ($results);
 }
 
 
 =begin doc
 
 Test a login.
+
+Return undef on failure, otherwise return the username.
 
 =end doc
 
@@ -278,22 +404,10 @@ sub testLogin
 {
     my ( $self, $user, $pass ) = (@_);
 
-    my $redis = $self->{ 'redis' } || die "Missing handle";
+    $user = lc($user);
 
     #
-    #  Does the user exist?
-    #
-    return unless ( $self->present($user) );
-
-    $user = lc($user) if ($user);
-
-    #
-    #  Get the password in the database.
-    #
-    my $epass = $redis->get("DHCP:USER:$user");
-
-    #
-    #  Now hash the users password with our Salt
+    #  Hash the users password with our Salt
     #
     my $sha = Digest::SHA->new();
     $sha->add($DHCP::Config::SALT);
@@ -301,9 +415,26 @@ sub testLogin
     my $hash = $sha->hexdigest();
 
     #
-    #  If the computed hash matches the expected hash we're good.
+    #  Does the user exist?  If not then it's a failure.
     #
-    return $user if ( $hash eq $epass );
+    return unless ( $self->present($user) );
+
+
+    #
+    #  Lookup
+    #
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $sql =
+      $db->prepare("SELECT login FROM users WHERE ( login=? AND password=? )")
+      or
+      die "Failed to prepare";
+
+    $sql->execute( $user, $hash ) or
+      die "Failed to execute";
+    my $found = $sql->fetchrow_array();
+
+    return ( $found ? $found : undef );
 
 }
 
@@ -322,9 +453,13 @@ sub present
 
     $user = lc($user) if ($user);
 
-    my $redis = $self->{ 'redis' };
-    return 1 if ( defined( $redis->get("DHCP:USER:$user") ) );
-    return 0;
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+    my $sql = $db->prepare("SELECT login FROM users WHERE login=?");
+    $sql->execute($user);
+    my $found = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    return ( $found ? 1 : 0 );
 
 }
 
