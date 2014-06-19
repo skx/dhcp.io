@@ -1,7 +1,7 @@
 DHCP.io
 -------
 
-This repository contains the code behind the [DHCP.io](http://dhcp.io/) website,
+This repository contains the code behind the [DHCP.io](http://dhcp.io/) service,
 which provides a self-hosted Dynamic-DNS system.
 
 Users can register any hostname beneath a given DNS zone, and easily
@@ -13,8 +13,9 @@ For example if you deployed the code with the hostname "`spare.io`", then a user
 > **NOTE**:  It is currently assumed a single user can control only a single hostname.
 
 
-Implementation
----------------
+
+Overview
+--------
 
 The code is written in Perl, using the [CGI::Application](http://search.cpan.org/perldoc?CGI%3A%3AApplication) framework.
 
@@ -22,6 +23,18 @@ The logins for all users are stored in a [Redis](http://redis.io/) instance
 running on the local-host.
 
 For the serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
+
+
+Requirements
+------------
+
+To deploy this code you'll need:
+
+* A domain name, beneath which you'll let users register accounts.
+* A working Perl installation.
+* A [Redis](http://redis.io/) server.
+* An account with [Amazon's Route53 DNS service](http://aws.amazon.com/route53/).
+
 
 
 Installation
@@ -61,13 +74,13 @@ user-data.
 Clone the code, and rename "`lib/DHCP/Config.pm.example`" to be `lib/DHCP/Config.pm`, updating it to contain your credentials.
 
 
-Running Locally
----------------
+Running/Testing Locally
+-----------------------
 
 The installation section should be complete enough that you're
 able to run the application for real.
 
-However for testing purposes a **sample** lighttpd configuration file
+However for testing purposes a sample [lighttpd](http://www.lighttpd.net/) configuration file
 is also included within this repository.  The configuration file contains
 all the required "rewrite rules", for example:
 
@@ -77,6 +90,7 @@ If you have `lighttpd` installed then you should be able to launch the
 application on your local system via:
 
     $ make local
+    ..
     Launching lighttpd on http://localhost:2000/
     lighttpd -f conf/lighttpd.conf -D
 
