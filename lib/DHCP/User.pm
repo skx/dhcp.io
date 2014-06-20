@@ -347,6 +347,15 @@ sub setRecord
     my $old_ip = $existing->{ $type }{ $record } || undef;
 
 
+    #
+    #  If we have an old IP and it is not different to the new IP
+    # then we do nothing.
+    #
+    if ( ( $old_ip && $ip ) &&
+         ( $old_ip eq $ip ) )
+    {
+        return;
+    }
 
     #
     #  If we got the old IP then we have to apply a "delete" + "create"
