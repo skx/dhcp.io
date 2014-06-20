@@ -8,7 +8,7 @@ Users can register up to five hostname beneath a given DNS zone, and easily
 update those hostnames to point to arbitrary IPv4 or IPv6 addresses.
 
 For example if you deployed the code with the hostname "`spare.io`", then a user
-"`bob`" would control the hostname "`bob.spare.io`".
+"`bob`" would control the hostname "`bob.spare.io`", and could also claim four more names.
 
 
 
@@ -20,7 +20,7 @@ The code is written in Perl, using the [CGI::Application](http://search.cpan.org
 The logins and record-associations for all users are stored in an SQLite
 database, making deployment nice and simple.
 
-[Redis](http://redis.io/) instance is used for session-storage, and zone-caching.
+A [Redis](http://redis.io/) instance is used for session-storage, and zone-caching.
 
 For serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
 
@@ -34,7 +34,7 @@ To deploy this code you'll need:
 * A working Perl installation.
 * A [Redis](http://redis.io/) server.
 * An account with [Amazon's Route53 DNS service](http://aws.amazon.com/route53/).
-
+   * You'll need to update a configuration module with your secret key, access token, and zone identifier.
 
 
 Installation
@@ -85,7 +85,7 @@ However for testing purposes a sample [lighttpd](http://www.lighttpd.net/) confi
 is also included within this repository.  The configuration file contains
 all the required "rewrite rules", for example:
 
-    * /create/?        -> /cgi-bin/index.cgi?mode=create
+    ^/create/?        -> /cgi-bin/index.cgi?mode=create
 
 If you have `lighttpd` installed then you should be able to launch the
 application on your local system via:
