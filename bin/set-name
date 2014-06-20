@@ -70,8 +70,8 @@ exit
                                   "ip=s",       \$ip ) );
 
 
-die "Missing username!" unless( $user );
-die "Missing IP!" unless( $ip );
+die "Missing username!" unless ($user);
+die "Missing IP!"       unless ($ip);
 
 
 #
@@ -82,5 +82,5 @@ my $tmp = DHCP::User->new();
 #
 #  Set the IP.
 #
-$tmp->setRecord( $user, $ip , $user);
+$tmp->setRecord( $user, $ip, $user );
 
