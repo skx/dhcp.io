@@ -14,8 +14,8 @@
      <blockquote>
        <p>You must login to access that page.</p>
      </blockquote>
-      <h1>Please Login</h1>
 <!-- tmpl_else -->
+      <h1>Please Login</h1>
 <!-- /tmpl_if -->
 
      <blockquote>
