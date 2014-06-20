@@ -9,13 +9,25 @@
       <!-- tmpl_include name="login-or-menu.inc" -->
     </div>
     <div id="content">
+<!-- tmpl_if name='target' -->
+     <h1>Login Required</h1>
+     <blockquote>
+       <p>You must login to access that page.</p>
+     </blockquote>
       <h1>Please Login</h1>
+<!-- tmpl_else -->
+<!-- /tmpl_if -->
+
+     <blockquote>
       <!-- tmpl_if name='login_error' -->
       <p>Your login failed, please try again:</p>
       <!-- /tmpl_if -->
 
       <form action="/cgi-bin/index.cgi" method="POST">
         <input type="hidden" name="mode" value="login" />
+<!-- tmpl_if name='target' -->
+ <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
+<!-- /tmpl_if -->
         <table>
           <tr><td>Username</td>
             <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->" /></td></tr>
@@ -27,6 +39,8 @@
             <td><input type="submit" name="submit" value="Login" /></td></tr>
         </table>
       </form>
+     </blockquote>
+
     </div>
     <!-- tmpl_include name='footer.inc' -->
   </body>

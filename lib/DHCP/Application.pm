@@ -142,6 +142,43 @@ sub setup
 }
 
 
+
+=begin doc
+
+Redirect if the user needs to login to access the specific page.
+
+=end doc
+
+=cut
+
+sub login_required
+{
+    my ($self) = (@_);
+
+    #
+    #  Load the template
+    #
+    my $template = $self->load_template("pages/login.template");
+    $template->param( target => $ENV{ 'REQUEST_URI' } );
+
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+
+    #
+    #  Update the cache
+    #
+    return ( $template->output() );
+}
+
+
+
 =begin doc
 
 Create a new account.
@@ -272,10 +309,8 @@ sub record
     #  Not logged in?
     #
     my $existing = $session->param('logged_in');
-    if ( !defined($existing) )
-    {
-        return ( $self->redirectURL("/") );
-    }
+    return ( $self->login_required() ) unless ( defined($existing) );
+
 
     #
     #  Get the attempted name
@@ -345,10 +380,8 @@ sub home
     #  Not logged in?
     #
     my $existing = $session->param('logged_in');
-    if ( !defined($existing) )
-    {
-        return ( $self->redirectURL("/") );
-    }
+    return ( $self->login_required() ) unless ( defined($existing) );
+
 
     #
     #  Load the homepage template.
@@ -573,7 +606,48 @@ sub application_login
         #
         #  Return to the homepage.
         #
-        return ( $self->redirectURL("/home") );
+        #
+        # Login succeeded.  If we have a redirection target:
+        #
+        # 1:  Close session.
+        # 2:  Redirect + Set-Cookie
+        # 3:  Exit.
+        #
+        my $target = $q->param("target");
+        if ( defined($target) && ( $target =~ /^\// ) )
+        {
+
+            #
+            #   Use Relative-Redirection.  I think that can't hurt.
+            #
+            #            my $protocol = "http://";
+            #            if ( defined( $ENV{ 'HTTPS' } ) && ( $ENV{ 'HTTPS' } =~ /on/i ) )
+            #            {
+            #                $protocol = "https://";
+            #            }
+            #            my $server = $ENV{'SERVER_NAME'};
+            #            if (  $ENV{'SERVER_PORT'} &&
+            #                  ( $ENV{'SERVER_PORT'} != 80 ) )
+            #            {
+            #                $server .= ":$ENV{'SERVER_PORT'}";
+            #            }
+            #
+            #
+            return (
+                $self->redirectURL(
+
+                    #                                     $protocol . $server . $target
+                    $target
+                ) );
+        }
+        else
+        {
+
+            #
+            #  Just return to the homepage.
+            #
+            return ( $self->redirectURL("/home") );
+        }
     }
     else
     {
@@ -675,10 +749,8 @@ sub edit
     #  The user must be logged in.
     #
     my $existing = $session->param('logged_in');
-    if ( !defined($existing) )
-    {
-        return ( $self->redirectURL("/") );
-    }
+    return ( $self->login_required() ) unless ( defined($existing) );
+
 
     #
     #  Get the name we're editing, remember there might be
@@ -784,10 +856,8 @@ sub delete
     #  The user must be logged in.
     #
     my $existing = $session->param('logged_in');
-    if ( !defined($existing) )
-    {
-        return ( $self->redirectURL("/") );
-    }
+    return ( $self->login_required() ) unless ( defined($existing) );
+
 
 
     #
@@ -879,6 +949,13 @@ sub slow_down
 }
 
 
+=begin doc
+
+Show the user their logs.
+
+=end doc
+
+=cut
 
 sub logs
 {
@@ -890,10 +967,7 @@ sub logs
     #  The user must be logged in.
     #
     my $existing = $session->param('logged_in');
-    if ( !defined($existing) )
-    {
-        return ( $self->redirectURL("/") );
-    }
+    return ( $self->login_required() ) unless ( defined($existing) );
 
     #
     #  Load the template
