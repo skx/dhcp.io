@@ -8,6 +8,7 @@
           <li>Related Links
             <ul>
               <li><a href="http://dns-api.org/">DNS API - Online DNS lookup service</a></li>
+              <li><a href="http://dns-api.com/">DNS API - Git-based DNS Hosting</a></li>
             </ul>
           </li>
         </ul>
