@@ -35,9 +35,9 @@
         <p>Yes it is a free service, although if you do not trust it to remain alive in the future you may <a href="http://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
         <p>The author of this site also runs a system which allows you to host your own DNS zones, via a GitHub repository:</p>
         <ul>
-        <li><a href="http://dns-api.com/">DNS-API.com - Git-based DNS Hosting</a></li>
+        <li><a href="http://dns-api.com/">Git-based DNS Hosting</a>.</li>
         </ul>
-        <p>If you wish to host domains, and don't want to manage the complex API involved it couldbe just what you're looking for.</p>
+        <p>If you wish to host domains, and don't want to manage the complex API involved it could be just what you're looking for.</p>
       </dd>
 
       <dt>Can we see our history?</dt>
