@@ -95,9 +95,10 @@ sub cgiapp_init
     # send a cookie if needed
     if ( !defined $sid or $sid ne $session->id )
     {
-        my $cookie = $query->cookie( -name    => $cookie_name,
-                                     -value   => $session->id,
-                                     -expires => $cookie_expiry,
+        my $cookie = $query->cookie( -name     => $cookie_name,
+                                     -value    => $session->id,
+                                     -expires  => $cookie_expiry,
+                                     -httponly => 1,
                                    );
         $self->header_props( -cookie => $cookie );
     }
