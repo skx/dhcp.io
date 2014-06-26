@@ -103,6 +103,33 @@ SKIP:
     $found = $u->find($email);
     is( lc $username, $found, "Finding user by email succeeds" );
 
+
+    #
+    #  Change the user's email address
+    #
+    $u->set_email( user => $username,
+                   mail => 'steve@steve.org.uk' );
+
+    #
+    #  Ensure the previous find fails, and the new one succeeds.
+    #
+    $found = $u->find($email);
+    is( undef, $found, "Finding user by mail fails when it is changed" );
+    $found = $u->find('steve@steve.org.uk');
+    is( lc $username, $found, "Finding user by (new) email succeeds" );
+
+
+    #
+    #  Change the users password and re-test login.
+    #
+    $u->set_pass( user => $username,
+                  pass => '1234luggage' );
+
+    is( $u->testLogin( $username, $username ),
+        undef, "Login fails when password changed" );
+    is( $u->testLogin( lc($username), '1234luggage' ),
+        lc($username), "Login works with new password" );
+
     #
     #  Delete the user
     #
