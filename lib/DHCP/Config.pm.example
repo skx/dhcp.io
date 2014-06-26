@@ -46,6 +46,12 @@ our $ZONE_ID = "xxxx";
 
 
 #
+#  The sender for emails
+#
+our $SENDER = 'steve@dhcp.io';
+
+
+#
 #  The salt applied to all passwords, to avoid dictionary attacks against
 # any stolen hashes.
 #
