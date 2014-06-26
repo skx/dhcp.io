@@ -82,7 +82,9 @@ SKIP:
     #
     #  Create the user
     #
-    $u->createUser( $username, $username );
+    my $email = $username . '@' . $username . '.com';
+
+    $u->createUser( $username, $username, $email );
     is( $u->present($username), 1, "The user does exist now." );
 
     #
@@ -92,6 +94,14 @@ SKIP:
     is( $u->testLogin( lc($username), $username ),
         lc($username), "Login works" );
 
+
+    #
+    #  Find the user by email
+    #
+    my $found = $u->find($username);
+    is( lc $username, $found, "Finding user by username succeeds" );
+    $found = $u->find($email);
+    is( lc $username, $found, "Finding user by email succeeds" );
 
     #
     #  Delete the user

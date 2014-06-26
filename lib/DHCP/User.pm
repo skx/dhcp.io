@@ -503,6 +503,47 @@ sub testLogin
 
 =begin doc
 
+Find a user, by username or email address.
+
+=end doc
+
+=cut
+
+sub find
+{
+    my( $self, $text ) = ( @_ );
+
+    $text = lc( $text );
+
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    my $result = undef;
+
+    #
+    #  Find the User-ID
+    #
+    my $sql = $db->prepare("SELECT login FROM users WHERE login=? COLLATE NOCASE") or
+      die "Failed to prepare statement";
+    $sql->execute($text) or
+      die "Failed to execute statement";
+    $result = $sql->fetchrow_array();
+    $sql->finish();
+
+    return $result if ( $result );
+
+    $sql = $db->prepare("SELECT login FROM users WHERE email=? COLLATE NOCASE") or
+      die "Failed to prepare statement";
+    $sql->execute($text) or
+      die "Failed to execute statement";
+    $result = $sql->fetchrow_array();
+    $sql->finish();
+
+    return( $result );
+}
+
+
+=begin doc
+
 Is the given username already present?
 
 =end doc
