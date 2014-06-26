@@ -669,6 +669,13 @@ sub get
 }
 
 
+=begin doc
+
+Set the email address for a user.
+
+=end doc
+
+=cut
 
 sub set_email
 {
@@ -681,12 +688,20 @@ sub set_email
     my $db = Singleton::DBI->instance();
     my $sql = $db->prepare("UPDATE users SET email=? WHERE login=?") or
       die "Failed to prepare statement";
-    $sql->execute($mail,$user) or
+    $sql->execute( $mail, $user ) or
       die "Failed to execute statement";
     $sql->finish();
 
 }
 
+
+=begin doc
+
+Set the password for a given user.
+
+=end doc
+
+=cut
 
 sub set_pass
 {
@@ -704,7 +719,7 @@ sub set_pass
     my $db = Singleton::DBI->instance();
     my $sql = $db->prepare("UPDATE users SET password=? WHERE login=?") or
       die "Failed to prepare statement";
-    $sql->execute($hash,$user) or
+    $sql->execute( $hash, $user ) or
       die "Failed to execute statement";
     $sql->finish();
 

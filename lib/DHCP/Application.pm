@@ -1139,7 +1139,7 @@ View/Edit the profile.
 
 sub profile
 {
-    my( $self ) = ( @_ );
+    my ($self) = (@_);
 
     my $q       = $self->query();
     my $session = $self->param('session');
@@ -1166,11 +1166,11 @@ sub profile
     #
     #  If the user is submitting.
     #
-    if ( $q->param( "submit" ) )
+    if ( $q->param("submit") )
     {
-        my $email = $q->param( "email" );
-        my $pass  = $q->param( "pass" ) || "";
-        if ( $email )
+        my $email = $q->param("email");
+        my $pass = $q->param("pass") || "";
+        if ($email)
         {
             $user->set_email( mail => $email,
                               user => $existing );
@@ -1179,15 +1179,16 @@ sub profile
         if ( $pass && length($pass) > 0 )
         {
             $user->set_pass( pass => $pass,
-                              user => $existing );
+                             user => $existing );
             $template->param( thanks => 1 );
         }
     }
 
-    my $data = $user->get(user => $existing);
-    $template->param( email => $data->{'email'} ) if ( $data && $data->{'email'} );
+    my $data = $user->get( user => $existing );
+    $template->param( email => $data->{ 'email' } )
+      if ( $data && $data->{ 'email' } );
 
-    return( $template->output() );
+    return ( $template->output() );
 }
 
 1;
