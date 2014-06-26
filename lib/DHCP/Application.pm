@@ -1005,7 +1005,7 @@ sub logs
 
 Forgotten password handler.
 
-=end
+=end doc
 
 =cut
 
