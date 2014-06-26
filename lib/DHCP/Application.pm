@@ -1069,6 +1069,15 @@ sub forgotten
     #
     my $template = $self->load_template("pages/forgotten.tmpl");
 
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+
     #
     #  Did the user submit the page?
     #
