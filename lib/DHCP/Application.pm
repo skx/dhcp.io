@@ -122,6 +122,9 @@ sub setup
         # forgot password / password reset
         'forgotten' => 'forgotten',
 
+        # profile
+        'profile' => 'profile',
+
         # called on unknown mode.
         'AUTOLOAD' => 'unknown_mode',
     );
@@ -1057,7 +1060,9 @@ sub forgotten
                 $session->param( "logged_in",    $u );
                 $session->param( "failed_login", undef );
                 $session->flush();
-                return ( $self->redirectURL("/home/") );
+
+                # Redirect the user to their profile page.
+                return ( $self->redirectURL("/profile/") );
             }
         }
 
@@ -1123,6 +1128,67 @@ sub forgotten
     return ( $template->output() );
 }
 
+
+=begin doc
+
+View/Edit the profile.
+
+=end doc
+
+=cut
+
+sub profile
+{
+    my( $self ) = ( @_ );
+
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
+    return ( $self->login_required() ) unless ( defined($existing) );
+
+    my $user = DHCP::User->new();
+
+    my $template = $self->load_template("pages/profile.tmpl");
+    $template->param( username => $existing );
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+    #
+    #  If the user is submitting.
+    #
+    if ( $q->param( "submit" ) )
+    {
+        my $email = $q->param( "email" );
+        my $pass  = $q->param( "pass" ) || "";
+        if ( $email )
+        {
+            $user->set_email( mail => $email,
+                              user => $existing );
+            $template->param( thanks => 1 );
+        }
+        if ( $pass && length($pass) > 0 )
+        {
+            $user->set_pass( pass => $pass,
+                              user => $existing );
+            $template->param( thanks => 1 );
+        }
+    }
+
+    my $data = $user->get(user => $existing);
+    $template->param( email => $data->{'email'} ) if ( $data && $data->{'email'} );
+
+    return( $template->output() );
+}
 
 1;
 
