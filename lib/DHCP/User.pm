@@ -669,60 +669,48 @@ sub get
 }
 
 
+
 =begin doc
 
-Set the email address for a user.
+Set fields in the database, for the user.
 
 =end doc
 
 =cut
 
-sub set_email
+sub set
 {
     my ( $self, %args ) = (@_);
 
     my $user = $self->{ 'user' } || $args{ 'user' } || die "Missing user";
-    my $mail = $self->{ 'mail' } || $args{ 'mail' } || die "Missing email";
     $user = lc($user);
 
     my $db = Singleton::DBI->instance();
-    my $sql = $db->prepare("UPDATE users SET email=? WHERE login=?") or
-      die "Failed to prepare statement";
-    $sql->execute( $mail, $user ) or
-      die "Failed to execute statement";
-    $sql->finish();
+
+    if ( $args{ 'mail' } )
+    {
+        my $sql = $db->prepare("UPDATE users SET email=? WHERE login=?") or
+          die "Failed to prepare statement";
+        $sql->execute( $args{ 'mail' }, $user ) or
+          die "Failed to execute statement";
+        $sql->finish();
+    }
+    if ( $args{ 'pass' } )
+    {
+        my $sha = Digest::SHA->new();
+        $sha->add($DHCP::Config::SALT);
+        $sha->add( $args{ 'pass' } );
+        my $hash = $sha->hexdigest();
+
+        my $sql = $db->prepare("UPDATE users SET password=? WHERE login=?") or
+          die "Failed to prepare statement";
+        $sql->execute( $hash, $user ) or
+          die "Failed to execute statement";
+        $sql->finish();
+    }
 
 }
 
 
-=begin doc
-
-Set the password for a given user.
-
-=end doc
-
-=cut
-
-sub set_pass
-{
-    my ( $self, %args ) = (@_);
-
-    my $user = $self->{ 'user' } || $args{ 'user' } || die "Missing user";
-    my $pass = $self->{ 'pass' } || $args{ 'pass' } || die "Missing pass";
-    $user = lc($user);
-
-    my $sha = Digest::SHA->new();
-    $sha->add($DHCP::Config::SALT);
-    $sha->add($pass);
-    my $hash = $sha->hexdigest();
-
-    my $db = Singleton::DBI->instance();
-    my $sql = $db->prepare("UPDATE users SET password=? WHERE login=?") or
-      die "Failed to prepare statement";
-    $sql->execute( $hash, $user ) or
-      die "Failed to execute statement";
-    $sql->finish();
-
-}
 
 1;

@@ -1172,14 +1172,14 @@ sub profile
         my $pass = $q->param("pass") || "";
         if ($email)
         {
-            $user->set_email( mail => $email,
-                              user => $existing );
+            $user->set( mail => $email,
+                        user => $existing );
             $template->param( thanks => 1 );
         }
         if ( $pass && length($pass) > 0 )
         {
-            $user->set_pass( pass => $pass,
-                             user => $existing );
+            $user->set( pass => $pass,
+                        user => $existing );
             $template->param( thanks => 1 );
         }
     }

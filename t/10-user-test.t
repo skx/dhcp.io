@@ -107,8 +107,8 @@ SKIP:
     #
     #  Change the user's email address
     #
-    $u->set_email( user => $username,
-                   mail => 'steve@steve.org.uk' );
+    $u->set( user => $username,
+             mail => 'steve@steve.org.uk' );
 
     #
     #  Ensure the previous find fails, and the new one succeeds.
@@ -122,8 +122,8 @@ SKIP:
     #
     #  Change the users password and re-test login.
     #
-    $u->set_pass( user => $username,
-                  pass => '1234luggage' );
+    $u->set( user => $username,
+             pass => '1234luggage' );
 
     is( $u->testLogin( $username, $username ),
         undef, "Login fails when password changed" );
