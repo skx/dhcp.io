@@ -41,7 +41,7 @@ use base 'DHCP::Application::Base';
 # We don't need abusive clients.
 #
 use CGI::Application::Plugin::Throttle;
-
+use UUID::Tiny;
 
 #
 #  This is is a sanity-check which will make the failure to follow
@@ -118,6 +118,9 @@ sub setup
         # login / logout
         'login'  => 'application_login',
         'logout' => 'application_logout',
+
+        # forgot password / password reset
+        'forgotten' => 'forgotten',
 
         # called on unknown mode.
         'AUTOLOAD' => 'unknown_mode',
@@ -996,6 +999,121 @@ sub logs
     return ( $template->output() );
 
 }
+
+
+=begin doc
+
+Forgotten password handler.
+
+=end
+
+=cut
+
+sub forgotten
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Logged in?  Return to home.
+    #
+    my $existing = $session->param('logged_in');
+    if ( defined($existing) )
+    {
+        return ( $self->redirectURL("/home/") );
+    }
+
+    #
+    #  Are we handling a password-reset?  If so we'll do the
+    # lookup and login here.
+    #
+    #
+    my $token = $q->param("token");
+
+    if ($token)
+    {
+
+        #
+        #  Get the user this token applies to.
+        #
+        my $redis = Singleton::Redis->instance();
+        my $u     = $redis->get("PASSWORD:RESET:$token");
+
+        #
+        #  See if that user exists.
+        #
+        if ($u)
+        {
+            my $tmp = DHCP::User->new();
+            if ( $tmp->present($u) )
+            {
+
+                #
+                #  The token is dead.
+                #
+                $redis->del("PASSWORD:RESET:$token");
+
+                $session->param( "logged_in",    $u );
+                $session->param( "failed_login", undef );
+                $session->flush();
+                return ( $self->redirectURL("/home/") );
+            }
+        }
+
+        die 'invalid token';
+    }
+
+    #
+    #  Load the page
+    #
+    my $template = $self->load_template("pages/forgotten.tmpl");
+
+    #
+    #  Did the user submit the page?
+    #
+    if ( $q->param("submit") )
+    {
+        my $user = DHCP::User->new();
+        my $obj  = $user->find( $q->param("text") );
+
+        if ( !$obj )
+        {
+            $template->param( not_found => 1 );
+            return ( $template->output() );
+        }
+        else
+        {
+            my $dat = $user->get( user => $obj );
+
+            # Create a reset-token
+            my $token = UUID::Tiny::create_uuid_as_string();
+            my $redis = Singleton::Redis->instance();
+            $redis->set( "PASSWORD:RESET:$token", $obj );
+            $redis->expire( "PASSWORD:RESET:$token", 60 * 60 * 12 );
+
+            #  Email it
+            my $et = $self->load_template("email/forgotten.tmpl");
+            $et->param( username => $obj,
+                        to       => $dat->{ 'email' },
+                        from     => $DHCP::Config::SENDER,
+                        token    => $token
+                      );
+            open( SENDMAIL, "|/usr/lib/sendmail -t -f $DHCP::Config::SENDER" )
+              or
+              die "Cannot open sendmail: $!";
+            print( SENDMAIL $et->output() );
+            close(SENDMAIL);
+
+            # Show the result.
+            $template->param( check_email => 1 );
+            return ( $template->output() );
+        }
+    }
+
+    return ( $template->output() );
+}
+
 
 1;
 

@@ -511,9 +511,9 @@ Find a user, by username or email address.
 
 sub find
 {
-    my( $self, $text ) = ( @_ );
+    my ( $self, $text ) = (@_);
 
-    $text = lc( $text );
+    $text = lc($text);
 
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
 
@@ -522,23 +522,25 @@ sub find
     #
     #  Find the User-ID
     #
-    my $sql = $db->prepare("SELECT login FROM users WHERE login=? COLLATE NOCASE") or
+    my $sql =
+      $db->prepare("SELECT login FROM users WHERE login=? COLLATE NOCASE") or
       die "Failed to prepare statement";
     $sql->execute($text) or
       die "Failed to execute statement";
     $result = $sql->fetchrow_array();
     $sql->finish();
 
-    return $result if ( $result );
+    return $result if ($result);
 
-    $sql = $db->prepare("SELECT login FROM users WHERE email=? COLLATE NOCASE") or
+    $sql =
+      $db->prepare("SELECT login FROM users WHERE email=? COLLATE NOCASE") or
       die "Failed to prepare statement";
     $sql->execute($text) or
       die "Failed to execute statement";
     $result = $sql->fetchrow_array();
     $sql->finish();
 
-    return( $result );
+    return ($result);
 }
 
 
@@ -638,4 +640,32 @@ sub logs
 
     return ($logs);
 }
+
+
+=begin doc
+
+Get the users account-data.
+
+=end doc
+
+=cut
+
+sub get
+{
+    my ( $self, %args ) = (@_);
+
+    my $user = $self->{ 'user' } || $args{ 'user' } || die "Missing user";
+    $user = lc($user);
+
+    my $db = Singleton::DBI->instance();
+    my $sql = $db->prepare("SELECT * FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($user) or
+      die "Failed to execute statement";
+    my $result = $sql->fetchrow_hashref();
+    $sql->finish();
+
+    return ($result);
+}
+
 1;

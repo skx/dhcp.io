@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title><!-- tmpl_var name='uc_zone' --> - Fast and Reliable Dynamic DNS</title>
+    <!-- tmpl_include name='header.inc' -->
+  </head>
+  <body>
+    <div id="bar">
+      <!-- tmpl_include name="login-or-menu.inc" -->
+    </div>
+    <div id="content">
+
+<!-- tmpl_if name='check_email' -->
+     <h2>Reset Email Sent</h2>
+     <blockquote>
+     <p>Your account was found, and an email was sent.  Please click the link to return here to set your password.</p>
+     <p>The reset link will be valid for 12 hours.</p>
+     </blockquote>
+<!-- tmpl_else -->
+  <h2>Password Reset Request</h2>
+  <blockquote>
+  <form method="POST" action="/forgotten">
+  <input type="hidden" name="mode" value+"forgotten">
+  <p>Please enter your username, or your email address:</p>
+  <input type="text" name="text" value="">
+  <input type="submit" name="submit" value="Reset">
+  </form>
+<!-- tmpl_if name='not_found' -->
+  <p>Your account was not found...</p>
+<!-- /tmpl_if -->
+  </blockquote>
+<!-- /tmpl_if -->
+
+    </div>
+    <!-- tmpl_include name='footer.inc' -->
+  </body>
+</html>
