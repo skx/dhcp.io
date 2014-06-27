@@ -126,12 +126,6 @@ sub teardown
     my $session = $self->param('session');
     $session->flush() if ( defined($session) );
 
-    #
-    #  Disconnect.
-    #
-    Singleton::Redis->instance()->quit();
-    Singleton::DBI->instance()->disconnect();
-
 }
 
 
@@ -201,8 +195,11 @@ sub load_template
 
     my $path = "";
 
-    my @dirs = ( "../templates/",    "../../templates/",
-                 "../templates/inc", "../../templates/inc" );
+    my @dirs = ( "./templates", "./templates/inc",
+                 "./../templates", "./../templates/inc",
+                 "./../../templates", "./../../templates/inc",
+                 "./../../../templates", "./../../../templates/inc"
+               );
 
     foreach my $dir (@dirs)
     {
