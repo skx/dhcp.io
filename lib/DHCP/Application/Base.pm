@@ -195,9 +195,9 @@ sub load_template
 
     my $path = "";
 
-    my @dirs = ( "./templates", "./templates/inc",
-                 "./../templates", "./../templates/inc",
-                 "./../../templates", "./../../templates/inc",
+    my @dirs = ( "./templates",          "./templates/inc",
+                 "./../templates",       "./../templates/inc",
+                 "./../../templates",    "./../../templates/inc",
                  "./../../../templates", "./../../../templates/inc"
                );
 
