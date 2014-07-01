@@ -1088,10 +1088,25 @@ sub forgotten
     #
     if ( $q->param("submit") )
     {
-        my $user = DHCP::User->new();
-        my $obj  = $user->find( $q->param("text") );
 
-        if ( !$obj )
+        #
+        #  The text the user entered - trimmed.
+        #
+        my $txt = $q->param("text") || "";
+        $txt =~ s/^\s+|\s+$//g;
+
+        #
+        #  Nothing entered?  Return.
+        #
+        return $template->output() if ( !length($txt) );
+
+        #
+        #  Find the user.
+        #
+        my $user = DHCP::User->new();
+        my $obj  = $user->find($txt);
+
+        if ( !$obj || ( !$obj->{ 'email' } ) )
         {
             $template->param( not_found => 1 );
             return ( $template->output() );
