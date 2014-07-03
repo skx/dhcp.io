@@ -623,28 +623,7 @@ sub application_login
         if ( defined($target) && ( $target =~ /^\// ) )
         {
 
-            #
-            #   Use Relative-Redirection.  I think that can't hurt.
-            #
-            #            my $protocol = "http://";
-            #            if ( defined( $ENV{ 'HTTPS' } ) && ( $ENV{ 'HTTPS' } =~ /on/i ) )
-            #            {
-            #                $protocol = "https://";
-            #            }
-            #            my $server = $ENV{'SERVER_NAME'};
-            #            if (  $ENV{'SERVER_PORT'} &&
-            #                  ( $ENV{'SERVER_PORT'} != 80 ) )
-            #            {
-            #                $server .= ":$ENV{'SERVER_PORT'}";
-            #            }
-            #
-            #
-            return (
-                $self->redirectURL(
-
-                    #                                     $protocol . $server . $target
-                    $target
-                ) );
+            return ( $self->redirectURL( $target ) );
         }
         else
         {
