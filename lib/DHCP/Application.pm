@@ -574,6 +574,24 @@ sub application_login
     }
 
     #
+    #  If the user is being throttled then tell them so.
+    #
+    my $redis = Singleton::Redis->instance();
+
+    #
+    #  The key we store login attempts.
+    #
+    my $tkey = "THROTTLE:IP:";
+    $tkey .= $ENV{ 'REMOTE_ADDR' } if ( $ENV{ 'REMOTE_ADDR' } );
+
+    my $throttle = $redis->get($tkey) || 0;
+    if ( defined($throttle) && ( $throttle >= 5 ) )
+    {
+        return ( $self->redirectURL("/throttle/") );
+    }
+
+
+    #
     # Login results.
     #
     my ($logged_in) = undef;
@@ -623,7 +641,7 @@ sub application_login
         if ( defined($target) && ( $target =~ /^\// ) )
         {
 
-            return ( $self->redirectURL( $target ) );
+            return ( $self->redirectURL($target) );
         }
         else
         {
@@ -636,6 +654,12 @@ sub application_login
     }
     else
     {
+
+        #
+        #  Bump the user's login-count.
+        #
+        $redis->incr($tkey);
+        $redis->expire( $tkey, 300 );
 
         #
         #  Login failed, or some details missing.
