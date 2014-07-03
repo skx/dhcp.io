@@ -1,0 +1,4 @@
+    <h1>Throttled Access</h1>
+
+    <p>You're making too many requests to this server, please try again in 5 minutes.</p>
+    <p>Login attempts are throttled, as are general requests.</p>
