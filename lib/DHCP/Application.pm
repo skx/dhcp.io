@@ -1109,7 +1109,7 @@ sub forgotten
         my $user = DHCP::User->new();
         my $obj  = $user->find($txt);
 
-        if ( !$obj || ( !$obj->{ 'email' } ) )
+        if ( !$obj )
         {
             $template->param( not_found => 1 );
             return ( $template->output() );
