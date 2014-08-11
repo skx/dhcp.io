@@ -3,9 +3,9 @@
   <span style="font-size:20px;"><a href="/"><!-- tmpl_var name='uc_zone' --></a> - Fast and Reliable Dynamic-DNS</span>
   <div id="loginContainer">
     <a href="/logout/" class="Button"><span>Logout</span><em></em></a>
+    <a href="/faq/" class="Button"><span>FAQ</span><em></em></a>
     <a href="/profile/" class="Button"><span>Profile</span><em></em></a>
     <a href="/logs/" class="Button"><span>Logs</span><em></em></a>
-    <a href="/faq/" class="Button"><span>FAQ</span><em></em></a>
   </div>
 </div>
 <!-- tmpl_else -->
