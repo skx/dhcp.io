@@ -111,6 +111,9 @@ sub setup
         # Delete an A/AAAA record
         'delete' => 'delete',
 
+        # Remove a hostname
+        'remove' => 'remove',
+
         # Edit/Set the IP for a record.
         'set'  => 'set',
         'edit' => 'edit',
@@ -915,6 +918,93 @@ sub delete
     return ( $self->redirectURL("/home") );
 }
 
+
+
+=begin doc
+
+Allow the user to delete a hostname.
+
+=end doc
+
+=cut
+
+sub remove
+{
+    my ($self)  = (@_);
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  The user must be logged in.
+    #
+    my $existing = $session->param('logged_in');
+    return ( $self->login_required() ) unless ( defined($existing) );
+
+    #
+    #  Get the name we're editing, remember there might be
+    # more than one for each user
+    #
+    my $record = $q->param("record");
+
+    #
+    #  Ensure the values are present.
+    #
+    if ( !defined($record) )
+    {
+        return ( $self->redirectURL("/") );
+    }
+
+
+    #
+    #  Security Test.
+    #
+    #  Get all the values for the current user, and ensure that
+    # they have control over the record
+    #
+    my $temp = DHCP::User->new();
+    my $data = $temp->getAllData($existing);
+
+    #
+    #  Look for a match
+    #
+    my $match = 0;
+    foreach my $entry (@$data)
+    {
+        $match = 1 if ( $entry->{ 'name' } eq $record );
+    }
+
+    return ( $self->redirectURL("/") ) if ( !$match );
+
+    #
+    #  Lookup the current value(s) of the record.
+    #
+    my $tmp = DHCP::Records->new();
+    my $cur = $tmp->lookup($record);
+
+    #
+    #  Delete the IPv4 address, if present.
+    #
+    if ( $cur && $cur->{ 'ipv4' } )
+    {
+        $tmp->removeRecord( $record, 'A', $cur->{ 'ipv4' } );
+    }
+
+    #
+    #  Delete the IPv6 address if present.
+    #
+    if ( $cur && $cur->{ 'ipv6' } )
+    {
+        $tmp->removeRecord( $record, 'AAAA', $cur->{ 'ipv4' } );
+    }
+
+    #
+    #  Now remove the records from the users DB-entry.
+    #
+    my $user = DHCP::User->new();
+    $user->deleteRecord( $existing, $record );
+
+    return ( $self->redirectURL("/home") );
+}
 
 =begin doc
 

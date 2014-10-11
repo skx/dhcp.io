@@ -155,6 +155,41 @@ sub addRecord
 
 =begin doc
 
+Remove a record from the database.
+
+=end doc
+
+=cut
+
+sub deleteRecord
+{
+    my ( $self, $user, $name ) = (@_);
+
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
+
+    #
+    #  Get the user-id
+    #
+    my $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
+      die "Failed to prepare statement";
+    $sql->execute($user) or
+      die "Failed to execute statement";
+    my $user_id = $sql->fetchrow_array();
+    $sql->finish();
+
+    die "No user ID" unless ( $user_id && ( $user_id =~ /^([0-9]+)$/ ) );
+    $sql = $db->prepare("DELETE FROM records WHERE name=? AND owner=?") or
+      die "Failed to prepare statement";
+    $sql->execute( $name, $user_id ) or
+      die "Failed to execute statement";
+    $sql->finish();
+
+}
+
+
+
+=begin doc
+
 Does the given record exist?
 
 =end doc

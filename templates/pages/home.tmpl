@@ -21,8 +21,9 @@
 
 <!-- tmpl_loop name='records' -->
       <div id="<!-- tmpl_var name='name' -->" class="tabContent">
+
+        <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' -->  <span style="font-size:12px"><a href="/remove/<!-- tmpl_var name='name' -->">Delete</a></span> </h3>
         <!-- tmpl_if name='present' -->
-        <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' --></h3>
 
         <blockquote>
           <table cellspacing="5">
