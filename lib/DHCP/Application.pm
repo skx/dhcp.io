@@ -1261,20 +1261,41 @@ sub profile_delete
     my $existing = $session->param('logged_in');
     return ( $self->login_required() ) unless ( defined($existing) );
 
+
     #
     #  Has the user confirmed?
     #
     if ( $q->param("confirm") )
     {
-        my $user = DHCP::User->new();
-        $user->deleteUser($existing);
 
-        return ( $self->application_logout() );
+        #
+        # Get the submitted session ID
+        #
+        my $csrf = $q->param("token");
+
+
+        if ( $session->id() eq $csrf )
+        {
+
+            my $user = DHCP::User->new();
+            $user->deleteUser($existing);
+
+            return ( $self->application_logout() );
+        }
+        else
+        {
+            return ( "Expected: " . $session->id() . " got $csrf" );
+
+            # hack attempt
+            return ( $self->redirectURL("/") );
+        }
+
     }
     else
     {
         my $template = $self->load_template("pages/profile_delete.tmpl");
-        $template->param( username => $existing );
+        $template->param( username => $existing,
+                          token    => $session->id() );
 
         my $z = $DHCP::Config::ZONE;
         $z =~ s/\.$//g;
