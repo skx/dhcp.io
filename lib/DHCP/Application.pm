@@ -1284,8 +1284,6 @@ sub profile_delete
         }
         else
         {
-            return ( "Expected: " . $session->id() . " got $csrf" );
-
             # hack attempt
             return ( $self->redirectURL("/") );
         }
