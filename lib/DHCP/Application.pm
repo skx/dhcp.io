@@ -1275,6 +1275,15 @@ sub profile_delete
     {
         my $template = $self->load_template("pages/profile_delete.tmpl");
         $template->param( username => $existing );
+
+        my $z = $DHCP::Config::ZONE;
+        $z =~ s/\.$//g;
+        $template->param( "zone" => $z );
+        if ( $z =~ /^(.*)\.(.*)$/ )
+        {
+            $template->param( "uc_zone" => uc($1) . "." . $2 );
+        }
+
         return ( $template->output() );
     }
 }
