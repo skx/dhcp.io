@@ -40,6 +40,11 @@
         <p>If you wish to host domains, and don't want to manage the complex API involved it could be just what you're looking for.</p>
       </dd>
 
+      <dt>How do I delete my account?</dt>
+      <dd>
+      <p>If you wish to permanently delete your account please visit the <a href="/profile/delete/">profile deletion</a> page.</p>
+      </dd>
+
       <dt>Can we see our history?</dt>
       <dd>
       <p>Yes, if you're signed into the site you can visit <a href="/logs/">the logs page</a>.</p>

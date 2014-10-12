@@ -111,6 +111,9 @@ sub setup
         # Delete an A/AAAA record
         'delete' => 'delete',
 
+        # Delete a profile == account
+        'profile_delete' => 'profile_delete',
+
         # Remove a hostname
         'remove' => 'remove',
 
@@ -1234,6 +1237,46 @@ sub forgotten
     }
 
     return ( $template->output() );
+}
+
+
+=begin doc
+
+Delete the profile/account.
+
+=end doc
+
+=cut
+
+sub profile_delete
+{
+    my ($self) = (@_);
+
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
+    return ( $self->login_required() ) unless ( defined($existing) );
+
+    #
+    #  Has the user confirmed?
+    #
+    if ( $q->param("confirm") )
+    {
+        my $user = DHCP::User->new();
+        $user->deleteUser($existing);
+
+        return ( $self->application_logout() );
+    }
+    else
+    {
+        my $template = $self->load_template("pages/profile_delete.tmpl");
+        $template->param( username => $existing );
+        return ( $template->output() );
+    }
 }
 
 
