@@ -218,6 +218,7 @@ sub create
     #  Load the template.
     #
     my $template = $self->load_template("pages/create.tmpl");
+    $template->param( closed => 1 );
 
     #
     #  Set the zone in the template

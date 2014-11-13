@@ -13,6 +13,13 @@
 <p>You may now login.</p>
 <!-- tmpl_else -->
 
+<!-- tmpl_if name='closed' -->
+
+          <h1>Account Limit Reached</h1>
+          <p>Maximum users reached - no more accounts may be created.</p>
+          <p>The source code to this site is <a href="http://github.com/skx/dhcp.io/">available on github</a> if you wish to deploy your own instance.</p>
+
+<!-- tmpl_else -->
           <h1>Create An Account</h1>
           <p>To get started you need to pick the name of the host you wish to control - beneath the <b><span class="tt">.<!-- tmpl_var name='zone' --></span></b> domain.</p>
           <p>For example if you pick "<span class="tt">bob</span>" you'll be able to control the IP address that <b><span class="tt">bob.<!-- tmpl_var name='zone' --></span></b> points to.  Once you have an account you may add up to four more names by default, more if you're a supporter.</p>
@@ -29,6 +36,7 @@
                     <td style="text-align:right;"><input type="submit" name="submit" value="create"></td></tr>
 <!-- tmpl_if name='error' -->
           <tr><td colspan="2"><p><b><!-- tmpl_var name='error' --></b></p></td></tr>
+<!-- /tmpl_if -->
 <!-- /tmpl_if -->
           </table>
           </form>
