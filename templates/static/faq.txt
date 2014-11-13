@@ -40,6 +40,16 @@
         <p>If you wish to host domains, and don't want to manage the complex API involved it could be just what you're looking for.</p>
       </dd>
 
+      <dt>How do you cope with abuse?</dt>
+      <dd>
+      <p>When abuse-reports are received, if they are judged worthy, the offending account is deleted, including all other records that account held.</p>
+      </dd>
+
+      <dt>My account was deleted, what do I do?</dt>
+      <dd>
+      <p>Find a new DNS host.</p>
+      </dd>
+
       <dt>How do I delete my account?</dt>
       <dd>
       <p>If you wish to permanently delete your account please visit the <a href="/profile/delete/">profile deletion</a> page.</p>
