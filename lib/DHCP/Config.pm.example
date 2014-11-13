@@ -78,4 +78,11 @@ our %MAGIC = {
              };
 
 
+
+#
+#  Set this to 1 if you wish to disable new account-registration.
+#
+our $CLOSED = 0;
+
+
 1;

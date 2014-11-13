@@ -205,7 +205,7 @@ sub create
     my $q       = $self->query();
     my $session = $self->param('session');
 
-    my $closed = 1;
+    my $closed = $DHCP::Config::CLOSED;
 
 
     #
