@@ -205,6 +205,9 @@ sub create
     my $q       = $self->query();
     my $session = $self->param('session');
 
+    my $closed = 1;
+
+
     #
     #  Already logged in?
     #
@@ -218,7 +221,11 @@ sub create
     #  Load the template.
     #
     my $template = $self->load_template("pages/create.tmpl");
-    $template->param( closed => 1 );
+
+    if ( $closed )
+    {
+        $template->param( closed => 1 );
+    }
 
     #
     #  Set the zone in the template
@@ -234,7 +241,7 @@ sub create
     #
     #  Is the user submitting?
     #
-    if ( $q->param("submit") )
+    if ( ( $q->param("submit") ) && ( ! $closed ) )
     {
         my $name = $q->param("zone");
         my $pass = $q->param("password");
