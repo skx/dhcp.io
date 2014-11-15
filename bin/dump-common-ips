@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w -I./lib/
+#
+#  This script is designed to output IPs which are the *DESTINATION*
+# for more than ten hostnames.
+#
+#  The intention here is to catch things like:
+#
+#    shopa -> 1.2.3.4
+#    shopb -> 1.2.3.4
+#    shopc -> 1.2.3.4
+#
+#  We can accept multiple hostnames pointing to place-holder IP addresses
+# like 127.0.0.1, but we've certainly seen a lot of spammy hostnames all
+# pointing to the same online drugs/electronics/fake site.
+#
+#
+# Steve
+# --
+#
+
+
+
+use strict;
+use warnings;
+
+use DHCP::Records;
+use DHCP::User;
+
+my $verbose = shift;
+
+
+my   $d = DHCP::Records->new();
+my $all = $d->getRecords();
+
+my %seen;
+
+
+
+foreach my $key ( keys %$all )
+{
+    # Only care about IPv4 at the moment.
+    next unless ( $key =~ /^A$/i );
+
+    # Get the data.
+    my $data = $all->{$key};
+
+    foreach my $hostname ( keys %$data )
+    {
+        # Get the IP that this hostname points to.
+        my $ip = $data->{$hostname};
+
+        # save the hostname against this IP.
+        my $cur = $seen{$ip};
+        push( @$cur, $hostname );
+        $seen{$ip} = $cur;
+
+    }
+}
+
+
+#
+#  Now we want to look at the most commonly used IPs
+#
+foreach my $i ( keys %seen )
+{
+    my $names = $seen{$i};
+    my @names = @$names;
+
+    if ( ( scalar @names ) > 7 )
+    {
+        print "IP: $i seen " . scalar(@names) . " times\n";
+
+        if ( $verbose )
+        {
+            foreach my $n ( @names )
+            {
+                print "\t$n\n";
+            }
+        }
+    }
+}
+exit ( 0 );
