@@ -1,0 +1,130 @@
+#!/usr/bin/perl -w -Ilib/
+
+=head1 NAME
+
+drop-ip - Helper to delete accounts with records pointing to bad IPs.
+
+=cut
+
+=head1 SYNOPSIS
+
+  drop-ip 1.2.3.4
+
+=cut
+
+=head1 ABOUT
+
+This script will output the command necessary to delete the user-accounts
+of all users who have uploaded any DNS record pointing to the specified
+IP address.
+
+This is specifically designed to cope with abuse - many many many accounts
+have been registered which all point to hosted online shops, and we want
+to terminate those easily.
+
+=cut
+
+=head1 Questions / Bug Reports
+
+The code is developed and hosted on gitub in the following location:
+
+=over 8
+
+=item https://github.com/skx/dhcp.io
+
+=back
+
+Please raise any issues in the tracker there.
+
+=cut
+
+=head1 LICENSE
+
+Copyright (c) 2014 by Steve Kemp.  All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it
+under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+Foundation; either version 2, or (at your option) any later version,
+or
+
+b) the Perl "Artistic License".
+
+=cut
+
+=head1 AUTHOR
+
+ Steve
+ --
+ http://www.steve.org.uk/
+
+=cut
+
+
+use strict;
+use warnings;
+
+use DHCP::Records;
+use DHCP::User;
+
+
+#
+#  Get the IP to delete references to.
+#
+my $BAD = shift;
+if ( !$BAD )
+{
+    print "Usage: $0 1.2.3.4\n";
+    exit(1);
+
+}
+
+
+#
+#  Get all records.
+#
+my $d   = DHCP::Records->new();
+my $all = $d->getRecords();
+
+#
+#  Helper for finding the owner of an IP.
+#
+my $u = DHCP::User->new();
+
+
+#
+#  For each set of records.
+#
+foreach my $key ( keys %$all )
+{
+
+    #
+    #  Look at the IPv4 entries.
+    #
+    next unless ( $key =~ /^A$/i );
+
+    #
+    #  We'll have a hash of "name => $ip".
+    #
+    my $data = $all->{ $key };
+
+    foreach my $hostname ( keys %$data )
+    {
+
+        #
+        #  Does the IP match?
+        #
+        my $ip = $data->{ $hostname };
+        if ( $ip eq $BAD )
+        {
+            my $owner = $u->getOwnerFromDomain($hostname);
+            if ($owner)
+            {
+                print "./bin/delete-user --username='$owner'\n";
+            }
+        }
+    }
+}
+
+exit 0;
