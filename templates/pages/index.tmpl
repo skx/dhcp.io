@@ -11,25 +11,17 @@
     <div id="content">
       <h1><!-- tmpl_var name='uc_zone' --> - Free Dynamic DNS</h1>
       <p><!-- tmpl_var name='uc_zone' --> allows you to control DNS entries beneath the <b><span class="tt">.<!-- tmpl_var name='zone' --></span></b> domain.</p>
-      <p>You can quickly, and easily, configure a name such as <b><span class="tt">gateway.<!-- tmpl_var name='zone' --></span></b> to point to the IP of your home gateway - with both IPv4 and IPv6 supported.</p>
-      <p>Registration takes seconds, and we only need the first name you wish to control:</p>
-      <ul>
-        <li><a href="/create/">Create your name</a> for free.
-          <ul>
-            <li>You don't need to give us your email address, unless you fear you'll forget your password!</li>
-            <li>You don't need to login to the site every month to keep your name alive!</li>
-          </ul>
-          </li>
-        <li>Each account is able to control up to five hostnames.</li>
-      </ul>
+      <p>You can quickly and easily configure a name such as <b><span class="tt">gateway.<!-- tmpl_var name='zone' --></span></b> to point to the IP of your home gateway - with both IPv4 and IPv6 supported.</p>
       <p>Once you've registered you can update your name(s) via a simple call to <span class="tt">curl</span>, or using your web-browser, with no need to install or configure any client.</p>
+      <p>Unfortunately <b>registration is closed</b> to new users.</p>
+
 
       <h2 style="border-bottom: 1px solid silver;">Git-based DNS Hosting</h2>
-<p>If you find this service useful you might wish to look at our sister site:</p>
+      <p>If you find this service useful you might wish to look at our sister site, which allows publishing DNS records directly from a git repository:</p>
         <ul>
         <li><a href="http://dns-api.com/">Git-based DNS hosting</a>.</li>
         </ul>
-        <p>It uses the same reliable backend, and allows you to host your DNS zones from a Github repository.</p>
+        <p>It uses the same distributed and redundent backends, and allows you to update your records whenever you like, maintaining a complete history of changes, thanks to the use of git revision control system.</p>
     </div>
     <!-- tmpl_include name='footer.inc' -->
   </body>
