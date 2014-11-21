@@ -222,7 +222,7 @@ sub create
     #
     my $template = $self->load_template("pages/create.tmpl");
 
-    if ( $closed )
+    if ($closed)
     {
         $template->param( closed => 1 );
     }
@@ -241,7 +241,7 @@ sub create
     #
     #  Is the user submitting?
     #
-    if ( ( $q->param("submit") ) && ( ! $closed ) )
+    if ( ( $q->param("submit") ) && ( !$closed ) )
     {
         my $name = $q->param("zone");
         my $pass = $q->param("password");
@@ -1225,18 +1225,24 @@ sub forgotten
             $redis->set( "PASSWORD:RESET:$token", $obj );
             $redis->expire( "PASSWORD:RESET:$token", 60 * 60 * 12 );
 
-            #  Email it
-            my $et = $self->load_template("email/forgotten.tmpl");
-            $et->param( username => $obj,
-                        to       => $dat->{ 'email' },
-                        from     => $DHCP::Config::SENDER,
-                        token    => $token
-                      );
-            open( SENDMAIL, "|/usr/lib/sendmail -t -f $DHCP::Config::SENDER" )
-              or
-              die "Cannot open sendmail: $!";
-            print( SENDMAIL $et->output() );
-            close(SENDMAIL);
+            #
+            # Send the actual email - if there was an address
+            # found.
+            #
+            if ( $dat && $dat->{ 'email' } )
+            {
+                my $et = $self->load_template("email/forgotten.tmpl");
+                $et->param( username => $obj,
+                            to       => $dat->{ 'email' },
+                            from     => $DHCP::Config::SENDER,
+                            token    => $token
+                          );
+                open( SENDMAIL,
+                      "|/usr/lib/sendmail -t -f $DHCP::Config::SENDER" ) or
+                  die "Cannot open sendmail: $!";
+                print( SENDMAIL $et->output() );
+                close(SENDMAIL);
+            }
 
             # Show the result.
             $template->param( check_email => 1 );
@@ -1292,6 +1298,7 @@ sub profile_delete
         }
         else
         {
+
             # hack attempt
             return ( $self->redirectURL("/") );
         }
