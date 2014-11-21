@@ -29,7 +29,7 @@ use DHCP::User;
 my $verbose = shift;
 
 
-my   $d = DHCP::Records->new();
+my $d   = DHCP::Records->new();
 my $all = $d->getRecords();
 
 my %seen;
@@ -38,21 +38,23 @@ my %seen;
 
 foreach my $key ( keys %$all )
 {
+
     # Only care about IPv4 at the moment.
     next unless ( $key =~ /^A$/i );
 
     # Get the data.
-    my $data = $all->{$key};
+    my $data = $all->{ $key };
 
     foreach my $hostname ( keys %$data )
     {
+
         # Get the IP that this hostname points to.
-        my $ip = $data->{$hostname};
+        my $ip = $data->{ $hostname };
 
         # save the hostname against this IP.
-        my $cur = $seen{$ip};
+        my $cur = $seen{ $ip };
         push( @$cur, $hostname );
-        $seen{$ip} = $cur;
+        $seen{ $ip } = $cur;
 
     }
 }
@@ -63,20 +65,20 @@ foreach my $key ( keys %$all )
 #
 foreach my $i ( keys %seen )
 {
-    my $names = $seen{$i};
+    my $names = $seen{ $i };
     my @names = @$names;
 
     if ( ( scalar @names ) > 7 )
     {
         print "IP: $i seen " . scalar(@names) . " times\n";
 
-        if ( $verbose )
+        if ($verbose)
         {
-            foreach my $n ( @names )
+            foreach my $n (@names)
             {
                 print "\t$n\n";
             }
         }
     }
 }
-exit ( 0 );
+exit(0);
