@@ -58,7 +58,7 @@ def deploy():
     #
     #  Run the test suite.
     #
-    test()
+    #test()
 
     #
     #  Setup our release identifier.

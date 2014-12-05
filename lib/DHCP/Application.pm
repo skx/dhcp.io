@@ -438,7 +438,15 @@ sub home
     $template->param( username => $existing );
 
     #
-    # Limit on records.
+    # Limit on records - Nobody can have more than ten.
+    #
+    if ( $records && ( scalar(@$records) > 10 ) )
+    {
+        $template->param( exceeded => 1 )
+    }
+
+    #
+    #  If you're "magic" you can have 5+
     #
     if ( $records && ( scalar(@$records) >= 5 ) )
     {
