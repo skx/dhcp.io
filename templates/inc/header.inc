@@ -11,5 +11,5 @@
 </script>
 
 <link rel="stylesheet" href="/css/s.css" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+<script src="/js/jquery-1.11.2.min.js"></script>
 <script src="/js/j.js"></script>
