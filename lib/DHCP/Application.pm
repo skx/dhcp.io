@@ -442,7 +442,8 @@ sub home
     #
     if ( $records && ( scalar(@$records) > 10 ) )
     {
-        $template->param( exceeded => 1 )
+        $template->param( exceeded => 1
+                        );
     }
 
     #
@@ -628,7 +629,7 @@ sub application_login
     # Do the login
     #
     if ( defined($lname) &&
-         length($lname) &&
+         length($lname)  &&
          defined($lpass) &&
          length($lpass) )
     {
@@ -737,6 +738,23 @@ sub set
     #
     my $token = $q->param("token");
     my $ip = $q->param("ip") || $ENV{ 'REMOTE_ADDR' };
+
+    #
+    #  Has the user updated recently?
+    #
+    my $redis  = Singleton::Redis->instance();
+    my $update = $redis->get("DHCP:UPDATE:$ip");
+    if ($update)
+    {
+        return ("Updates are limited to once every 15 minutes.");
+    }
+
+    #
+    #  Store the update, with an expiry, this sets the limit
+    # we've just tested.
+    #
+    $redis->set( "DHCP:UPDATE:$ip", 1 );
+    $redis->expire( "DHCP:UPDATE:$ip", 60 * 15 );
 
     #
     #  See if we can find a user by token
@@ -1394,5 +1412,3 @@ sub profile
 }
 
 1;
-
-

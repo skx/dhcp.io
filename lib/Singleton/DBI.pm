@@ -118,7 +118,8 @@ sub new
 
         $dbh->do(
             "CREATE TABLE logs (id INTEGER PRIMARY KEY, domain, changed_from, changed_to, ip, owner, timestamp DATE DEFAULT (datetime('now','localtime')))"
-        ) unless ($found);
+          )
+          unless ($found);
 
     }
 

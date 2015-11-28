@@ -172,8 +172,8 @@ sub _send_request
     my $sig = encode_base64( $hmac->digest, undef );
 
     my $auth =
-      'AWS3-HTTPS AWSAccessKeyId=' . $self->{ 'id' } . ',' .
-      'Algorithm=HmacSHA1,Signature=' . $sig;
+      'AWS3-HTTPS AWSAccessKeyId=' .
+      $self->{ 'id' } . ',' . 'Algorithm=HmacSHA1,Signature=' . $sig;
 
     $request->header( 'Content-Type'         => 'text/xml' );
     $request->header( 'Date'                 => $date );
@@ -947,8 +947,8 @@ sub change_resource_record_sets
     if (    !defined( $args{ changes } )
          &&
          !( defined( $args{ action } ) &&
-            defined( $args{ name } ) &&
-            defined( $args{ type } ) &&
+            defined( $args{ name } )   &&
+            defined( $args{ type } )   &&
             ( defined( $args{ records } ) || defined( $args{ value } ) ) ) )
     {
         carp "Either the 'changes', or the 'action', 'name', 'type', " .
@@ -998,7 +998,7 @@ sub change_resource_record_sets
                 push(
                       @{  $change_data->{ ResourceRecordSet }
                             ->{ ResourceRecords }[0]->{ ResourceRecord }
-                        },
+                       },
                       { 'Value' => [$value] } );
             }
         }
@@ -1007,7 +1007,7 @@ sub change_resource_record_sets
             push(
                  @{  $change_data->{ ResourceRecordSet }->{ ResourceRecords }[0]
                        ->{ ResourceRecord }
-                   },
+                  },
                  { 'Value' => [$change->{ value }] } );
         }
 
