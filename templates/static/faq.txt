@@ -1,7 +1,7 @@
     <h1>Frequently Asked Questions</h1>
     <dl>
       <dt>Who created this site, and why was it made?</dt>
-      <dd><p>This site was created by <a href="http://steve.org.uk/">Steve Kemp</a>.</p>
+      <dd><p>This site was created by <a href="https://steve.org.uk/">Steve Kemp</a>.</p>
         <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understood how it worked, and how it could be used.</p>
         <p>This site was born as a result of that learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
 
@@ -32,7 +32,7 @@
 
       <dt>Is this service free?</dt>
       <dd>
-        <p>Yes it is a free service, although if you do not trust it to remain alive in the future you may <a href="http://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
+        <p>Yes it is a free service, although if you do not trust it to remain alive in the future you may <a href="https://github.com/skx/dhcp.io/">clone the source-code from Github</a>, and run your own instance.</p>
         <p>The author of this site also runs a system which allows you
         to host your own DNS zones, which interfaces with the git
         revision control system:</p>

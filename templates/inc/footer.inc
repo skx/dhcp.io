@@ -7,8 +7,8 @@
         <ul>
           <li>Related Links
             <ul>
-              <li><a href="http://dns-api.org/">Online DNS lookup service</a></li>
-              <li><a href="http://dns-api.com/">Git-based DNS Hosting</a></li>
+              <li><a href="https://dns-api.org/">Online DNS lookup service</a></li>
+              <li><a href="https://dns-api.com/">Git-based DNS Hosting</a></li>
             </ul>
           </li>
         </ul>
@@ -17,7 +17,7 @@
         <ul>
           <li>Author Links
             <ul>
-              <li><a href="http://blog.steve.org.uk/">Blog</a></li>
+              <li><a href="https://blog.steve.org.uk/">Blog</a></li>
               <li><a href="https://twitter.com/Stolen_Souls">Twitter</a></li>
             </ul>
           </li>
@@ -50,10 +50,10 @@
 /* ]]> */
 </script>
 
-      <p><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en"   data-via="Stolen_Souls" data-url="http://dhcp.io/">Tweet</a></p>
+      <p><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en"   data-via="Stolen_Souls" data-url="https://dhcp.io/">Tweet</a></p>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
-<p><a class="FlattrButton" href="http://dhcp.io/" description="Free Dynamic-DNS" title="Free Dynamic-DNS">Free Dynamic-DNS</a></p>
+<p><a class="FlattrButton" href="https://dhcp.io/" description="Free Dynamic-DNS" title="Free Dynamic-DNS">Free Dynamic-DNS</a></p>
 
       </td>
     </tr>
