@@ -1096,9 +1096,9 @@ Show the user that the site is in read-only mode.
 
 sub read_only
 {
-    #
+    my $self = shift;
+
     #  Load the template.
-    #
     my $template = $self->load_template("pages/read_only.tmpl");
 
     #
