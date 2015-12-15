@@ -218,6 +218,12 @@ sub create
         return ( $self->redirectURL("/home") );
     }
 
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
+
+
     #
     #  Load the template.
     #
@@ -331,6 +337,12 @@ sub record
     #
     my $existing = $session->param('logged_in');
     return ( $self->login_required() ) unless ( defined($existing) );
+
+
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
 
 
     #
@@ -734,6 +746,11 @@ sub set
     my ($self) = (@_);
     my $q = $self->query();
 
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
+
     #
     #  Get the record to update and the IP to use.
     #
@@ -800,6 +817,12 @@ sub edit
     #
     my $existing = $session->param('logged_in');
     return ( $self->login_required() ) unless ( defined($existing) );
+
+
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
 
 
     #
@@ -908,7 +931,10 @@ sub delete
     my $existing = $session->param('logged_in');
     return ( $self->login_required() ) unless ( defined($existing) );
 
-
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
 
     #
     #  Get the name we're editing, remember there might be
@@ -977,6 +1003,11 @@ sub remove
     #
     my $existing = $session->param('logged_in');
     return ( $self->login_required() ) unless ( defined($existing) );
+
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
 
     #
     #  Get the name we're editing, remember there might be
@@ -1332,6 +1363,12 @@ sub profile_delete
     return ( $self->login_required() ) unless ( defined($existing) );
 
 
+    # If we're in read-only mode then just terminate.
+    if ( $DHCP::Config::READ_ONLY ) {
+        return ( $self->redirectURL("/read-only/") );
+    }
+
+
     #
     #  Has the user confirmed?
     #
@@ -1418,6 +1455,11 @@ sub profile
     #
     if ( $q->param("submit") )
     {
+        # If we're in read-only mode then just terminate.
+        if ( $DHCP::Config::READ_ONLY ) {
+            return ( $self->redirectURL("/read-only/") );
+        }
+
         my $email = $q->param("email");
         my $pass = $q->param("pass") || "";
         if ($email)
