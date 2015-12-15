@@ -89,5 +89,12 @@ our $CLOSED = 0;
 #
 our $READ_ONLY = 0;
 
+#
+#  This is the threshold period beneath which updates are forbidden.
+#
+#  For example if the value is set to 300 then users can change their
+# IP address no more than once every five minutes:  5 * 60 = 300
+#
+our $THRESHOLD = 300;
 
 1;

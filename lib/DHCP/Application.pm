@@ -219,7 +219,8 @@ sub create
     }
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -340,7 +341,8 @@ sub record
 
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -455,8 +457,7 @@ sub home
     #
     if ( $records && ( scalar(@$records) > 10 ) )
     {
-        $template->param( exceeded => 1
-                        );
+        $template->param( exceeded => 1 );
     }
 
     #
@@ -747,7 +748,8 @@ sub set
     my $q = $self->query();
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -762,17 +764,23 @@ sub set
     #
     my $redis  = Singleton::Redis->instance();
     my $update = $redis->get("DHCP:UPDATE:$ip");
+
     if ($update)
     {
-        return ("Updates are limited to once every 15 minutes.");
+        my $threshold = $DHCP::Config::THRESHOLD;
+        return ("Updates are limited to once every $threshold seconds.");
     }
 
     #
-    #  Store the update, with an expiry, this sets the limit
-    # we've just tested.
+    # If there is a threshold in-place then record the user's most recent
+    # update against it.
     #
-    $redis->set( "DHCP:UPDATE:$ip", 1 );
-    $redis->expire( "DHCP:UPDATE:$ip", 60 * 15 );
+    my $thresh = $DHCP::Config::THRESHOLD;
+    if ( $thresh && ( $thresh =~ /^([0-9]+)$/ ) )
+    {
+        $redis->set( "DHCP:UPDATE:$ip", 1 );
+        $redis->expire( "DHCP:UPDATE:$ip", $threshold );
+    }
 
     #
     #  See if we can find a user by token
@@ -820,7 +828,8 @@ sub edit
 
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -932,7 +941,8 @@ sub delete
     return ( $self->login_required() ) unless ( defined($existing) );
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -1005,7 +1015,8 @@ sub remove
     return ( $self->login_required() ) unless ( defined($existing) );
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -1372,7 +1383,8 @@ sub profile_delete
 
 
     # If we're in read-only mode then just terminate.
-    if ( $DHCP::Config::READ_ONLY ) {
+    if ($DHCP::Config::READ_ONLY)
+    {
         return ( $self->redirectURL("/read-only/") );
     }
 
@@ -1464,7 +1476,8 @@ sub profile
     if ( $q->param("submit") )
     {
         # If we're in read-only mode then just terminate.
-        if ( $DHCP::Config::READ_ONLY ) {
+        if ($DHCP::Config::READ_ONLY)
+        {
             return ( $self->redirectURL("/read-only/") );
         }
 
