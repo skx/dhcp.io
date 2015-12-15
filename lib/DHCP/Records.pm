@@ -181,7 +181,7 @@ sub removeRecord
             {  action => 'delete',
                name   => "$record.$DHCP::Config::ZONE",
                type   => $type,
-               ttl    => 60,
+               ttl    => $DHCP::Config::TTL,
                value  => $ip,
             },
         ] );
@@ -221,7 +221,7 @@ sub createRecord
             {  action => 'create',
                name   => "$record.$DHCP::Config::ZONE",
                type   => $type,
-               ttl    => 60,
+               ttl    => $DHCP::Config::TTL,
                value  => $ip,
             },
         ] );
@@ -264,4 +264,3 @@ sub lookup
 
 
 1;
-

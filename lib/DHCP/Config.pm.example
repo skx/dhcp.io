@@ -97,4 +97,10 @@ our $READ_ONLY = 0;
 #
 our $THRESHOLD = 300;
 
+#
+#  The default TTL for our entries.
+#
+our $TTL = 300;
+
+
 1;
