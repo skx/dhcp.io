@@ -776,7 +776,7 @@ sub set
     # update against it.
     #
     my $threshold = $DHCP::Config::THRESHOLD;
-    if ( $thresh && ( $thresh =~ /^([0-9]+)$/ ) )
+    if ( $threshold && ( $threshold =~ /^([0-9]+)$/ ) )
     {
         $redis->set( "DHCP:UPDATE:$ip", 1 );
         $redis->expire( "DHCP:UPDATE:$ip", $threshold );
