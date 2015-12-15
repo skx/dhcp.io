@@ -84,5 +84,10 @@ our %MAGIC = {
 #
 our $CLOSED = 0;
 
+#
+#  Set this to one to make the site read-only.
+#
+our $READ_ONLY = 0;
+
 
 1;
