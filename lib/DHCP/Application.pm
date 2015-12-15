@@ -93,6 +93,7 @@ sub setup
 
         # Rate-Limit
         'slow_down' => 'slow_down',
+        'read_only' => 'read_only',
 
         # Index/Home for anonymous/signed-in users.
         'index' => 'index',
@@ -1082,6 +1083,35 @@ sub slow_down
     return (
         "Rate-Limit exceeded  - $count visits seen - maximum is $max - in the past 60 seconds."
     );
+}
+
+
+=begin doc
+
+Show the user that the site is in read-only mode.
+
+=end doc
+
+=cut
+
+sub read_only
+{
+    #
+    #  Load the template.
+    #
+    my $template = $self->load_template("pages/read_only.tmpl");
+
+    #
+    #  Set the zone in the template
+    #
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+    return ( $template->output() );
 }
 
 
