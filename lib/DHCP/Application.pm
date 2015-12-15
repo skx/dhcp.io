@@ -775,7 +775,7 @@ sub set
     # If there is a threshold in-place then record the user's most recent
     # update against it.
     #
-    my $thresh = $DHCP::Config::THRESHOLD;
+    my $threshold = $DHCP::Config::THRESHOLD;
     if ( $thresh && ( $thresh =~ /^([0-9]+)$/ ) )
     {
         $redis->set( "DHCP:UPDATE:$ip", 1 );
