@@ -1142,6 +1142,14 @@ sub read_only
     {
         $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
+
+    #
+    # Persist the username, if any.
+    #
+    my $session  = $self->param('session');
+    my $existing = $session->param('logged_in');
+    $template->param( username => $existing ) if ($existing);
+
     return ( $template->output() );
 }
 
