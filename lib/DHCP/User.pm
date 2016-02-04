@@ -650,7 +650,7 @@ sub logs
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
 
     my $sql = $db->prepare(
-        "SELECT a.domain,a.changed_from,a.changed_to,a.ip,a.timestamp FROM logs AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER by a.id ASC LIMIT 100"
+        "SELECT a.domain,a.changed_from,a.changed_to,a.ip,a.timestamp FROM logs AS a JOIN users AS b WHERE ( a.owner = b.id AND b.login=? ) ORDER by a.id DESC LIMIT 50"
       ) or
       die "Failed to prepare" . $db->errstr();
 
