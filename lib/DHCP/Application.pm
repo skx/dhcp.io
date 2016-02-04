@@ -1208,7 +1208,12 @@ sub logs
     my $helper = DHCP::User->new();
     my $logs   = $helper->logs($existing);
 
-    $template->param( logs => $logs ) if ($logs);
+    if ( $logs )
+      {
+	my    @logs = reverse( @$logs );
+
+	$template->param( logs => \@logs );
+      }
     return ( $template->output() );
 
 }
