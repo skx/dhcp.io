@@ -1,17 +1,21 @@
     <h1>Frequently Asked Questions</h1>
     <dl>
       <dt>Who created this site, and why was it made?</dt>
-      <dd><p>This site was created by <a href="https://steve.org.uk/">Steve Kemp</a>.</p>
-        <p>I've recently started using Amazon's Route53 service for hosting DNS, and I wanted to be sure that I fully understood how it worked, and how it could be used.</p>
-        <p>This site was born as a result of that learning experience; one of the simplest things that could possibly be done with an API for DNS.</p>
-
-
+      <dd><p>This site was created by <a href="https://www.steve.org.uk/">Steve Kemp</a>.</p>
+        <p>It was created as a learning experience for working with
+        Amazon's Route53 API.</p>
+        <p>It has been left running since then because I tend to feel
+        bad if I cancel services users rely upon - that said I make no
+        promise that it will remain in service indefinitely.</p>
       </dd>
 
       <dt>How long does it take for DNS changes to take effect?</dt>
       <dd>
-        <p>All the records beneath the <b><span class="tt">.dhcp.io</span></b> zone have a 60 second <abbr title="time to live">TTL</abbr>.</p>
-        <p>This means that records <i>should</i> update in less than a minute, however local caches might misbehave and cause the updates to take longer.</p>
+        <p>All the records beneath the <b><span
+        class="tt">.dhcp.io</span></b> zone have a 3600 second (one
+        hour) <abbr title="time to live">TTL</abbr>.</p>
+        <p>That means that while changes will take effect as they are
+        visible you might see the old values for up to an hour.</p>
       </dd>
 
       <dt>How do I set only IPv6 or IPv4 addresses?</dt>
