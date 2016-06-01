@@ -97,6 +97,12 @@ def deploy():
 
 
     #
+    #  Generate our templates
+    #
+    run( "cd ~/current && perl ./bin/generate-templates" )
+
+
+    #
     #  Upload our CSS files.  These should be minified if pyslimmer is
     # installed.
     #
@@ -132,4 +138,3 @@ if __name__ == '__main__':
         #  Otherwise list our targets.
         #
         subprocess.call(['fab', '-f', __file__, '--list'])
-

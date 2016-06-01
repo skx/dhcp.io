@@ -1,0 +1,78 @@
+<h1>Welcome Home <!-- tmpl_var name='username' --></h1>
+
+<ul class="tabs">
+  <!-- tmpl_loop name='records' -->
+  <li><a href="#<!-- tmpl_var name='name' escape='html' -->"><!-- tmpl_var name='name' --></a></li>
+  <!-- /tmpl_loop -->
+  <li><a href="#add">Add new ..</a></li>
+</ul>
+
+<div class="tabContainer">
+
+  <!-- tmpl_loop name='records' -->
+  <div id="<!-- tmpl_var name='name' -->" class="tabContent">
+
+    <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' -->  <span style="font-size:12px"><a href="/remove/<!-- tmpl_var name='name' -->">Delete</a></span> </h3>
+    <!-- tmpl_if name='present' -->
+
+    <blockquote>
+      <table cellspacing="5">
+        <!-- tmpl_if name='ipv4' -->
+        <tr><td><p><b>IPv4</b></td>
+          <td><p><!-- tmpl_var name='ipv4' --> </p>
+          <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/A/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
+        <!-- /tmpl_if name='ipv4' -->
+        <!-- tmpl_if name='ipv6' -->
+        <tr><td><p><b>IPv6</b></td>
+          <td><p><!-- tmpl_var name='ipv6' --></p></td>
+          <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
+        <!-- /tmpl_if name='ipv6' -->
+      </table>
+    </blockquote>
+    <!-- /tmpl_if name='present' -->
+
+
+    <!-- tmpl_if name='present' -->
+    <p>To update the value of your hostname to please run:</p>
+    <!-- tmpl_else -->
+    <p>To set the value of your hostname to please run:</p>
+    <!-- /tmpl_if -->
+
+    <blockquote>
+      <pre>
+        $ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->
+      </pre>
+    </blockquote>
+    <p>If you wish to set the value to a specific IP please run:</p>
+    <blockquote>
+      <pre>
+        $ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4
+      </pre>
+    </blockquote>
+
+    <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
+    <blockquote>
+      <pre>
+        $ curl -X POST https://<!-- tmpl_var name='zone' -->/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'
+      </pre>
+      <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
+    </blockquote>
+  </div>
+  <!-- /tmpl_loop name='records' -->
+  <div id="add" class="tabContent">
+    <!-- tmpl_if name='exceeded' -->
+    <h3>Limit Exceeded</h3>
+    <p>You may only have five, or fewer, names on one account.</p>
+    <p>If you'd like more then please <a href="/feedback">mail $teve</a>.</p>
+    <!-- tmpl_else name='exceeded' -->
+    <h3>Add New</h3>
+    <p>You can add up to five records with your account:</p>
+    <form method="POST" action="/record/">
+      <input type="hidden" name="mode" value="record">
+      <input type="text" name="name" value="">
+      <input type="submit" name="submit" value="Create Name" >
+    </form>
+    <!-- /tmpl_if -->
+  </div>
+</div>
+<p>&nbsp;</p>

@@ -38,6 +38,13 @@ js: htdocs/js/login.js htdocs/js/tabs.js
 
 
 #
+#  Generate the templates
+#
+templates:
+	bin/generate-templates
+
+
+#
 #  Run the test-suite
 #
 test:

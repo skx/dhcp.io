@@ -1,0 +1,20 @@
+<!-- tmpl_if name='check_email' -->
+<h2>Reset Email Sent</h2>
+<blockquote>
+<p>Your account was found, and an email was sent if you had an email address registered.</p>
+<p>If you didn't have an address registered when you created the account you're out of luck.</p>
+</blockquote>
+<!-- tmpl_else -->
+<h2>Password Reset Request</h2>
+<blockquote>
+<form method="POST" action="/forgotten">
+<input type="hidden" name="mode" value+"forgotten">
+<p>Please enter your username, or your email address:</p>
+<input type="text" name="text" value="">
+<input type="submit" name="submit" value="Reset">
+</form>
+<!-- tmpl_if name='not_found' -->
+<p>Your account was not found...</p>
+<!-- /tmpl_if -->
+</blockquote>
+<!-- /tmpl_if -->

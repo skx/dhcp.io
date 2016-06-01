@@ -171,7 +171,7 @@ sub login_required
     #
     #  Load the template
     #
-    my $template = $self->load_template("pages/login.template");
+    my $template = $self->load_template("pages/login.tmpl");
     $template->param( target => $ENV{ 'REQUEST_URI' } );
 
 

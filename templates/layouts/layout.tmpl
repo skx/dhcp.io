@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-  <title> - Fast and Reliable Dynamic DNS</title>
+  <title><!-- tmpl_var name='uc_zone' --> - Fast and Reliable Dynamic DNS</title>
   <meta charset="utf-8" />
   <meta name=viewport content="width=device-width, initial-scale=1"/>
   <script>
@@ -20,9 +20,19 @@
 </head>
 <body>
   <div id="bar">
-    
+    <!-- tmpl_if name='username' -->
     <div id="container">
-      <span style="font-size:20px;"><a href="/"></a> - Fast and Reliable Dynamic-DNS</span>
+      <span style="font-size:20px;"><a href="/"><!-- tmpl_var name='uc_zone' --></a> - Fast and Reliable Dynamic-DNS</span>
+      <div id="loginContainer">
+        <a href="/logout/" class="Button"><span>Logout</span><em></em></a>
+        <a href="/faq/" class="Button"><span>FAQ</span><em></em></a>
+        <a href="/profile/" class="Button"><span>Profile</span><em></em></a>
+        <a href="/logs/" class="Button"><span>Logs</span><em></em></a>
+      </div>
+    </div>
+    <!-- tmpl_else -->
+    <div id="container">
+      <span style="font-size:20px;"><a href="/"><!-- tmpl_var name='uc_zone' --></a> - Fast and Reliable Dynamic-DNS</span>
       <div id="loginContainer">
         <a href="/login/" id="loginButton"><span>Login</span><em></em></a>
         <div style="clear:both"></div>
@@ -46,12 +56,11 @@
       </div>
       <a href="/faq/" class="Button"><span>FAQ</span><em></em></a>
     </div>
-    
+    <!-- /tmpl_if -->
 
   </div>
   <div id="content">
-    <!-- tmpl_var name='text' -->
-
+    <!-- tmpl_var name='content' -->
   </div>
   <p>&nbsp;</p>
   <p>&nbsp;</p>

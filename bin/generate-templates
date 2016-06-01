@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+#
+# Our web-application requires that we can load a series of HTML::Template
+# input-files.  These are located beneath C<templates/pages/>
+#
+# To avoid duplicating layout details we generate the files `*.tmpl`
+# via the layout.tmpl file, and the *.in files
+#
+#
+
+use strict;
+use warnings;
+
+use HTML::Template;
+
+
+#
+#  Load the template
+#
+my $layout = HTML::Template->new( filename => "./templates/layouts/layout.tmpl" );
+
+
+#
+#  Now process the pages
+#
+foreach my $file ( sort( glob( "templates/pages/*.in" ) ) )
+{
+        my $out = $file;
+        $out =~ s/\.in$/.tmpl/g;
+
+        print "Generating $out from $file\n";
+
+        #
+        #  Load the contents of the file
+        #
+        my $content = "";
+        open( my $handle, "<", $file )
+              or die "Failed to open $file - $!";
+        while( my $line = <$handle> )
+        {
+            $content .= $line;
+        }
+        close( $handle );
+
+        #
+        #  Open the file for output
+        #
+        open( $handle, ">", $out )
+          or die "Failed to open file for writing $out - $!";
+
+        #
+        #  Template-update
+        #
+        $layout->param( content => $content );
+
+        print $handle $layout->output();
+
+        close( $handle );
+}
