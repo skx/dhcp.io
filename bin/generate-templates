@@ -15,45 +15,63 @@ use HTML::Template;
 
 
 #
-#  Load the template
+#  Load the layout-template.
 #
-my $layout = HTML::Template->new( filename => "./templates/layouts/layout.tmpl" );
+my @layout = read_file("./templates/layouts/layout.tmpl");
 
 
 #
 #  Now process the pages
 #
-foreach my $file ( sort( glob( "templates/pages/*.in" ) ) )
+foreach my $file ( sort( glob("templates/pages/*.in") ) )
 {
-        my $out = $file;
-        $out =~ s/\.in$/.tmpl/g;
+    my $out = $file;
+    $out =~ s/\.in$/.tmpl/g;
 
-        print "Generating $out from $file\n";
+    print "Generating $out from $file\n";
 
-        #
-        #  Load the contents of the file
-        #
-        my $content = "";
-        open( my $handle, "<", $file )
-              or die "Failed to open $file - $!";
-        while( my $line = <$handle> )
+    #
+    #  Load the contents of the file
+    #
+    my @page = read_file($file);
+
+    #
+    #  Open the file for output
+    #
+    open( my $handle, ">", $out ) or
+      die "Failed to open file for writing $out - $!";
+
+    foreach my $line (@layout)
+    {
+        if ( $line =~ /##CONTENT##/ )
         {
-            $content .= $line;
+            foreach my $line (@page)
+            {
+                print $handle $line;
+            }
         }
-        close( $handle );
+        else
+        {
+            print $handle $line;
+        }
+    }
 
-        #
-        #  Open the file for output
-        #
-        open( $handle, ">", $out )
-          or die "Failed to open file for writing $out - $!";
+    close($handle);
+}
 
-        #
-        #  Template-update
-        #
-        $layout->param( content => $content );
 
-        print $handle $layout->output();
+sub read_file
+{
+    my ($file) = (@_);
 
-        close( $handle );
+    my @ret;
+
+    open( my $handle, "<", $file ) or die "Failed to open $file - $!";
+    while ( my $line = <$handle> )
+    {
+        push( @ret, $line );
+    }
+    close($handle);
+
+    return (@ret);
 }
