@@ -4,11 +4,11 @@ DHCP.io
 This repository contains the code behind the [DHCP.io](http://dhcp.io/) service,
 which provides a self-hosted Dynamic-DNS system.
 
-Users can register up to five hostname beneath a given DNS zone, and easily
-update those hostnames to point to arbitrary IPv4 or IPv6 addresses.
+Users can register up to five hostnames beneath a given DNS zone, and easily
+update those names to point to arbitrary IPv4 or IPv6 addresses.
 
-For example if you deployed the code with the hostname "`spare.io`", then a user
-"`bob`" would control the hostname "`bob.spare.io`", and could also claim four more names.
+For example if you deployed the code with the hostname "`example.io`", then a user
+"`bob`" would control the hostname "`bob.example.io`", and could also claim four more names.
 
 
 
@@ -34,7 +34,7 @@ To deploy this code you'll need:
 * A working Perl installation.
 * A [Redis](http://redis.io/) server.
 * An account with [Amazon's Route53 DNS service](http://aws.amazon.com/route53/).
-   * You'll need to update a configuration module with your secret key, access token, and zone identifier.
+   * You'll need to update the configuration module with your secret key, access token, and zone identifier.
 
 
 Installation
