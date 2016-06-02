@@ -2,6 +2,5 @@ lib/DHCP/Config.pm
 error.log
 access.log
 fabfile.pyc
-htdocs/css/s.css
-htdocs/js/j.js
 templates.local
+templates/pages/*.tmpl
