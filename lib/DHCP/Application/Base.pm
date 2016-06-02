@@ -181,9 +181,6 @@ sub redirectURL
 Load a template from our ./templates directory - which is outside the
 web root directory for safety.
 
-
-If templates.local contains a match first then prefer that.
-
 =end doc
 
 =cut
@@ -276,5 +273,3 @@ sub unknown_mode
 
 
 1;
-
-
