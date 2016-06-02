@@ -1,7 +1,14 @@
-    <h1>Report Abuse</h1>
-
-    <p>If you believe one of our hostnames is being used for abusive purposes please let us know by emailing all appropriate details to:</p>
-    <ul style="list-style:none;">
-    <li><span class="tt">abuse</span><span class="tt">@<!-- --></span><span class="tt">dhcp.io</span></li>
-    </ul>
-    <p>We take reports of abuse seriously and will suspend/remove offending hostnames.</p>
+<h1>Report Abuse</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>If you believe one of our hostnames is being used for abusive purposes please let us know by emailing all appropriate details to:</p>
+      <ul style="list-style:none;">
+        <li><span class="tt">abuse</span><span class="tt">@<!-- --></span><span class="tt">dhcp.io</span></li>
+      </ul>
+      <p>We take reports of abuse seriously and will suspend/remove offending hostnames.</p>
+          </div>
+        </div>
+      </div>

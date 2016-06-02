@@ -1,6 +1,13 @@
-    <h1>Leave Feedback</h1>
-
+<h1>Leave Feedback</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
     <p>If you have comments, suggestions, or other feedback please do feel free to drop me a mail:</p>
     <ul style="list-style:none;">
     <li><span class="tt">steve</span><span class="tt">@<!-- --></span><span class="tt">dhcp.io</span></li>
     </ul>
+          </div>
+        </div>
+      </div>
