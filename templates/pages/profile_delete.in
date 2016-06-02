@@ -1,6 +1,14 @@
-<h2>Delete the <!--tmpl_var name='existing' --> account</h2>
-<p>If you're really sure you wish to delete your profile please click on the following link:</p>
-<p>Once deleted <b>there is no going back</b> - your account is <b>gone</b>, and your <b>records will be deleted</b>.</p>
-<ul>
-  <li><a href="/profile/delete/really/<!-- tmpl_var name='token' -->"><b>Really delete <!-- tmpl_var name='existing' --></b></a></li>
-</ul>
+<h1>Delete your account, <!--tmpl_var name='username' --> </h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>If you're <b>really sure</b> you wish to delete your account please click on the following link:</p>
+      <p>Once deleted <b>there is no going back</b>, your account is <b>gone</b>, and your <b>records will be deleted</b>.</p>
+      <ul>
+        <li><a href="/profile/delete/really/<!-- tmpl_var name='token' -->"><b>Really delete the account with login <code><!-- tmpl_var name='username' --></code></b>?</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
