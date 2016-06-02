@@ -709,7 +709,7 @@ sub application_login
         #
         #  Load the template
         #
-        my $template = $self->load_template("pages/login.template");
+        my $template = $self->load_template("pages/login.tmpl");
         $template->param( login_name => $lname ) if ($lname);
 
 
