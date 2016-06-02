@@ -97,20 +97,9 @@ def deploy():
 
 
     #
-    #  Generate our templates
+    #  Generate our templates - on the remote side.
     #
     run( "cd ~/current && perl ./bin/generate-templates" )
-
-
-    #
-    #  Upload our CSS files.  These should be minified if pyslimmer is
-    # installed.
-    #
-    local( "make css" )
-    put( "htdocs/css/s.css", "~/current/htdocs/css/s.css" )
-
-    local( "make js" )
-    put( "htdocs/js/j.js", "~/current/htdocs/js/j.js" )
 
     #
     #  And restart
