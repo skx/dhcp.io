@@ -1,35 +1,57 @@
 <!-- tmpl_if name='target' -->
 <h1>Login Required</h1>
-<blockquote>
-  <p>You must login to access that page.</p>
-</blockquote>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>You must login to access that page.</p>
+    </div>
+  </div>
+</div>
 <!-- tmpl_else -->
 <h1>Please Login</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+    </div>
+  </div>
+</div>
 <!-- /tmpl_if -->
 
-<blockquote>
-  <!-- tmpl_if name='login_error' -->
-  <p>Your login failed, please try again:</p>
-  <!-- /tmpl_if -->
 
-  <form action="/cgi-bin/index.cgi" method="POST">
-    <input type="hidden" name="mode" value="login" />
-    <!-- tmpl_if name='target' -->
-    <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
-    <!-- /tmpl_if -->
-    <table>
-      <tr><td>Username</td>
-        <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->" /></td></tr>
-      <tr>
-        <td>Password</td>
-        <td><input type="password" name="lpass" value=""/></td>
-      </tr>
-      <tr><td></td>
-        <td><input type="submit" name="submit" value="Login" /></td></tr>
-    </table>
-  </form>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
 
-  <!-- tmpl_if name='login_error' -->
-  <p>If you've forgotten your password you can initiate <a href="/forgotten/">a password reset process</a>, via email.</p>
-  <!-- /tmpl_if -->
-</blockquote>
+      <!-- tmpl_if name='login_error' -->
+      <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>Your login failed, please try again.</p>
+        <p>If you've forgotten your password you can initiate <a href="/forgotten/">a password reset process</a>, via email.</p>
+      </div>
+      <!-- /tmpl_if -->
+
+      <form action="/cgi-bin/index.cgi" method="POST">
+        <input type="hidden" name="mode" value="login" />
+        <!-- tmpl_if name='target' -->
+        <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
+        <!-- /tmpl_if -->
+        <table>
+          <tr><td>Username</td>
+            <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->" /></td></tr>
+          <tr>
+            <td>Password</td>
+            <td><input type="password" name="lpass" value=""/></td>
+          </tr>
+          <tr><td></td>
+            <td><input type="submit" name="submit" value="Login" /></td></tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,27 +1,44 @@
-<h3>Activity Log</h3>
-<!-- tmpl_if name='logs' -->
-<p>The following table shows the IP changes applied to the record(s) you control:</p>
-<blockquote>
-  <table>
-    <tr>
-      <td><b>Record</b></td>
-      <td><b>Old IP</b></td>
-      <td><b>New IP</b></td>
-      <td><b>Source</b></td>
-      <td><b>When</b></td>
-    </tr>
-    <!-- tmpl_loop name='logs' -->
-    <tr>
-      <td><!-- tmpl_var name='record' --></td>
-      <td><!-- tmpl_var name='old' --></td>
-      <td><!-- tmpl_var name='new' --></td>
-      <td><!-- tmpl_var name='source' --></td>
-      <td><!-- tmpl_var name='time' --></td>
-    </tr>
-    <!-- /tmpl_loop -->
 
-  </table>
-</blockquote>
+<!-- tmpl_if name='logs' -->
+
+<h1>Activity Log</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>The following table shows the IP changes applied to the record(s) you control:</p>
+      <table class="table table-bordered table-striped table-condensed table-hover">
+        <tr>
+          <td><b>Record</b></td>
+          <td><b>Old IP</b></td>
+          <td><b>New IP</b></td>
+          <td><b>Source</b></td>
+          <td><b>When</b></td>
+        </tr>
+        <!-- tmpl_loop name='logs' -->
+        <tr>
+          <td><!-- tmpl_var name='record' --></td>
+          <td><!-- tmpl_var name='old' --></td>
+          <td><!-- tmpl_var name='new' --></td>
+          <td><!-- tmpl_var name='source' --></td>
+          <td><!-- tmpl_var name='time' --></td>
+        </tr>
+        <!-- /tmpl_loop -->
+      </table>
+    </div>
+  </div>
+</div>
 <!-- tmpl_else -->
-<p>You have no updates logged.</p>
+
+<h1>No Logs</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>You have no updates logged.</p>
+    </div>
+  </div>
+</div>
 <!-- /tmpl_if -->
