@@ -35,8 +35,9 @@ use warnings;
 package DHCP::User;
 
 # Our code
-use DHCP::Records;
 use DHCP::Config;
+use DHCP::Lookup;
+use DHCP::Records;
 use Singleton::DBI;
 
 # Standard modules.
@@ -272,6 +273,14 @@ sub deleteUser
     $sql->finish();
 
     #
+    #  Delete the records from the database.
+    #
+    $sql = $db->prepare("DELETE FROM logs WHERE owner=?") or
+      die "Failed to prepare";
+    $sql->execute($user_id);
+    $sql->finish();
+
+    #
     #  Delete the user from the database.
     #
     $sql = $db->prepare("DELETE FROM users WHERE id=?") or
@@ -352,6 +361,10 @@ method than I'd like.
 sub setRecord
 {
     my ( $self, $record, $ip, $owner ) = (@_);
+
+    #
+    #  FIXME: Use upsert.
+    #
 
     #
     # Create a helper
@@ -446,13 +459,6 @@ sub getAllData
     my $results;
 
     #
-    # Lookup the live values of all zones.
-    #
-    my $tmp = DHCP::Records->new( redis => $self->{ 'redis' } );
-    my $live = $tmp->getRecords();
-
-
-    #
     #  Fetch the zones and tokens.
     #
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
@@ -467,17 +473,22 @@ sub getAllData
     my ( $dom, $token );
     $sql->bind_columns( undef, \$dom, \$token );
 
+    #
+    # DNS lookup helper.
+    #
+    my $helper = DHCP::Lookup->new();
+
     while ( $sql->fetch() )
     {
-        my $present = $live->{ 'A' }{ $dom } || $live->{ 'AAAA' }{ $dom };
+        my $data = $helper->values( $dom . ".dhcp.io" );
+        my $present = $data->{ 'a' } || $data->{ 'aaaa' };
+
         push( @$results,
               {  name    => $dom,
                  token   => $token,
                  present => $present,
-                 ipv4    => $live->{ 'A' }{ $dom } ? $live->{ 'A' }{ $dom } :
-                   undef,
-                 ipv6 => $live->{ 'AAAA' }{ $dom } ? $live->{ 'AAAA' }{ $dom } :
-                   undef,
+                 ipv4    => $data->{ 'a' } ? $data->{ 'a' } : undef,
+                 ipv6    => $data->{ 'aaaa' } ? $data->{ 'aaaa' } : undef,
               } );
 
     }

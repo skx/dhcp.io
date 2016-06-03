@@ -921,9 +921,17 @@ sub edit
     return ( $template->output() );
 }
 
+
 =begin doc
 
-Allow the user to delete a record.
+Allow the user to delete a name completely.
+
+If a user has `foo.dhcp.io` this function is called when the user
+tries to delete it.  This will :
+
+* Remove the AAAA record, if present.
+* Remove the A record, if present.
+* Remove the name `foo` from the user's database entry.
 
 =end doc
 
@@ -948,8 +956,7 @@ sub delete
     }
 
     #
-    #  Get the name we're editing, remember there might be
-    # more than one for each user
+    #  Get the name we're deleting, and the type.
     #
     my $record = $q->param("record");
     my $type   = $q->param("type");
@@ -967,28 +974,39 @@ sub delete
 
 
     #
-    #  Security Test.
+    #  Get all the names/values for the current user.
     #
-    #  Get all the values for the current user, and ensure that
-    # they have control over the record
+    #  Create the helper to do the deletion.
     #
     my $temp = DHCP::User->new();
     my $data = $temp->getAllData($existing);
+    my $dns  = DHCP::Records->new();
+
+
 
     #
-    #  Look for a match
+    #  If the record currently exists for the user then delete it.
     #
-    my $match = 0;
+    my $deleted = 0;
+
     foreach my $entry (@$data)
     {
-        $match = 1 if ( $entry->{ 'name' } eq $record );
+        if ( $entry->{ 'name' } eq $record )
+        {
+            if ( ( $type eq "AAAA" ) &&
+                 ( $entry->{ 'ipv6' } ) )
+            {
+                $dns->removeRecord( $record, 'AAAA', $entry->{ 'ipv6' } );
+                $deleted = 1;
+            }
+            if ( ( $type eq "A" ) &&
+                 ( $entry->{ 'ipv4' } ) )
+            {
+                $dns->removeRecord( $record, 'A', $entry->{ 'ipv4' } );
+                $deleted = 1;
+            }
+        }
     }
-
-    return ( $self->redirectURL("/") ) if ( !$match );
-
-    my $tmp = DHCP::Records->new();
-    $tmp->removeRecord( $record, $type, $value );
-
 
     return ( $self->redirectURL("/home") );
 }
@@ -997,7 +1015,14 @@ sub delete
 
 =begin doc
 
-Allow the user to delete a hostname.
+If a user has `foo.dhcp.io` this function is called when the user
+tries to delete either the A or the AAAA record associated with this
+name.
+
+This will result in NXDOMAIN for that type.
+
+NOTE: The user still has the name registered, it will just fail to resolve.
+To remove the name entirely then see `delete`.
 
 =end doc
 
@@ -1037,52 +1062,38 @@ sub remove
 
 
     #
-    #  Security Test.
+    #  Get all the names/values for the current user.
     #
-    #  Get all the values for the current user, and ensure that
-    # they have control over the record
+    #  Create the helper to do the deletion.
     #
     my $temp = DHCP::User->new();
     my $data = $temp->getAllData($existing);
+    my $dns  = DHCP::Records->new();
 
     #
-    #  Look for a match
+    #  If the record currently exists for the user then delete it.
     #
-    my $match = 0;
+    my $deleted = 0;
+
     foreach my $entry (@$data)
     {
-        $match = 1 if ( $entry->{ 'name' } eq $record );
+        if ( $entry->{ 'name' } eq $record )
+        {
+            $dns->removeRecord( $record, 'A', $entry->{ 'ipv4' } )
+              if ( $entry->{ 'ipv4' } );
+
+            $dns->removeRecord( $record, 'AAAA', $entry->{ 'ipv6' } )
+              if ( $entry->{ 'ipv6' } );
+
+            $deleted = 1;
+        }
     }
 
-    return ( $self->redirectURL("/") ) if ( !$match );
-
-    #
-    #  Lookup the current value(s) of the record.
-    #
-    my $tmp = DHCP::Records->new();
-    my $cur = $tmp->lookup($record);
-
-    #
-    #  Delete the IPv4 address, if present.
-    #
-    if ( $cur && $cur->{ 'ipv4' } )
+    if ($deleted)
     {
-        $tmp->removeRecord( $record, 'A', $cur->{ 'ipv4' } );
+        my $user = DHCP::User->new();
+        $user->deleteRecord( $existing, $record );
     }
-
-    #
-    #  Delete the IPv6 address if present.
-    #
-    if ( $cur && $cur->{ 'ipv6' } )
-    {
-        $tmp->removeRecord( $record, 'AAAA', $cur->{ 'ipv4' } );
-    }
-
-    #
-    #  Now remove the records from the users DB-entry.
-    #
-    my $user = DHCP::User->new();
-    $user->deleteRecord( $existing, $record );
 
     return ( $self->redirectURL("/home") );
 }

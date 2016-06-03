@@ -5,7 +5,15 @@ DHCP::Records - DNS-Record Related code.
 
 =head1 DESCRIPTION
 
-This module is used to interface with Amazon and get/set DNS records.
+This module is used to interface with Amazon and set/delete DNS records.
+
+There is no facility to retrieve the current values of the records, as
+we use DNS directly for that.  This is more efficient in our UI as
+we only ever need to show a few records, and making DNS-lookups scales
+better than having to fetch the whole zone-name, and parse it.
+
+(Amazon lets you fetch a zone, but internally it requests N records,
+and then allows you to continue fetching more in chunks.)
 
 =cut
 
@@ -70,100 +78,10 @@ sub new
 
 =begin doc
 
-Return all records beneath our main zone.
+Remove an existing record.  This is used either:
 
-The return value is a nested hash:
-
-=for example begin
-
-   $result{'a'}{'foo'} = "1.2.3.3";
-   $result{'a'}{'bar'} = "1.2.3.5";
-   $result{'aaaa'}{'foo'} = "::1";
-   $result{'aaaa'}{'bar'} = "::1";
-
-=for example end
-
-=end doc
-
-=cut
-
-sub getRecords
-{
-    my ($self) = (@_);
-
-    my $result;
-
-    #
-    #  Lookup in cache first
-    #
-    my $redis  = Singleton::Redis->instance();
-    my $cached = $redis->get("DHCP:CACHED:ZONE");
-    if ($cached)
-    {
-        $result = from_json($cached);
-        return ($result);
-    }
-
-    #
-    #  These are here to provide an offset in the iteration case.
-    #
-    #  The "fetch records" call will return no more than 100 records
-    # at a time.
-    #
-    my $cont     = 1;
-    my $tmp_name = undef;
-    my $tmp_type = undef;
-
-    while ($cont)
-    {
-        my ( $record_sets, $next ) =
-          $self->{ 'r53' }->list_resource_record_sets(
-                                              zone_id => $DHCP::Config::ZONE_ID,
-                                              name    => $tmp_name,
-                                              type    => $tmp_type
-          );
-
-        #
-        #  Should we continue looping for more records?
-        #
-        if ( $next->{ 'name' } )
-        {
-            $tmp_name = $next->{ 'name' };
-            $tmp_type = $next->{ 'type' };
-        }
-        else
-        {
-            $cont = 0;
-        }
-
-
-        #
-        #  OK is the record we're looking for in the current batch?
-        #
-        foreach my $existing (@$record_sets)
-        {
-            my $type = $existing->{ 'type' };
-            my $name = $existing->{ 'name' };
-            $name = $1 if ( $name =~ /^([^.]+).(.*)/ );
-
-            my $data = $existing->{ 'records' }[0];
-
-            $result->{ $type }{ $name } = $data;
-        }
-    }
-
-    #
-    #  Store in the cache
-    #
-    $redis->set( "DHCP:CACHED:ZONE", to_json($result) );
-
-    return ($result);
-}
-
-
-=begin doc
-
-Remove an existing record.
+* When a user clicks `delete` on a name/record.
+* When an account is removed.
 
 =end doc
 
@@ -203,7 +121,7 @@ sub removeRecord
 
 =begin doc
 
-Create a new record.
+Add/Change a record.
 
 =end doc
 
@@ -237,30 +155,5 @@ sub createRecord
     #
     Singleton::Redis->instance()->del("DHCP:CACHED:ZONE");
 }
-
-
-=begin doc
-
-Lookup the current values of the given record.
-
-Return both the IPv4 and IPv6 records - if available.
-
-=end doc
-
-=cut
-
-sub lookup
-{
-    my ( $self, $name ) = (@_);
-
-    my $result;
-
-    my $existing = $self->getRecords();
-    $result->{ 'ipv4' } = $existing->{ "A" }{ $name }    || undef;
-    $result->{ 'ipv6' } = $existing->{ "AAAA" }{ $name } || undef;
-
-    return ($result);
-}
-
 
 1;
