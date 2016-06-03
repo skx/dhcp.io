@@ -377,32 +377,17 @@ sub setRecord
     $type = 'AAAA' if ( $ip =~ /:/ );
 
     #
-    #  Now compare teh values
+    #  Get the old/current IP.
+    #
+    my $old_ip = "";
+    $old_ip = $data->{ 'a' }    if ( $type eq "A" );
+    $old_ip = $data->{ 'aaaa' } if ( $type eq "AAAA" );
+
+    #
+    # If submitted value matches that old one, then we'll return now.
     #
     my $existing = 0;
-    my $old_ip   = "";
-
-    #
-    #  Does the current value match that already setup?
-    #
-    if ( $type eq "A" )
-    {
-        if ( $data->{ 'a' } eq $ip )
-        {
-            $old_ip   = $data->{ 'a' };
-            $existing = 1;
-        }
-    }
-    if ( $type eq "AAAA" )
-    {
-        if ( $data->{ 'aaaa' } eq $ip )
-        {
-            $old_ip   = $data->{ 'aaaa' };
-            $existing = 1;
-        }
-    }
-
-    # If the record matches, then we'll return now.
+    $existing = 1 if ( $old_ip eq $ip );
     return if ($existing);
 
     #
@@ -415,7 +400,6 @@ sub setRecord
     #  Get the user-id
     #
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
-
     my $sql = $db->prepare("SELECT id FROM users WHERE login=?") or
       die "Failed to prepare statement";
     $sql->execute($owner) or
@@ -476,7 +460,7 @@ sub getAllData
     while ( $sql->fetch() )
     {
         my $data = $helper->values( $dom . ".dhcp.io" );
-        my $present = $data->{ 'a' } || $data->{ 'aaaa' };
+        my $present = $data->{ 'a' } || $data->{ 'aaaa' } || undef;
 
         push( @$results,
               {  name    => $dom,
