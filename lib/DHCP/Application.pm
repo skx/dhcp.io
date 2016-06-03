@@ -775,8 +775,22 @@ sub set
     {
         my $owner = $temp->getOwnerFromDomain($user);
 
-        $temp->setRecord( $user, $ip, $owner );
-        return ($ip);
+        #
+        # Get the owner's email address.  If they have none
+        # their update will be rejected.
+        #
+        my $data = $user->get( user => $owner );
+        my $mail = $data->{ 'email' };
+
+        if ( defined($mail) && ( length($mail) > 0 ) && ( $mail =~ /@/ ) )
+        {
+            $temp->setRecord( $user, $ip, $owner );
+            return ($ip);
+        }
+        else
+        {
+            return "Update dropped from user without email address.";
+        }
     }
     else
     {
