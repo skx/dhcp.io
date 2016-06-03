@@ -1,0 +1,43 @@
+
+<!-- tmpl_if name='saved' -->
+
+<div class="container">
+  <h1>Email Address Changed</h1>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-1 col-md-1">
+      </div>
+      <div class="col-sm-11 col-md-11">
+        <p>Your email-address was updated, thank you.</p>
+        <p>See your <a href="/profile/">updated profile</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- tmpl_else -->
+
+<div class="container">
+  <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <div class="panel panel-info" >
+      <div class="panel-heading"><div class="panel-title">Change your email-address</div></div>
+      <div style="padding-top:30px" class="panel-body" >
+        <form id="form" class="form-horizontal" role="form" method="POST" action="/profile/email">
+          <input type="hidden" name="mode" value="profile_email" />
+          <div style="margin-bottom: 10px" class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+            <input id="email" type="text" class="form-control" name="email" value="<!-- tmpl_var name='email' escape='html' -->" placeholder="Enter your email-address">
+          </div>
+          <div style="margin-top:10px" class="form-group pull-right">
+            <div class="col-sm-12 controls">
+              <button id="cancel" name="cancel" value="1" href="/profile" class="btn">Cancel</button>
+              <button id="submit" name="submit" value="1" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /tmpl_if -->

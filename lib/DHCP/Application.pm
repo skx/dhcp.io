@@ -116,7 +116,7 @@ sub setup
         'profile_delete' => 'profile_delete',
 
         # Update a profile.
-        'profile_email' => 'profile_email',
+        'profile_email'    => 'profile_email',
         'profile_password' => 'profile_password',
 
         # Remove a hostname
@@ -1499,14 +1499,152 @@ sub profile
 }
 
 
+=begin doc
+
+Allow the user to change their email address.
+
+=end doc
+
+=cut
+
 sub profile_email
 {
-    return "NOP";
+    my ($self) = (@_);
+
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
+    return ( $self->login_required() ) unless ( defined($existing) );
+
+    my $template = $self->load_template("pages/profile_email.tmpl");
+    $template->param( username => $existing );
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+    #
+    #  Get the user
+    #
+    my $user = DHCP::User->new();
+
+
+    #
+    #  Is the user cancelling?
+    #
+    if ( $q->param("cancel") )
+    {
+        return ( $self->redirectURL("/profile") );
+    }
+
+
+    #
+    #  Is the user submitting?
+    #
+    if ( $q->param("submit") )
+    {
+
+        # Get the email from the form
+        my $email = $q->param("email");
+
+        if ( length $email )
+        {
+
+            # Save it
+            $user->set( mail => $email,
+                        user => $existing );
+
+            $template->param( saved => 1 );
+        }
+    }
+
+    # Get the updated/new values
+    my $data = $user->get( user => $existing );
+    $template->param( email => $data->{ 'email' } )
+      if ( $data && $data->{ 'email' } );
+
+    # Show the template
+    return ( $template->output() );
 }
 
 sub profile_password
 {
-    return "NOP";
+    my ($self) = (@_);
+
+    my $q       = $self->query();
+    my $session = $self->param('session');
+
+    #
+    #  Not logged in?
+    #
+    my $existing = $session->param('logged_in');
+    return ( $self->login_required() ) unless ( defined($existing) );
+
+    my $template = $self->load_template("pages/profile_password.tmpl");
+    $template->param( username => $existing );
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+    #
+    #  Get the user
+    #
+    my $user = DHCP::User->new();
+
+
+    #
+    #  Is the user cancelling?
+    #
+    if ( $q->param("cancel") )
+    {
+        return ( $self->redirectURL("/profile") );
+    }
+
+
+    #
+    #  Is the user submitting?
+    #
+    if ( $q->param("submit") )
+    {
+
+        # Get the passwords from the form
+        my $pass1 = $q->param("password");
+        my $pass2 = $q->param("confirm");
+
+        if ( $pass1 && $pass2 )
+        {
+            if ( $pass1 eq $pass2 )
+            {
+                $user->set( pass => $pass1,
+                            user => $existing );
+                $template->param( saved => 1 );
+            }
+            else
+            {
+                $template->param( password_mismatch => 1 );
+            }
+        }
+        else
+        {
+            $template->param( password_empty => 1 );
+        }
+    }
+
+    # Show the template
+    return ( $template->output() );
 }
 
 
