@@ -115,6 +115,10 @@ sub setup
         # Delete a profile == account
         'profile_delete' => 'profile_delete',
 
+        # Update a profile.
+        'profile_email' => 'profile_email',
+        'profile_password' => 'profile_password',
+
         # Remove a hostname
         'remove' => 'remove',
 
@@ -129,7 +133,7 @@ sub setup
         # forgot password / password reset
         'forgotten' => 'forgotten',
 
-        # profile
+        # view profile
         'profile' => 'profile',
 
         # called on unknown mode.
@@ -1455,7 +1459,7 @@ sub profile_delete
 
 =begin doc
 
-View/Edit the profile.
+View your own profile.
 
 =end doc
 
@@ -1487,38 +1491,23 @@ sub profile
         $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
-    #
-    #  If the user is submitting.
-    #
-    if ( $q->param("submit") )
-    {
-        # If we're in read-only mode then just terminate.
-        if ($DHCP::Config::READ_ONLY)
-        {
-            return ( $self->redirectURL("/read-only/") );
-        }
-
-        my $email = $q->param("email");
-        my $pass = $q->param("pass") || "";
-        if ($email)
-        {
-            $user->set( mail => $email,
-                        user => $existing );
-            $template->param( thanks => 1 );
-        }
-        if ( $pass && length($pass) > 0 )
-        {
-            $user->set( pass => $pass,
-                        user => $existing );
-            $template->param( thanks => 1 );
-        }
-    }
-
     my $data = $user->get( user => $existing );
     $template->param( email => $data->{ 'email' } )
       if ( $data && $data->{ 'email' } );
 
     return ( $template->output() );
 }
+
+
+sub profile_email
+{
+    return "NOP";
+}
+
+sub profile_password
+{
+    return "NOP";
+}
+
 
 1;
