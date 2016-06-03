@@ -408,8 +408,8 @@ sub setRecord
     #
     # Create a helper
     #
-    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
-    $helper->createRecord( $record, $type, $ip );
+    my $updater = DHCP::Records->new( redis => $self->{ 'redis' } );
+    $updater->createRecord( $record, $type, $ip );
 
     #
     #  Get the user-id
