@@ -1,38 +1,52 @@
-<!-- tmpl_if name='check_email' -->
-<h1>Reset Email Sent</h1>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-1 col-md-1">
-    </div>
-    <div class="col-sm-11 col-md-11">
-      <p>Your account was found, and an email was sent if you had an email address registered.</p>
-      <p>If you didn't have an address registered when you created the account you're out of luck.</p>
-    </div>
-  </div>
-</div>
+<div class="container">
+  <div id="box" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <div class="panel panel-info" >
+      <div class="panel-heading"><div class="panel-title">Reset Your Password</div></div>
+      <div style="padding-top:30px" class="panel-body" >
+        <form id="form" class="form-horizontal" role="form" method="POST" action="/forgotten">
 
-<!-- tmpl_else -->
+          <!-- tmpl_if name='not_found' -->
+          <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <p>The details you submitted did not match an existing account.</p>
+          </div>
+          <!-- /tmpl_if -->
 
-<h1>Password Reset Request</h1>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-1 col-md-1">
-    </div>
-    <div class="col-sm-11 col-md-11">
-      <!-- tmpl_if name='not_found' -->
-      <div class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <p>Your account was not found...</p>
+
+          <!-- tmpl_if name='invalid_token' -->
+          <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <p>The token you submitted has been used already, or is otherwise invalid.</p>
+          </div>
+          <!-- /tmpl_if -->
+
+          <!-- tmpl_if name='check_email' -->
+          <div class="alert alert-info">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <p>Your account was found, and an email was sent to let you reset your credentials.</p>
+            <p>The reset link will be valid for 12 hours.</p>
+          </div>
+          <!-- /tmpl_if -->
+
+
+          <input type="hidden" name="mode" value="forgotten">
+
+          <div style="margin-bottom: 25px" class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input type="text" class="input-block-level form-control" name="text" value=""  placeholder="Enter your username, or email-address.">
+          </div>
+
+          <div style="margin-top:10px" class="form-group pull-right">
+            <!-- Button -->
+            <div class="col-sm-12 controls">
+              <input type="submit" id="cancel" name="cancel" class="btn" value="Cancel">
+              <input type="submit" id="submit" name="submit" class="btn btn-primary" value="reset">
+            </div>
+          </div>
+
+        </form>
       </div>
-      <!-- /tmpl_if -->
-
-      <form method="POST" action="/forgotten">
-        <input type="hidden" name="mode" value+"forgotten">
-        <p>Please enter your username, or your email address:</p>
-        <input type="text" name="text" value="">
-        <input type="submit" name="submit" value="Reset">
-      </form>
     </div>
+
   </div>
 </div>
-<!-- /tmpl_if -->

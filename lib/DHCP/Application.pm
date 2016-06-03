@@ -666,7 +666,7 @@ sub application_login
         my $lname = $q->param('lname');
         my $lpass = $q->param('lpass');
 
-        my $logged_in = undef          ;
+        my $logged_in = undef;
 
         #
         #  Run the test
@@ -677,7 +677,7 @@ sub application_login
             $logged_in = $user->testLogin( $lname, $lpass );
         }
 
-        if ( $logged_in )
+        if ($logged_in)
         {
             #
             #  Setup the session variables.
@@ -1237,6 +1237,19 @@ sub forgotten
     }
 
     #
+    #  Load the template
+    #
+    my $template = $self->load_template("pages/forgotten.tmpl");
+
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
+    {
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
+    }
+
+    #
     #  Are we handling a password-reset?  If so we'll do the
     # lookup and login here.
     #
@@ -1275,22 +1288,18 @@ sub forgotten
             }
         }
 
-        die 'invalid token';
+        $template->param( invalid_token => 1 );
     }
 
-    #
-    #  Load the page
-    #
-    my $template = $self->load_template("pages/forgotten.tmpl");
 
-    my $z = $DHCP::Config::ZONE;
-    $z =~ s/\.$//g;
-    $template->param( "zone" => $z );
-    if ( $z =~ /^(.*)\.(.*)$/ )
+
+    #
+    #  Cancelling?
+    #
+    if ( $q->param("cancel") )
     {
-        $template->param( "uc_zone" => uc($1) . "." . $2 );
+        return ( $self->redirectURL("/") );
     }
-
 
     #
     #  Did the user submit the page?
