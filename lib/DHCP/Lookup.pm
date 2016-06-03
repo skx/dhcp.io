@@ -21,9 +21,6 @@ sub values
     my ( $self, $name ) = (@_);
 
     my $result;
-    $result->{ 'a' }    = "1.2.3.4";
-    $result->{ 'aaaa' } = "foo::" . $name . "::bar";
-    return $result;
 
     #
     # Resolver
