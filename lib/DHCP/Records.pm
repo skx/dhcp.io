@@ -136,7 +136,7 @@ sub createRecord
         changes => [
 
             # Create the record
-            {  action => 'create',
+            {  action => 'upsert',
                name   => "$record.$DHCP::Config::ZONE",
                type   => $type,
                ttl    => $DHCP::Config::TTL,

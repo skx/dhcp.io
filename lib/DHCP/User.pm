@@ -363,57 +363,52 @@ sub setRecord
     my ( $self, $record, $ip, $owner ) = (@_);
 
     #
-    #  FIXME: Use upsert.
+    # Get the current values of the name, to see if they
+    # are already present.
     #
+    my $helper = DHCP::Lookup->new();
+    my $data   = $helper->values( $record . ".dhcp.io" );
+
+
+    #
+    # What type are we handling?
+    #
+    my $type = "A";
+    $type = 'AAAA' if ( $ip =~ /:/ );
+
+    #
+    #  Now compare teh values
+    #
+    my $existing = 0;
+    my $old_ip   = "";
+
+    #
+    #  Does the current value match that already setup?
+    #
+    if ( $type eq "A" )
+    {
+        if ( $data->{ 'a' } eq $ip )
+        {
+            $old_ip   = $data->{ 'a' };
+            $existing = 1;
+        }
+    }
+    if ( $type eq "AAAA" )
+    {
+        if ( $data->{ 'aaaa' } eq $ip )
+        {
+            $old_ip   = $data->{ 'aaaa' };
+            $existing = 1;
+        }
+    }
+
+    # If the record matches, then we'll return now.
+    return if ($existing);
 
     #
     # Create a helper
     #
     my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
-
-    #
-    #  Get the existing records - we need to see if the record
-    # we're setting a new value to an existing record, or creating a new one.
-    #
-    my $existing = $helper->getRecords();
-
-    #
-    #  The type of the record we're dealing with.
-    #
-    my $type = 'A';
-    $type = 'AAAA' if ( $ip =~ /:/ );
-
-    #
-    #  Look for the old value of the zone being updated.
-    #
-    #  Amazon won't let you say "set foo.example.com = 1.2.3.4",
-    # if the `foo` record exists you must delete it, and then recreate it.
-    #
-    #  Annoyingly deleting without the correct/current value will fail,
-    # so you need to search the existing zone to find the old IP.
-    #
-    my $old_ip = $existing->{ $type }{ $record } || undef;
-
-
-    #
-    #  If we have an old IP and it is not different to the new IP
-    # then we do nothing.
-    #
-    if ( ( $old_ip && $ip ) &&
-         ( $old_ip eq $ip ) )
-    {
-        return;
-    }
-
-    #
-    #  If we got the old IP then we have to apply a "delete" + "create"
-    # pair of events.
-    #
-    if ($old_ip)
-    {
-        $helper->removeRecord( $record, $type, $old_ip );
-    }
-
     $helper->createRecord( $record, $type, $ip );
 
     #
