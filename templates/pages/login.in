@@ -22,35 +22,46 @@
 <!-- /tmpl_if -->
 
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-1 col-md-1">
+
+<div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+  <div class="panel panel-info" >
+    <div class="panel-heading">
+      <div class="panel-title">Login</div>
+
+      <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="/forgotten/">Forgot your password?</a></div>
     </div>
-    <div class="col-sm-11 col-md-11">
 
-      <!-- tmpl_if name='login_error' -->
-      <div class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <p>Your login failed, please try again.</p>
-        <p>If you've forgotten your password you can initiate <a href="/forgotten/">a password reset process</a>, via email.</p>
-      </div>
-      <!-- /tmpl_if -->
+    <div style="padding-top:30px" class="panel-body" >
 
-      <form action="/cgi-bin/index.cgi" method="POST">
+      <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+
+      <form id="loginform" class="form-horizontal" role="form" method="POST" action="/login/">
         <input type="hidden" name="mode" value="login" />
         <!-- tmpl_if name='target' -->
         <input type="hidden" name="target" value="<!-- tmpl_var name='target' -->">
         <!-- /tmpl_if -->
-        <table>
-          <tr><td>Username</td>
-            <td><input type="text" name="lname" value="<!-- tmpl_var name='login_name' -->" /></td></tr>
-          <tr>
-            <td>Password</td>
-            <td><input type="password" name="lpass" value=""/></td>
-          </tr>
-          <tr><td></td>
-            <td><input type="submit" name="submit" value="Login" /></td></tr>
-        </table>
+
+        <!-- tmpl_if name='login_error' -->
+        <p>Your login failed, please try again.</p>
+        <!-- /tmpl_if -->
+
+        <div style="margin-bottom: 10px" class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+          <input id="lname" type="text" class="form-control" name="lname" value="<!-- tmpl_var name='login_name' escape='html' -->" placeholder="Your username ">
+        </div>
+
+        <div style="margin-bottom: 10px" class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+          <input id="lpass" type="password" class="form-control" name="lpass" placeholder="Your password">
+        </div>
+
+
+        <div style="margin-top:10px" class="form-group pull-right">
+          <div class="col-sm-12 controls">
+            <input type="submit" id="submit" name="submit" value="Login" class="btn btn-info">
+
+          </div>
+        </div>
       </form>
     </div>
   </div>

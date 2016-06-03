@@ -632,71 +632,28 @@ sub application_login
         return ( $self->redirectURL("/throttle/") );
     }
 
+    #
+    #  Load the template.
+    #
+    my $template = $self->load_template("pages/login.tmpl");
 
     #
-    # Login results.
+    #  Populate the template.
     #
-    my ($logged_in) = undef;
-
-    #
-    #  Username and Password from the login form.
-    #
-    my $lname = $q->param('lname');
-    my $lpass = $q->param('lpass');
-
-    #
-    # Do the login
-    #
-    if ( defined($lname) &&
-         length($lname)  &&
-         defined($lpass) &&
-         length($lpass) )
+    my $z = $DHCP::Config::ZONE;
+    $z =~ s/\.$//g;
+    $template->param( "zone" => $z );
+    if ( $z =~ /^(.*)\.(.*)$/ )
     {
-        my $user = DHCP::User->new();
-        $logged_in = $user->testLogin( $lname, $lpass );
+        $template->param( "uc_zone" => uc($1) . "." . $2 );
     }
 
+
     #
-    #  If it worked
+    #  If the user is submitting.
     #
-    if ( defined($logged_in) && ($logged_in) )
+    if ( $q->param('submit') )
     {
-
-        #
-        #  Setup the session variables.
-        #
-        $session->param( "logged_in",    $lname );
-        $session->param( "failed_login", undef );
-        $session->flush();
-
-        #
-        #  Return to the homepage.
-        #
-        #
-        # Login succeeded.  If we have a redirection target:
-        #
-        # 1:  Close session.
-        # 2:  Redirect + Set-Cookie
-        # 3:  Exit.
-        #
-        my $target = $q->param("target");
-        if ( defined($target) && ( $target =~ /^\// ) )
-        {
-
-            return ( $self->redirectURL($target) );
-        }
-        else
-        {
-
-            #
-            #  Just return to the homepage.
-            #
-            return ( $self->redirectURL("/home") );
-        }
-    }
-    else
-    {
-
         #
         #  Bump the user's login-count.
         #
@@ -704,38 +661,59 @@ sub application_login
         $redis->expire( $tkey, 300 );
 
         #
-        #  Login failed, or some details missing.
+        #  Username and Password from the login form.
         #
-        $session->param( 'logged_in', undef );
-        $session->clear('logged_in');
-        $session->param( 'login_name', $lname );
-        $session->close();
+        my $lname = $q->param('lname');
+        my $lpass = $q->param('lpass');
+
+        my $logged_in = undef          ;
 
         #
-        #  Load the template
+        #  Run the test
         #
-        my $template = $self->load_template("pages/login.tmpl");
-        $template->param( login_name => $lname ) if ($lname);
-
-
-        my $z = $DHCP::Config::ZONE;
-        $z =~ s/\.$//g;
-        $template->param( "zone" => $z );
-        if ( $z =~ /^(.*)\.(.*)$/ )
+        if ( $lname && $lpass )
         {
-            $template->param( "uc_zone" => uc($1) . "." . $2 );
+            my $user = DHCP::User->new();
+            $logged_in = $user->testLogin( $lname, $lpass );
         }
 
-        #
-        # User submitted a login attempt which failed.
-        #
-        $template->param( login_error => 1 );
+        if ( $logged_in )
+        {
+            #
+            #  Setup the session variables.
+            #
+            $session->param( "logged_in",    $lname );
+            $session->param( "failed_login", undef );
+            $session->flush();
 
-        #
-        #  Display it.
-        #
-        return $template->output();
+            #
+            # Login succeeded.  If we have a redirection target:
+            #
+            # 1:  Close session.
+            # 2:  Redirect + Set-Cookie
+            # 3:  Exit.
+            #
+            my $target = $q->param("target");
+            if ( defined($target) && ( $target =~ /^\// ) )
+            {
+                return ( $self->redirectURL($target) );
+            }
+            else
+            {
+                return ( $self->redirectURL("/home") );
+            }
+        }
+        else
+        {
+            $template->param( login_error => 1 );
+            $template->param( login_name => $lname ) if ($lname);
+        }
     }
+
+    #
+    #  Show the form.
+    #
+    return $template->output();
 }
 
 
