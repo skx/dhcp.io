@@ -7,7 +7,6 @@
       <p><!-- tmpl_var name='uc_zone' --> allows you to control DNS entries beneath the <code><!-- tmpl_var name='zone' --></code> domain.</p>
       <p>You can quickly and easily configure a name such as <code>gateway.<!-- tmpl_var name='zone' --></code> to point to the IP of your home gateway, whether that is an IPv6 address an IPv4 address, or both.</p>
       <p>You've can update your name(s) at any time via a simple call to <code>curl</code>, or using your web-browser, with no need to install or configure any client.</p>
-      <p>To prevent abuse registration to this service requires a one-time fee of <b>&pound;5.00</b>.</p>
     </div>
   </div>
 </div>
