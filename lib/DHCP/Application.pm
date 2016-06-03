@@ -421,7 +421,8 @@ sub home
     #
     #  Load the homepage template.
     #
-    my $template = $self->load_template("pages/home.tmpl");
+    my $template =
+      $self->load_template( "pages/home.tmpl", loop_context_vars => 1 );
 
     #
     #  Set the zone in the template
@@ -1208,12 +1209,12 @@ sub logs
     my $helper = DHCP::User->new();
     my $logs   = $helper->logs($existing);
 
-    if ( $logs )
-      {
-	my    @logs = reverse( @$logs );
+    if ($logs)
+    {
+        my @logs = reverse(@$logs);
 
-	$template->param( logs => \@logs );
-      }
+        $template->param( logs => \@logs );
+    }
     return ( $template->output() );
 
 }
