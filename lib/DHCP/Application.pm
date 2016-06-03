@@ -779,7 +779,7 @@ sub set
         # Get the owner's email address.  If they have none
         # their update will be rejected.
         #
-        my $data = $user->get( user => $owner );
+        my $data = $temp->get( user => $owner );
         my $mail = $data->{ 'email' };
 
         if ( defined($mail) && ( length($mail) > 0 ) && ( $mail =~ /@/ ) )
