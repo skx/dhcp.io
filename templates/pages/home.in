@@ -18,7 +18,8 @@
         <div id="<!-- tmpl_var name='name' -->" class="tab-pane <!-- tmpl_if name='__first__' -->active<!-- /tmpl_if -->">
           <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' -->  <span style="font-size:12px"><a href="/remove/<!-- tmpl_var name='name' -->">Delete</a></span> </h3>
           <!-- tmpl_if name='present' -->
-          <table cellspacing="5">
+          <table class="table table-hover table-striped table-condensed">
+          <tr><th>Address-Type</th><th>Value</th><th>Action</th></tr>
             <!-- tmpl_if name='ipv4' -->
             <tr><td><p><b>IPv4</b></td>
               <td><p><!-- tmpl_var name='ipv4' --> </p>
@@ -32,6 +33,8 @@
           </table>
           <!-- /tmpl_if name='present' -->
 
+          <p>View the <code>curl</code> <a href="#" class="show-info">commands to set your names</a>.</p>
+          <div class="info" style="display:none">
           <!-- tmpl_if name='present' -->
           <p>To update the value of your hostname to please run:</p>
           <!-- tmpl_else -->
@@ -40,9 +43,7 @@
           <p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' --></pre></p>
           <p>If you wish to set the value to a specific IP please run:</p>
 <p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4</pre></p>
-          <p>Finally if you wish to avoid your URL being sniffed, stored, or copied, you could use a HTTP-POST instead:</p>
-           <p><pre>$ curl -X POST https://<!-- tmpl_var name='zone' -->/set --data 'token=<!-- tmpl_var name='token' -->&amp;ip=23.34.45.56'</pre></p>
-            <p>(As before if you omit the <span class="tt">ip=x.x.x.x</span>  then the source of your request will be assumed.)</p>
+          </div>
         </div>
         <!-- /tmpl_loop name='records' -->
 
@@ -67,3 +68,10 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+      $(document).ready(function(){
+        $( ".show-info" ).click(  function(  ) {
+          $(this).closest('p').next('.info').toggle(); } );
+      });
+</script>
