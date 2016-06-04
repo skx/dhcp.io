@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -Ilib/ -I../lib/
+#!/usr/bin/perl -w -Ilib/
 
 =head1 NAME
 
@@ -55,68 +55,78 @@ b) the Perl "Artistic License".
 use strict;
 use warnings;
 
-use DHCP::Records;
+use WebService::Amazon::Route53;
+use DHCP::Config;
 use Getopt::Long;
-use Redis;
 
 #
-#  Parse options: -4 / -6 / all
+#  Parse options: -4 / -6 / --all / --cname
 #
 my %CONFIG;
 $CONFIG{ 'all' } = 1;
 
 exit
   if (
-       !Getopt::Long::GetOptions( "4",     \$CONFIG{ 'ipv4' },
-                                  "6",     \$CONFIG{ 'ipv6' },
-                                  "--all", \$CONFIG{ 'all' } ) );
+       !Getopt::Long::GetOptions( "4",       \$CONFIG{ 'ipv4' },
+                                  "6",       \$CONFIG{ 'ipv6' },
+                                  "--cname", \$CONFIG{ 'cname' },
+                                  "--all",   \$CONFIG{ 'all' } ) );
 
 my $type = "all";
-$type = "A"    if ( $CONFIG{ 'ipv4' } );
-$type = "AAAA" if ( $CONFIG{ 'ipv6' } );
+$type = "A"     if ( $CONFIG{ 'ipv4' } );
+$type = "AAAA"  if ( $CONFIG{ 'ipv6' } );
+$type = "CNAME" if ( $CONFIG{ 'cname' } );
 
 
 
 #
 #  Get the records.
 #
-my $r   = Redis->new();
-my $tmp = DHCP::Records->new( redis => $r );
-my $obj = $tmp->getRecords();
+my $dns =
+  WebService::Amazon::Route53->new( id  => $DHCP::Config::ROUTE_53_ID,
+                                    key => $DHCP::Config::ROUTE_53_KEY );
 
 #
-#  The results and the count.
+#  These are here to provide an offset in the iteration case.
 #
-my %obj = %$obj;
-my $c   = 0;
+#  The "fetch records" call will return no more than 100 records
+# at a time.
+#
+my $cont     = 1;
+my $tmp_name = undef;
+my $tmp_type = undef;
 
-#
-#  The record-types to dump.  All by default.
-#
-my @types = ( "A", "AAAA" );
-
-#
-#  Might be limiting.
-#
-@types = ("A")    if ( $type eq "A" );
-@types = ("AAAA") if ( $type eq "AAAA" );
-
-
-#
-#  Get the types.
-#
-foreach my $key (@types)
+while ($cont)
 {
-    my $hash = $obj{ $key };
+    my $response =
+      $dns->list_resource_record_sets( zone_id => $DHCP::Config::ZONE_ID,
+                                       name    => $tmp_name,
+                                       type    => $tmp_type,
+                                     );
 
-    foreach my $name ( sort keys %$hash )
+    $tmp_name = $response->{ 'next_record_name' };
+    $tmp_type = $response->{ 'next_record_type' };
+
+    $cont = 0 unless ( $tmp_name && $tmp_type );
+
+    if ( $response->{ 'resource_record_sets' } )
     {
-        next if ( $name =~ /^(dhcp|www)$/ );
-        print sprintf( "%15s - %s", $name, $obj->{ $key }{ $name } ) . "\n";
-        $c += 1;
+        foreach my $ent ( @{ $response->{ 'resource_record_sets' } } )
+        {
+            my $r_type = $ent->{ 'type' };
+            my $r_ttl  = $ent->{ 'ttl' };
+            my $r_name = $ent->{ 'name' };
+            my $r_val  = $ent->{ 'resource_records' }[0];
+
+            if ( ( $type eq "all" ) ||
+                 ( $type eq $r_type ) )
+            {
+                $r_name =~ s/\.$//g;
+
+                print sprintf( "%30s -> %6s %40s TTL:%d\n",
+                               $r_name, $r_type, $r_val,  $r_ttl );
+            }
+
+        }
     }
 }
-
-print "; $c record";
-print "s" unless ( $c == 1 );
-print ".\n";
