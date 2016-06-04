@@ -22,12 +22,12 @@
           <tr><th>Address-Type</th><th>Value</th><th>Action</th></tr>
             <!-- tmpl_if name='ipv4' -->
             <tr><td><p><b>IPv4</b></td>
-              <td><p><!-- tmpl_var name='ipv4' --> </p>
+              <td><p><code><!-- tmpl_var name='ipv4' --></code></p>
               <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/A/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv4' -->
             <!-- tmpl_if name='ipv6' -->
             <tr><td><p><b>IPv6</b></td>
-              <td><p><!-- tmpl_var name='ipv6' --></p></td>
+              <td><p><code><!-- tmpl_var name='ipv6' --></code></p></td>
               <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
             <!-- /tmpl_if name='ipv6' -->
           </table>
