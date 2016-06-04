@@ -235,7 +235,7 @@ sub deleteUser
     #
     # Create a helper for removing the old DNS records.
     #
-    my $helper = DHCP::Records->new( redis => $self->{ 'redis' } );
+    my $helper = DHCP::Records->new();
 
     foreach my $entry (@$data)
     {
@@ -393,7 +393,7 @@ sub setRecord
     #
     # Create a helper
     #
-    my $updater = DHCP::Records->new( redis => $self->{ 'redis' } );
+    my $updater = DHCP::Records->new();
     $updater->createRecord( $record, $type, $ip );
 
     #

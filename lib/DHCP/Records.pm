@@ -42,7 +42,6 @@ package DHCP::Records;
 # This must be renamed - it isn't in the repository.
 use DHCP::Config;
 
-use Singleton::Redis;
 use WebService::Amazon::Route53;
 use JSON;
 
@@ -109,12 +108,6 @@ sub removeRecord
         use Data::Dumper;
         print STDERR Dumper( $self->{ 'r53' }->error() );
     }
-
-    #
-    #  Remove the cached values - which are now invalid.
-    #
-    Singleton::Redis->instance()->del("DHCP:CACHED:ZONE");
-
 }
 
 
@@ -150,10 +143,6 @@ sub createRecord
         print STDERR Dumper( $self->{ 'r53' }->error() );
     }
 
-    #
-    #  Remove the cached values - which are now invalid.
-    #
-    Singleton::Redis->instance()->del("DHCP:CACHED:ZONE");
 }
 
 1;
