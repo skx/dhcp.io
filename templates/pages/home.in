@@ -17,21 +17,16 @@
         <!-- tmpl_loop name='records' -->
         <div id="<!-- tmpl_var name='name' -->" class="tab-pane <!-- tmpl_if name='__first__' -->active<!-- /tmpl_if -->">
           <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' -->  <span style="font-size:12px"><a href="/remove/<!-- tmpl_var name='name' -->">Delete</a></span> </h3>
-          <!-- tmpl_if name='present' -->
           <table class="table table-hover table-striped table-condensed">
           <tr><th>Address-Type</th><th>Value</th><th>Action</th></tr>
-            <!-- tmpl_if name='ipv4' -->
+
             <tr><td><p><b>IPv4</b></td>
-              <td><p><code><!-- tmpl_var name='ipv4' --></code></p>
-              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/A/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv4' -->">Delete</a></p></td></tr>
-            <!-- /tmpl_if name='ipv4' -->
-            <!-- tmpl_if name='ipv6' -->
+              <td><p><code><!-- tmpl_if name='ipv4' --><!-- tmpl_var name='ipv4' --><!-- tmpl_else -->Unset<!-- /tmpl_if --></code></p>
+              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> <!-- tmpl_if name='ipv4' -->| <a href="/delete/A/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv4' -->">Delete</a><!-- /tmpl_if --></p></td></tr>
             <tr><td><p><b>IPv6</b></td>
-              <td><p><code><!-- tmpl_var name='ipv6' --></code></p></td>
-              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a></p></td></tr>
-            <!-- /tmpl_if name='ipv6' -->
+              <td><p><code><!-- tmpl_if name='ipv6' --><!-- tmpl_var name='ipv6' --><!-- tmpl_else -->Unset<!-- /tmpl_if --></code></p></td>
+              <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a><!-- tmpl_if name='ipv6' --> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a><!-- /tmpl_if --></p></td></tr>
           </table>
-          <!-- /tmpl_if name='present' -->
 
           <p>View the <code>curl</code> <a href="#" class="show-info">commands to set your names</a>.</p>
           <div class="info" style="display:none">
