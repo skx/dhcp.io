@@ -20,7 +20,7 @@ The code is written in Perl, using the [CGI::Application](http://search.cpan.org
 The logins and record-associations for all users are stored in an SQLite
 database, making deployment nice and simple.
 
-A [Redis](http://redis.io/) instance is used for session-storage, and zone-caching.
+A [Redis](http://redis.io/) instance is used for session-storage, throttle-control, and similar things.
 
 For serving the actual Dynamic-DNS entries Amazon's Route53 service is used.
 
