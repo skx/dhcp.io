@@ -108,14 +108,14 @@ SKIP:
     #  Change the user's email address
     #
     $u->set( user => $username,
-             mail => 'steve@steve.org.uk' );
+             mail => 'ssteve@steve.org.uk' );
 
     #
     #  Ensure the previous find fails, and the new one succeeds.
     #
     $found = $u->find($email);
     is( undef, $found, "Finding user by mail fails when it is changed" );
-    $found = $u->find('steve@steve.org.uk');
+    $found = $u->find('ssteve@steve.org.uk');
     is( lc $username, $found, "Finding user by (new) email succeeds" );
 
 
