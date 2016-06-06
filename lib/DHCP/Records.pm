@@ -124,6 +124,26 @@ sub createRecord
 {
     my ( $self, $record, $type, $ip ) = (@_);
 
+    #
+    #  This is just here to remove the invalid record
+    # it will probably fail - because active users won't
+    # have this record in place.
+    #
+    #  Remove in a few days.
+    #
+    my $tmp = $self->{ 'r53' }->change_resource_record_sets(
+        zone_id => $DHCP::Config::ZONE_ID,
+        changes => [
+
+            # Create the record
+            {  action => 'DELETE',
+               name   => "$record.$DHCP::Config::ZONE",
+               type   => "CNAME",
+               ttl    => 3600,
+               value  => "invalid.dhcp.io",
+            },
+        ] );
+
     my $res = $self->{ 'r53' }->change_resource_record_sets(
         zone_id => $DHCP::Config::ZONE_ID,
         changes => [
