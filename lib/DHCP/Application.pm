@@ -1576,6 +1576,15 @@ sub profile_email
     return ( $template->output() );
 }
 
+
+=begin doc
+
+Allow the user to change their password.
+
+=end doc
+
+=cut
+
 sub profile_password
 {
     my ($self) = (@_);
