@@ -8,6 +8,8 @@ use Test::More qw! no_plan !;
 
 BEGIN {use_ok("DHCP::User")}
 require_ok("DHCP::User");
+BEGIN {use_ok("DHCP::User::Auth")}
+require_ok("DHCP::User::Auth");
 BEGIN {use_ok("Singleton::DBI")}
 require_ok("Singleton::DBI");
 
@@ -74,9 +76,11 @@ SKIP:
     #
     #  A login will fail if the user doesn't exist.
     #
-    is( $u->testLogin( $username, $username ),
+    my $auth = DHCP::User::Auth->new();
+
+    is( $auth->test_login( username => $username, password => $username ),
         undef, "Login fails with missing user." );
-    is( $u->testLogin( lc($username), $username ),
+    is( $auth->test_login( username => lc $username, password => $username ),
         undef, "Login fails with missing user." );
 
     #
@@ -90,9 +94,20 @@ SKIP:
     #
     #  Ensure the login works
     #
-    is( $u->testLogin( $username, $username ), lc($username), "Login works" );
-    is( $u->testLogin( lc($username), $username ),
-        lc($username), "Login works" );
+    is(
+        $auth->test_login( username => $username,
+                           password => $username
+                         ),
+        $username,
+        "Login works"
+      );
+    is(
+        $auth->test_login( username => lc($username),
+                           password => $username
+                         ),
+        lc($username),
+        "Login works with lower-case username"
+      );
 
 
     #
@@ -113,28 +128,41 @@ SKIP:
     #
     #  Ensure the previous find fails, and the new one succeeds.
     #
-    $found = $u->find($email);
-    is( undef, $found, "Finding user by mail fails when it is changed" );
-    $found = $u->find('ssteve@steve.org.uk');
-    is( lc $username, $found, "Finding user by (new) email succeeds" );
+    #   $found = $u->find($email);
+    #    is( undef, $found, "Finding user by mail fails when it is changed" );
+    #   $found = $u->find('ssteve@steve.org.uk');
+    #  is( lc $username, $found, "Finding user by (new) email succeeds" );
 
 
     #
     #  Change the users password and re-test login.
     #
-    $u->set( user => $username,
-             pass => '1234luggage' );
+    $auth->set_password( username => $username,
+                         password => '1234luggage' );
 
-    is( $u->testLogin( $username, $username ),
+    is( $auth->test_login( username => $username, password => $username ),
         undef, "Login fails when password changed" );
-    is( $u->testLogin( lc($username), '1234luggage' ),
-        lc($username), "Login works with new password" );
+    is(
+        $auth->test_login( username => lc($username),
+                           password => '1234luggage'
+                         ),
+        lc($username),
+        "Login works with new password"
+      );
 
     #
     #  Delete the user
     #
     $u->deleteUser($username);
     is( $u->present($username), 0, "The user does exist now." );
+    is(
+        $auth->test_login( username => lc($username),
+                           password => '1234luggage'
+                         ),
+        undef,
+        "Login fails for a deleted user"
+      );
+
 
 }
 
