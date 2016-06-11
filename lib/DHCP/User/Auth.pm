@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-DHCP::User - User/Record-Related code.
+DHCP::User::Auth - User/Record-Related code.
 
 =head1 MIGRATION
 
@@ -14,7 +14,6 @@ This requires a new table to be created in C<~/db.db>:
 =for example end
 
 =cut
-
 
 =head1 DESCRIPTION
 
