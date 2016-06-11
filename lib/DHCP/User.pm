@@ -479,55 +479,6 @@ sub getAllData
 
 =begin doc
 
-Test a login.
-
-Return undef on failure, otherwise return the username.
-
-=end doc
-
-=cut
-
-sub testLogin
-{
-    my ( $self, $user, $pass ) = (@_);
-
-    $user = lc($user);
-
-    #
-    #  Hash the users password with our Salt
-    #
-    my $sha = Digest::SHA->new();
-    $sha->add($DHCP::Config::SALT);
-    $sha->add($pass);
-    my $hash = $sha->hexdigest();
-
-    #
-    #  Does the user exist?  If not then it's a failure.
-    #
-    return unless ( $self->present($user) );
-
-
-    #
-    #  Lookup
-    #
-    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
-
-    my $sql =
-      $db->prepare("SELECT login FROM users WHERE ( login=? AND password=? )")
-      or
-      die "Failed to prepare";
-
-    $sql->execute( $user, $hash ) or
-      die "Failed to execute";
-    my $found = $sql->fetchrow_array();
-
-    return ( $found ? $found : undef );
-
-}
-
-
-=begin doc
-
 Find a user, by username or email address.
 
 =end doc
@@ -720,20 +671,6 @@ sub set
           die "Failed to execute statement";
         $sql->finish();
     }
-    if ( $args{ 'pass' } )
-    {
-        my $sha = Digest::SHA->new();
-        $sha->add($DHCP::Config::SALT);
-        $sha->add( $args{ 'pass' } );
-        my $hash = $sha->hexdigest();
-
-        my $sql = $db->prepare("UPDATE users SET password=? WHERE login=?") or
-          die "Failed to prepare statement";
-        $sql->execute( $hash, $user ) or
-          die "Failed to execute statement";
-        $sql->finish();
-    }
-
 }
 
 

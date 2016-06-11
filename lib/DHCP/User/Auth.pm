@@ -95,16 +95,16 @@ sub test_login
     {
         my $result = $self->test_login_old(%params);
 
-        if ( $result )
+        if ($result)
         {
             #
             # Set the password here - so that we migrate
             # to bcrypt.
             #
-            $self->set_password( username => $params{'username'} ,
-                                 password => $params{'password'} );
+            $self->set_password( username => $params{ 'username' },
+                                 password => $params{ 'password' } );
         }
-        return( $result ):
+        return ($result);
     }
 }
 

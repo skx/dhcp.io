@@ -73,6 +73,7 @@ EOF
 #
 use DHCP::Records;
 use DHCP::User;
+use DHCP::User::Auth;
 
 
 
@@ -673,8 +674,10 @@ sub application_login
         #
         if ( $lname && $lpass )
         {
-            my $user = DHCP::User->new();
-            $logged_in = $user->testLogin( $lname, $lpass );
+            my $user = DHCP::User::Auth->new();
+            $logged_in =
+              $user->test_login( username => $lname,
+                                 password => $lpass );
         }
 
         if ($logged_in)
@@ -1638,8 +1641,10 @@ sub profile_password
         {
             if ( $pass1 eq $pass2 )
             {
-                $user->set( pass => $pass1,
-                            user => $existing );
+                my $helper = DHCP::User::Auth->new();
+                $helper->set_password( username => $existing,
+                                       password => $pass1 );
+
                 $template->param( saved => 1 );
             }
             else
