@@ -160,16 +160,16 @@ sub set_password
     $sql->finish();
 
     #
-    #  Calculate the hash
+    # Generate a salt of printable ASCII chars.
     #
     my $salt = "";
-    my @chars = ( "A" .. "Z", "a" .. "z" );
-    $salt .= $chars[rand @chars] for 1 .. 16;
+    my @a = map {chr} ( 33 .. 126 );
+    $salt .= $a[rand(@a)] for 1 .. 16;
+    $salt = Crypt::Eksblowfish::Bcrypt::en_base64($salt);
 
     #
     #  Now hash the user's passwrod
     #
-    $salt = Crypt::Eksblowfish::Bcrypt::en_base64($salt);
     my $settings = '$2a$12$' . $salt;
     my $hash = Crypt::Eksblowfish::Bcrypt::bcrypt( $pass, $settings );
 
