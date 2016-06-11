@@ -203,6 +203,7 @@ sub _is_new
 {
     my ( $self, $login ) = (@_);
 
+    $login = lc($login);
     my $db = Singleton::DBI->instance() || die "Missing DB-handle";
     my $sql =
       $db->prepare(
@@ -284,7 +285,7 @@ sub test_login_new
         "SELECT a.hash FROM passwords AS a JOIN users AS b WHERE a.owner=b.id AND b.login=?"
       ) or
       die "Failed to prepare " . $dbh->errstr();
-    $sql->execute($user);
+    $sql->execute( lc $user );
 
     my ($hash) = $sql->fetchrow_array();
     $sql->finish();
