@@ -38,10 +38,10 @@ package DHCP::User;
 use DHCP::Config;
 use DHCP::Lookup;
 use DHCP::Records;
+use DHCP::User::Auth;
 use Singleton::DBI;
 
 # Standard modules.
-use Digest::SHA;
 use Data::UUID::LibUUID;
 
 
@@ -78,22 +78,24 @@ sub createUser
 {
     my ( $self, $user, $pass, $mail, $ip ) = (@_);
 
+    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
     $user = lc($user);
 
-
     #
-    #  Now hash the users password with our Salt
+    #  Insert the user.
     #
-    my $sha = Digest::SHA->new();
-    $sha->add($DHCP::Config::SALT);
-    $sha->add($pass);
-    my $hash = $sha->hexdigest();
-
-    my $db = Singleton::DBI->instance() || die "Missing DB-handle";
     my $sql = $db->prepare(
                 "INSERT INTO users (login,password,email,ip) VALUES( ?,?,?,?)");
-    $sql->execute( $user, $hash, $mail, $ip );
+    $sql->execute( $user, "bcrypt", $mail, $ip );
     $sql->finish();
+
+    #
+    #  Insert the password
+    #
+    my $helper = DHCP::User::Auth->new();
+    $helper->set_password( username => $user,
+                           password => $pass );
+
 
     #
     #  Get the user-id

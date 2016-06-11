@@ -46,7 +46,13 @@ use warnings;
 
 package DHCP::User::Auth;
 
+
+# Legacy auth
+use Digest::SHA;
+
+# New auth
 use Crypt::Eksblowfish::Bcrypt;
+
 use DHCP::Config;
 use Singleton::DBI;
 
