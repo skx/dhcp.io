@@ -60,3 +60,6 @@ require_ok("WebService::Amazon::Route53");
 
 BEGIN {use_ok("XML::Simple")}
 require_ok("XML::Simple");
+
+BEGIN {use_ok("Crypt::Eksblowfish::Bcrypt")}
+require_ok("Crypt::Eksblowfish::Bcrypt");
