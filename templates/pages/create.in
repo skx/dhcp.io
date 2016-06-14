@@ -1,13 +1,29 @@
 <!-- tmpl_if name='created' -->
 <h1>Account Created</h1>
-<p>You may now login.</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>You may now login.</p>
+    </div>
+  </div>
+</div>
 <!-- tmpl_else -->
 
 <!-- tmpl_if name='closed' -->
 
 <h1>Account Limit Reached</h1>
-<p>Maximum users reached - no more accounts may be created.</p>
-<p>The source code to this site is <a href="https://github.com/skx/dhcp.io/">available on github</a> if you wish to deploy your own instance.</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-1 col-md-1">
+    </div>
+    <div class="col-sm-11 col-md-11">
+      <p>Maximum users reached - no more accounts may be created.</p>
+      <p>The source code to this site is <a href="https://github.com/skx/dhcp.io/">available on github</a> if you wish to deploy your own instance.</p>
+    </div>
+  </div>
+</div>
 
 <!-- tmpl_else -->
 <h1>Create An Account</h1>
