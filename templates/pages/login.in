@@ -1,3 +1,7 @@
+    <script type="text/javascript">
+    $( document ).ready(function() { $('input:text:visible:first').focus(); })
+    </script>
+
 <!-- tmpl_if name='target' -->
 <h1>Login Required</h1>
 <div class="container-fluid">
