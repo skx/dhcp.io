@@ -17,7 +17,7 @@
         <ul>
           <li>Author Links
             <ul>
-              <li><a href="https://blog.steve.org.uk/">Blog</a></li>
+              <li><a href="https://blog.steve.fi/">Blog</a></li>
               <li><a href="https://twitter.com/Stolen_Souls">Twitter</a></li>
             </ul>
           </li>
