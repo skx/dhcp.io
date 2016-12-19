@@ -11,7 +11,7 @@
     <div class="col-sm-1 col-md-2">
     </div>
     <div class="col-sm-11 col-md-10">
-      <p>This site was created by <a href="https://www.steve.org.uk/">Steve Kemp</a>.</p>
+      <p>This site was created by <a href="https://steve.kemp.fi/">Steve Kemp</a>.</p>
       <p>It was created as a learning experience for working with Amazon's Route53 API.</p>
       <p>It has been left running since then because I tend to feel bad if I cancel services users rely upon - that said I make no promise that it will remain in service indefinitely.</p>
     </div>
