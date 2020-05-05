@@ -48,15 +48,6 @@ WORKDIR /srv
 # Copy the source into it
 COPY . .
 
-# Run the test just for the moment - skip two tests that will fail
-#
-# The first fails due to a git-hook.
-#
-# The second fails because it wants redis running.
-#
-RUN rm t/style-no-tabs.t t/20-web-application.t
-RUN make test
-
 # Build the templates
 RUN perl ./bin/generate-templates
 
