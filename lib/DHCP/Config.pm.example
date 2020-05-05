@@ -115,6 +115,6 @@ our $TTL = 300;
 #
 # Path to our SQLite database
 #
-our DB_PATH = "/srv/db.db";
+our $DB_PATH = "/srv/db.db";
 
 1;
