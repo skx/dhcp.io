@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# This file is only used by docker.
+#
+
+
+#
+# Hack
+#
+echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
+echo 'nameserver 8.8.4.4' >> /etc/resolv.conf
+
+#
+# Hack #2
+#
+chmod 777 /root /root/db.db
+
+#
+# Launch the HTTPD
+#
+exec lighttpd -D -f /srv/conf/lighttpd.conf
