@@ -32,6 +32,7 @@ package Singleton::DBI;
 
 use strict;
 use warnings;
+use DHCP::Config;
 
 
 #
@@ -72,11 +73,9 @@ sub new
 {
 
     #
-    #  Get our home directory.
+    #  Get our SQLite file.
     #
-    my $HOME = ( getpwuid($<) )[7];
-
-    my $db = $HOME . "/db.db";
+    my $db = $DHCP::Config::DB_PATH;
 
     my $create = 0;
     $create = 1 if ( !-e $db );

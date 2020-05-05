@@ -29,14 +29,14 @@ the same terms as Perl itself.
 package DHCP::Config;
 
 
-our $ROUTE_53_ID      = "xxxxxxxxxxx";
-our $ROUTE_53_KEY     = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+our $ROUTE_53_ID  = "xxxxxxxxxxx";
+our $ROUTE_53_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 
 #
 #  The Zone we use - Note that the trailing period is ESSENTIAL.
 #
-our $ZONE    = "dhcp.io.";
+our $ZONE = "dhcp.io.";
 
 
 
@@ -69,21 +69,22 @@ our $SENDER = 'steve@dhcp.io';
 # invalid.
 #
 #
-our $SALT = 'VieghohS7ookOhT3giebiig7peiroov/i4OoEig%eghae7ufJa=w7eev4ooH AeF7eiyo\foiEf"i7sie[Y$a';
+our $SALT =
+  'VieghohS7ookOhT3giebiig7peiroov/i4OoEig%eghae7ufJa=w7eev4ooH AeF7eiyo\foiEf"i7sie[Y$a';
 
 
 #
 #  The list of forbidden usernames
 #
-our @FORBIDDEN = ( qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret ! );
+our @FORBIDDEN = (
+    qw! ip6 ipv6 ipv4 ip4 ip tftp ntp nntp time snmp https syslog shell domain printer login exec nntps ftps irc pop3 pop3s ftp ssh mail mx dhcp http ping icmp telnet imap smtp ldap imaps ldaps httpd web help support faq www admin secure official steve kemp notice secret !
+);
 
 
 #
 #  Magic-users can have more than five hostnames ..
 #
-our %MAGIC = {
-              "skx" => 1,
-             };
+our %MAGIC = { "skx" => 1, };
 
 
 
@@ -110,5 +111,10 @@ our $THRESHOLD = 300;
 #
 our $TTL = 300;
 
+
+#
+# Path to our SQLite database
+#
+our DB_PATH = "/srv/db.db";
 
 1;
