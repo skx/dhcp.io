@@ -38,6 +38,14 @@ our $ROUTE_53_KEY     = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 #
 our $ZONE    = "dhcp.io.";
 
+
+
+#
+#  Redis host
+#
+our $REDIS_HOST = "127.0.0.1:6379";
+
+
 #
 #  The Zone-ID which can be found in your Amazon console, this should
 # match the domain listed above.

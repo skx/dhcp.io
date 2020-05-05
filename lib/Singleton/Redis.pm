@@ -32,6 +32,7 @@ package Singleton::Redis;
 
 use strict;
 use warnings;
+use DHCP::Config;
 
 
 #
@@ -70,7 +71,7 @@ since this object is used as a Singleton.
 
 sub new
 {
-    return ( Redis->new() );
+    return Redis->new( server => $DHCP::Config::REDIS_HOST );
 }
 
 
