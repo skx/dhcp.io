@@ -12,13 +12,12 @@
         <!-- /tmpl_loop -->
         <li><a data-toggle="tab" href="#add">Add New</a></li>
       </ul>
-
       <div class="tab-content">
         <!-- tmpl_loop name='records' -->
         <div id="<!-- tmpl_var name='name' -->" class="tab-pane <!-- tmpl_if name='__first__' -->active<!-- /tmpl_if -->">
           <h3><!-- tmpl_var name='name' -->.<!-- tmpl_var name='zone' -->  <span style="font-size:12px"><a href="/remove/<!-- tmpl_var name='name' -->">Delete</a></span> </h3>
           <table class="table table-hover table-striped table-condensed">
-          <tr><th>Address-Type</th><th>Value</th><th>Action</th></tr>
+            <tr><th>Address-Type</th><th>Value</th><th>Action</th></tr>
 
             <tr><td><p><b>IPv4</b></td>
               <td><p><code><!-- tmpl_if name='ipv4' --><!-- tmpl_var name='ipv4' --><!-- tmpl_else -->Unset<!-- /tmpl_if --></code></p>
@@ -27,17 +26,16 @@
               <td><p><code><!-- tmpl_if name='ipv6' --><!-- tmpl_var name='ipv6' --><!-- tmpl_else -->Unset<!-- /tmpl_if --></code></p></td>
               <td><p><a href="/edit/<!-- tmpl_var name='name' -->">Edit</a><!-- tmpl_if name='ipv6' --> | <a href="/delete/AAAA/<!-- tmpl_var name='name' -->/<!-- tmpl_var name='ipv6' -->">Delete</a><!-- /tmpl_if --></p></td></tr>
           </table>
-
           <p>View the <code>curl</code> <a href="#" class="show-info">commands to set your names</a>.</p>
           <div class="info" style="display:none">
-          <!-- tmpl_if name='present' -->
-          <p>To update the value of your hostname to please run:</p>
-          <!-- tmpl_else -->
-          <p>To set the value of your hostname to please run:</p>
-          <!-- /tmpl_if -->
-          <p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' --></pre></p>
-          <p>If you wish to set the value to a specific IP please run:</p>
-<p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4</pre></p>
+            <!-- tmpl_if name='present' -->
+            <p>To update the value of your hostname to please run:</p>
+            <!-- tmpl_else -->
+            <p>To set the value of your hostname to please run:</p>
+            <!-- /tmpl_if -->
+            <p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' --></pre></p>
+            <p>If you wish to set the value to a specific IP please run:</p>
+            <p><pre>$ curl https://<!-- tmpl_var name='zone' -->/set/<!-- tmpl_var name='token' -->/1.2.3.4</pre></p>
           </div>
         </div>
         <!-- /tmpl_loop name='records' -->
@@ -59,14 +57,13 @@
         </div>
       </div>
       <p>&nbsp;</p>
-
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
-      $(document).ready(function(){
-        $( ".show-info" ).click(  function(  ) {
-          $(this).closest('p').next('.info').toggle(); } );
-      });
+  $(document).ready(function(){
+  $( ".show-info" ).click(  function(  ) {
+  $(this).closest('p').next('.info').toggle(); } );
+  });
 </script>

@@ -4,34 +4,33 @@
     <div class="col-sm-1 col-md-1">
     </div>
     <div class="col-sm-11 col-md-11">
+      <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-info" >
+          <div class="panel-heading"><div class="panel-title">Your Details</div></div>
+          <div style="padding-top:30px" class="panel-body" >
 
+            <label for="lname" class="col-md-3 control-label">Username</label>
+            <div style="margin-bottom: 10px" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+              <input id="lname" type="text" class="form-control" name="lname" value="<!-- tmpl_var name='username' escape='html' -->" placeholder="Enter your username" disabled>
+            </div>
 
+            <label for="lpass" class="col-md-3 control-label">Password</label>
+            <div style="margin-bottom: 10px" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input id="lpass" type="password" class="form-control" name="lpass" value="12346579" placeholder="Enter your password" disabled>
+            </div>
+            <p class="text-right"><a href="/profile/password">Change Password</a></p>
 
-<div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-  <div class="panel panel-info" >
-    <div class="panel-heading"><div class="panel-title">Your Details</div></div>
-    <div style="padding-top:30px" class="panel-body" >
-
-        <label for="lname" class="col-md-3 control-label">Username</label>
-        <div style="margin-bottom: 10px" class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-          <input id="lname" type="text" class="form-control" name="lname" value="<!-- tmpl_var name='username' escape='html' -->" placeholder="Enter your username" disabled>
+            <label for="email" class="col-md-3 control-label">Email</label>
+            <div style="margin-bottom: 10px" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+              <input id="email" type="text" class="form-control" name="email" value="<!-- tmpl_var name='email' escape='html' -->" placeholder="Enter your email-address" disabled>
+            </div>
+            <p class="text-right"><a href="/profile/email">Change Email</a></p>
+          </div>
         </div>
-
-        <label for="lpass" class="col-md-3 control-label">Password</label>
-        <div style="margin-bottom: 10px" class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-          <input id="lpass" type="password" class="form-control" name="lpass" value="12346579" placeholder="Enter your password" disabled>
-        </div>
-          <p class="text-right"><a href="/profile/password">Change Password</a></p>
-
-        <label for="email" class="col-md-3 control-label">Email</label>
-        <div style="margin-bottom: 10px" class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-          <input id="email" type="text" class="form-control" name="email" value="<!-- tmpl_var name='email' escape='html' -->" placeholder="Enter your email-address" disabled>
-        </div>
-          <p class="text-right"><a href="/profile/email">Change Email</a></p>
+      </div>
     </div>
   </div>
-
 </div>

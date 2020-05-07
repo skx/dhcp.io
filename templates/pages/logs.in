@@ -1,4 +1,3 @@
-
 <!-- tmpl_if name='logs' -->
 
 <h1>Activity Log</h1>
@@ -41,4 +40,5 @@
     </div>
   </div>
 </div>
+
 <!-- /tmpl_if -->
