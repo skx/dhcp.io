@@ -16,18 +16,6 @@
 ##
 ##    docker-compose -d up
 ##
-## Admin:
-##
-##   $ docker login docker.steve.fi
-##   $ docker tag dhcp.io:1 docker.steve.fi/steve/dhcp.io:1
-##   $ docker push docker.steve.fi/steve/dhcp.io:1
-##
-##
-## Admin Launching:
-##
-##   $ docker login docker.steve.fi
-##   $ docker pull docker.steve.fi/steve/dhcp.io:1
-##   $ docker-compose -d up
 ##
 
 # Base image
@@ -37,7 +25,7 @@ FROM debian:buster
 RUN apt-get update --quiet
 
 # Perl/Other dependencies
-RUN apt-get install --yes make libhtml-template-perl libcgi-application-perl libtie-ixhash-perl libdata-uuid-libuuid-perl libdbi-perl libdbd-sqlite3-perl libhtml-template-perl libjson-perl libredis-perl perl-modules lighttpd libcgi-session-perl libnet-dns-perl libxml-simple-perl libwww-perl libcrypt-blowfish-perl libcrypt-eksblowfish-perl libtest-pod-perl libtest-strict-perl libtest-www-mechanize-cgiapp-perl
+RUN apt-get install --yes make libhtml-template-perl libcgi-application-perl libtie-ixhash-perl libdata-uuid-libuuid-perl libdbi-perl libdbd-sqlite3-perl libhtml-template-perl libjson-perl libredis-perl perl-modules lighttpd libcgi-session-perl libnet-dns-perl libxml-simple-perl libwww-perl libcrypt-blowfish-perl libcrypt-eksblowfish-perl libtest-pod-perl libtest-strict-perl libtest-www-mechanize-cgiapp-perl libnet-smtp-ssl-perl
 
 # Ensure /root is writable for the tests
 RUN chmod -R 777 /root
