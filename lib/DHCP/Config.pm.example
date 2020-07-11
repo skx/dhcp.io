@@ -113,6 +113,16 @@ our $TTL = 300;
 
 
 #
+# SMTP details are necessary for allowing password resets.
+#
+our $SMTP_HOST     = "smtp.gmail.com";
+our $SMTP_PORT     = 465;
+our $SMTP_USERNAME = "";
+our $SMTP_PASSWORD = "";
+
+
+#
+#
 # Path to our SQLite database
 #
 our $DB_PATH = "/srv/db.db";

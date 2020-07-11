@@ -44,6 +44,11 @@ use CGI::Application::Plugin::Throttle;
 use UUID::Tiny;
 
 #
+# Password reminders need SMTP
+#
+use Net::SMTP::SSL;
+
+#
 #  This is is a sanity-check which will make the failure to follow
 # instructions more explicit to users.
 #
@@ -1368,11 +1373,26 @@ sub forgotten
                             from     => $DHCP::Config::SENDER,
                             token    => $token
                           );
-                open( SENDMAIL,
-                      "|/usr/lib/sendmail -t -f $DHCP::Config::SENDER" ) or
-                  die "Cannot open sendmail: $!";
-                print( SENDMAIL $et->output() );
-                close(SENDMAIL);
+
+                #
+                # Send the email.
+                #
+                my $smtp =
+                  Net::SMTP::SSL->new( $DHCP::Config::SMTP_HOST,
+                                       Port  => $DHCP::Config::SMTP_PORT,
+                                       Debug => 0
+                                     );
+
+                $smtp->auth( $DHCP::Config::SMTP_USERNAME,
+                             $DHCP::Config::SMTP_PASSWORD ) ||
+                  die "Authentication failed!\n";
+
+                $smtp->mail( $DHCP::Config::SENDER . "\n" );
+                $smtp->to( $dat->{ 'email' } );
+                $smtp->data();
+                $smtp->datasend( $et->output() );
+                $smtp->dataend();
+                $smtp->quit;
             }
 
             # Show the result.
