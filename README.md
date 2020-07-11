@@ -54,6 +54,8 @@ The code relies upon the following modules being present and installed:
   * `apt-get install libhtml-template-perl`
 * JSON
   * `apt-get install libjson-perl`
+* Net::SMTP::SSL
+  * `apt-get install libnet-smtp-ssl-perl`
 * Redis
   * `apt-get install libredis-perl`
 * WebService::Amazon::Route53
